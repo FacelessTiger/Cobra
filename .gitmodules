@@ -1,0 +1,3 @@
+[submodule "Ellis/vendor/spdlog"]
+	path = Ellis/vendor/spdlog
+	url = https://github.com/gabime/spdlog

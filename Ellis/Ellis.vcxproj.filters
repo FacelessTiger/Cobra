@@ -27,9 +27,15 @@
     <ClInclude Include="src\Ellis\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ellis\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

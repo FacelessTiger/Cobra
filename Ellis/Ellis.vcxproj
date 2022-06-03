@@ -15,9 +15,11 @@
     <ClInclude Include="src\Ellis\Application.h" />
     <ClInclude Include="src\Ellis\Core.h" />
     <ClInclude Include="src\Ellis\EntryPoint.h" />
+    <ClInclude Include="src\Ellis\Log.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Application.cpp" />
+    <ClCompile Include="src\Ellis\Log.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -68,6 +70,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>EL_PLATFORM_WINDOWS;EL_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Ellis\vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,6 +85,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>EL_PLATFORM_WINDOWS;EL_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Ellis\vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
