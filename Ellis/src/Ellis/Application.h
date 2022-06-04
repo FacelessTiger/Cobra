@@ -2,6 +2,7 @@
 
 #include "Core.h"
 #include "Events/Event.h"
+#include "Ellis/Events/ApplicationEvent.h"
 #include "Window.h"
 
 namespace Ellis {
@@ -16,6 +17,10 @@ namespace Ellis {
 		virtual ~Application();
 
 		void Run();
+
+		void OnEvent(Event& e);
+	private:
+		bool OnWindowClose(WindowCloseEvent& e);
 	};
 
 	// To be defined in client
