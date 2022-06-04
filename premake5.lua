@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Ellis/vendor/GLFW/include"
+IncludeDir["Glad"] = "Ellis/vendor/Glad/include"
 
 include "Ellis/vendor/GLFW"
+include "Ellis/vendor/Glad"
 
 project "Ellis"
 	location "Ellis"
@@ -36,12 +38,14 @@ project "Ellis"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links 
 	{ 
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -53,7 +57,8 @@ project "Ellis"
 		defines
 		{
 			"EL_PLATFORM_WINDOWS",
-			"EL_BUILD_DLL"
+			"EL_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands
