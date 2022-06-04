@@ -1,5 +1,6 @@
 workspace "Ellis"
 	architecture "x64"
+	startproject "Sandbox"
 	
 	configurations
 	{
@@ -15,14 +16,17 @@ IncludeDir["GLFW"] = "Ellis/vendor/GLFW/include"
 IncludeDir["Glad"] = "Ellis/vendor/Glad/include"
 IncludeDir["ImGui"] = "Ellis/vendor/imgui"
 
-include "Ellis/vendor/GLFW"
-include "Ellis/vendor/Glad"
-include "Ellis/vendor/imgui"
+group "Dependencies"
+	include "Ellis/vendor/GLFW"
+	include "Ellis/vendor/Glad"
+	include "Ellis/vendor/imgui"
+group ""
 
 project "Ellis"
 	location "Ellis"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -55,7 +59,6 @@ project "Ellis"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -67,28 +70,29 @@ project "Ellis"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "configurations:Debug"
 		defines "EL_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
 		defines "EL_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "EL_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "on"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -112,7 +116,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -122,15 +125,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "EL_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
 		defines "EL_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "EL_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "on"
