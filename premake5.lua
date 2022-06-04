@@ -63,14 +63,17 @@ project "Ellis"
 
 	filter "configurations:Debug"
 		defines "EL_DEBUG"
+		buildoptions "/MDd"
 		symbols "on"
 
 	filter "configurations:Release"
 		defines "EL_RELEASE"
+		buildoptions "/MD"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "EL_DIST"
+		buildoptions "/MD"
 		optimize "on"
 
 project "Sandbox"
@@ -110,12 +113,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "EL_DEBUG"
+		buildoptions "/MDd"
 		symbols "on"
 
 	filter "configurations:Release"
 		defines "EL_RELEASE"
+		buildoptions "/MD"
 		optimize "on"
 
 	filter "configurations:Dist"
 		defines "EL_DIST"
+		buildoptions "/MD"
 		optimize "on"
