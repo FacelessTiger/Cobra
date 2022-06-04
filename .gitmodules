@@ -1,3 +1,6 @@
 [submodule "Ellis/vendor/spdlog"]
 	path = Ellis/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Ellis/vendor/GLFW"]
+	path = Ellis/vendor/GLFW
+	url = https://github.com/FacelessTiger/glfw

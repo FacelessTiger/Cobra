@@ -12,6 +12,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Ellis/Log.h"
+
 #ifdef EL_PLATFORM_WINDOWS
 	#include <Windows.h>
 #endif

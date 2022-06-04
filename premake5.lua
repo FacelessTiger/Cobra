@@ -10,6 +10,11 @@ workspace "Ellis"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Ellis/vendor/GLFW/include"
+
+include "Ellis/vendor/GLFW"
+
 project "Ellis"
 	location "Ellis"
 	kind "SharedLib"
@@ -30,7 +35,14 @@ project "Ellis"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links 
+	{ 
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"

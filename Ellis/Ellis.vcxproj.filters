@@ -35,6 +35,8 @@
       <Filter>Ellis</Filter>
     </ClInclude>
     <ClInclude Include="src\elpch.h" />
+    <ClInclude Include="src\Ellis\Window.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Application.cpp">
@@ -44,5 +46,6 @@
       <Filter>Ellis</Filter>
     </ClCompile>
     <ClCompile Include="src\elpch.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
 </Project>
