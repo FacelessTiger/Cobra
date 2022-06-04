@@ -4,3 +4,6 @@
 [submodule "Ellis/vendor/GLFW"]
 	path = Ellis/vendor/GLFW
 	url = https://github.com/FacelessTiger/glfw
+[submodule "Ellis/vendor/imgui"]
+	path = Ellis/vendor/imgui
+	url = https://github.com/FacelessTiger/imgui

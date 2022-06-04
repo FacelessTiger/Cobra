@@ -11,6 +11,8 @@ namespace Ellis {
 	class ELLIS_API Application
 	{
 	private:
+		static Application* s_Instance;
+
 		std::unique_ptr<Window> m_Window;
 		LayerStack m_LayerStack;
 
@@ -25,6 +27,10 @@ namespace Ellis {
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
+
+		inline Window& GetWindow() { return *m_Window; }
+
+		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 	};
