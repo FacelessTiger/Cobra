@@ -4,6 +4,9 @@
     <Filter Include="Ellis">
       <UniqueIdentifier>{3EAD1C0D-AAC1-44BE-7343-E81DDF1641EF}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Ellis\Events">
+      <UniqueIdentifier>{6247DF35-4EAA-6EDA-F72F-A790E3713A5D}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Ellis.h" />
@@ -16,9 +19,22 @@
     <ClInclude Include="src\Ellis\EntryPoint.h">
       <Filter>Ellis</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ellis\Events\ApplicationEvent.h">
+      <Filter>Ellis\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Events\Event.h">
+      <Filter>Ellis\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Events\KeyEvent.h">
+      <Filter>Ellis\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Events\MouseEvent.h">
+      <Filter>Ellis\Events</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ellis\Log.h">
       <Filter>Ellis</Filter>
     </ClInclude>
+    <ClInclude Include="src\elpch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Application.cpp">
@@ -27,5 +43,6 @@
     <ClCompile Include="src\Ellis\Log.cpp">
       <Filter>Ellis</Filter>
     </ClCompile>
+    <ClCompile Include="src\elpch.cpp" />
   </ItemGroup>
 </Project>
