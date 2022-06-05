@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ellis/Window.h"
+#include "Ellis/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>
 
@@ -10,6 +11,7 @@ namespace Ellis {
 	{
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{
