@@ -1,5 +1,5 @@
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #include <Ellis.h>
+#include <imgui/imgui.h>
 
 class ExampleLayer : public Ellis::Layer
 {
@@ -12,6 +12,13 @@ public:
 	{
 		if (Ellis::Input::IsKeyPressed(EL_KEY_TAB))
 			EL_TRACE("Tab key is pressed (poll)!");
+	}
+
+	void OnImGuiRender() override
+	{
+		ImGui::Begin("Test");
+		ImGui::Text("Hello world");
+		ImGui::End();
 	}
 
 	void OnEvent(Ellis::Event& event) override

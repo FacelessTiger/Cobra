@@ -4,7 +4,7 @@
 
 namespace Ellis {
 
-	class ELLIS_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	protected:
 		int m_KeyCode;
@@ -17,7 +17,7 @@ namespace Ellis {
 			: m_KeyCode(keycode) { }
 	};
 
-	class ELLIS_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	private:
 		int m_RepeatCount;
@@ -37,7 +37,7 @@ namespace Ellis {
 		EVENT_CLASS_TYPE(KeyPressed)
 	};
 
-	class ELLIS_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode)
@@ -53,7 +53,7 @@ namespace Ellis {
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class ELLIS_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keycode)

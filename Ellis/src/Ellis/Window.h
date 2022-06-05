@@ -21,7 +21,7 @@ namespace Ellis {
 	};
 
 	// Interface representing a desktop system based Window
-	class ELLIS_API Window
+	class Window
 	{
 	public:
 		using EventCallbackFn = std::function<void(Event&)>;

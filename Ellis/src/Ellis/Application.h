@@ -9,7 +9,7 @@
 
 namespace Ellis {
 
-	class ELLIS_API Application
+	class Application
 	{
 	private:
 		static Application* s_Instance;

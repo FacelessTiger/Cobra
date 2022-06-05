@@ -4,7 +4,7 @@
 
 namespace Ellis {
 
-	class ELLIS_API MouseMovedEvent : public Event
+	class MouseMovedEvent : public Event
 	{
 	private:
 		float m_MouseX, m_MouseY;
@@ -27,7 +27,7 @@ namespace Ellis {
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	};
 
-	class ELLIS_API MouseScrolledEvent : public Event
+	class MouseScrolledEvent : public Event
 	{
 	private:
 		float m_XOffset, m_YOffset;
@@ -50,7 +50,7 @@ namespace Ellis {
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	};
 
-	class ELLIS_API MouseButtonEvent : public Event
+	class MouseButtonEvent : public Event
 	{
 	protected:
 		int m_Button;
@@ -63,7 +63,7 @@ namespace Ellis {
 			: m_Button(button) { }
 	};
 
-	class ELLIS_API MouseButtonPressedEvent : public MouseButtonEvent
+	class MouseButtonPressedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonPressedEvent(int button)
@@ -79,7 +79,7 @@ namespace Ellis {
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 
-	class ELLIS_API MouseButtonReleasedEvent : public MouseButtonEvent
+	class MouseButtonReleasedEvent : public MouseButtonEvent
 	{
 	public:
 		MouseButtonReleasedEvent(int button)

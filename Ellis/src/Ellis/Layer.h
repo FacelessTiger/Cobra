@@ -5,7 +5,7 @@
 
 namespace Ellis {
 
-	class ELLIS_API Layer
+	class Layer
 	{
 	protected:
 		std::string m_DebugName;

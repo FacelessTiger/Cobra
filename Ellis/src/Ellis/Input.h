@@ -4,7 +4,7 @@
 
 namespace Ellis {
 
-	class ELLIS_API Input
+	class Input
 	{
 	private:
 		static Input* s_Instance;
