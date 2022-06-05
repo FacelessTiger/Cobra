@@ -67,6 +67,8 @@
     <ClInclude Include="src\elpch.h" />
     <ClInclude Include="src\Ellis\Input.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
+    <ClInclude Include="src\Ellis\KeyCodes.h" />
+    <ClInclude Include="src\Ellis\MouseButtonCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Application.cpp">

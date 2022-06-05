@@ -1,3 +1,4 @@
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #include <Ellis.h>
 
 class ExampleLayer : public Ellis::Layer
@@ -9,12 +10,20 @@ public:
 
 	void OnUpdate() override
 	{
-		EL_INFO("ExampleLayer::Update");
+		if (Ellis::Input::IsKeyPressed(EL_KEY_TAB))
+			EL_TRACE("Tab key is pressed (poll)!");
 	}
 
 	void OnEvent(Ellis::Event& event) override
 	{
-		EL_INFO("{0}", event);
+		if (event.GetEventType() == Ellis::EventType::KeyPressed)
+		{
+			Ellis::KeyPressedEvent& e = (Ellis::KeyPressedEvent&)event;
+			if (e.GetKeyCode() == EL_KEY_TAB)
+				EL_TRACE("Tab key is pressed (event)!");
+
+			EL_TRACE("{0}", (char)e.GetKeyCode());
+		}
 	}
 };
 
