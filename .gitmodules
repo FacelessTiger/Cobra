@@ -7,3 +7,6 @@
 [submodule "Ellis/vendor/imgui"]
 	path = Ellis/vendor/imgui
 	url = https://github.com/FacelessTiger/imgui
+[submodule "Ellis/vendor/glm"]
+	path = Ellis/vendor/glm
+	url = https://github.com/g-truc/glm

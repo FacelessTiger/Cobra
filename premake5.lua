@@ -15,6 +15,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Ellis/vendor/GLFW/include"
 IncludeDir["Glad"] = "Ellis/vendor/Glad/include"
 IncludeDir["ImGui"] = "Ellis/vendor/imgui"
+IncludeDir["glm"] = "Ellis/vendor/glm"
 
 group "Dependencies"
 	include "Ellis/vendor/GLFW"
@@ -37,7 +38,9 @@ project "Ellis"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	includedirs
@@ -46,7 +49,8 @@ project "Ellis"
 		"%{prj.name}/vendor/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.ImGui}"
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
 	}
 
 	links 
@@ -106,7 +110,8 @@ project "Sandbox"
 	includedirs
 	{
 		"Ellis/vendor/spdlog/include",
-		"Ellis/src"
+		"Ellis/src",
+		"%{IncludeDir.glm}"
 	}
 
 	links
