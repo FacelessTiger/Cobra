@@ -5,6 +5,7 @@
 #include "Ellis/LayerStack.h"
 #include "Ellis/Events/Event.h"
 #include "Ellis/Events/ApplicationEvent.h"
+#include "Ellis/ImGui/ImGuiLayer.h"
 
 namespace Ellis {
 
@@ -14,6 +15,7 @@ namespace Ellis {
 		static Application* s_Instance;
 
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 
 		bool m_Running = true;
