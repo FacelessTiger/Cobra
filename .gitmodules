@@ -1,12 +1,12 @@
 [submodule "Ellis/vendor/spdlog"]
 	path = Ellis/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Ellis/vendor/GLFW"]
-	path = Ellis/vendor/GLFW
-	url = https://github.com/FacelessTiger/glfw
 [submodule "Ellis/vendor/imgui"]
 	path = Ellis/vendor/imgui
 	url = https://github.com/FacelessTiger/imgui
 [submodule "Ellis/vendor/glm"]
 	path = Ellis/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "Ellis/vendor/GLFW"]
+	path = Ellis/vendor/GLFW
+	url = https://github.com/FacelessTiger/glfw
