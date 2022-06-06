@@ -6,6 +6,7 @@
 #include "Ellis/Events/Event.h"
 #include "Ellis/Events/ApplicationEvent.h"
 #include "Ellis/ImGui/ImGuiLayer.h"
+#include "Ellis/Renderer/Shader.h"
 
 namespace Ellis {
 
@@ -19,6 +20,7 @@ namespace Ellis {
 		LayerStack m_LayerStack;
 
 		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::unique_ptr<Shader> m_Shader;
 
 		bool m_Running = true;
 	public:
