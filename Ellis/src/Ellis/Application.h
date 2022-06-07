@@ -10,6 +10,7 @@
 #include "Ellis/Renderer/Shader.h"
 #include "Ellis/Renderer/Buffer.h"
 #include "Ellis/Renderer/VertexArray.h"
+#include "Ellis/Renderer/OrthographicCamera.h"
 
 namespace Ellis {
 
@@ -27,6 +28,8 @@ namespace Ellis {
 
 		std::shared_ptr<VertexArray> m_SquareVA;
 		std::shared_ptr<Shader> m_BlueShader;
+
+		OrthographicCamera m_Camera;
 
 		bool m_Running = true;
 	public:
