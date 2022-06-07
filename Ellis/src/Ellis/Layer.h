@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Ellis/Core.h"
+#include "Ellis/Core/Timestep.h"
 #include "Ellis/Events/Event.h"
 
 namespace Ellis {
@@ -15,7 +16,7 @@ namespace Ellis {
 
 		virtual void OnAttach() { }
 		virtual void OnDetach() { }
-		virtual void OnUpdate() { }
+		virtual void OnUpdate(Timestep ts) { }
 		virtual void OnImGuiRender() { }
 		virtual void OnEvent(Event& event) { }
 

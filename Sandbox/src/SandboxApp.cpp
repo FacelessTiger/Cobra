@@ -14,8 +14,8 @@ private:
 	glm::vec3 m_CameraPosition;
 	float m_CameraRotation = 0.0f;
 
-	float m_CameraMoveSpeed = 0.1f;
-	float m_CameraRotationSpeed = 2.0f;
+	float m_CameraMoveSpeed = 5.0f;
+	float m_CameraRotationSpeed = 180.0f;
 public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
@@ -132,22 +132,22 @@ public:
 		m_BlueShader.reset(new Ellis::Shader(blueShaderVertexSource, blueShaderFragmentSource));
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Ellis::Timestep ts) override
 	{
 		if (Ellis::Input::IsKeyPressed(EL_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed;
+			m_CameraPosition.x -= m_CameraMoveSpeed * ts;
 		else if (Ellis::Input::IsKeyPressed(EL_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed;
+			m_CameraPosition.x += m_CameraMoveSpeed * ts;
 
 		if (Ellis::Input::IsKeyPressed(EL_KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed;
+			m_CameraPosition.y += m_CameraMoveSpeed * ts;
 		else if (Ellis::Input::IsKeyPressed(EL_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed;
+			m_CameraPosition.y -= m_CameraMoveSpeed * ts;
 
 		if (Ellis::Input::IsKeyPressed(EL_KEY_A))
-			m_CameraRotation += m_CameraRotationSpeed;
+			m_CameraRotation += m_CameraRotationSpeed * ts;
 		else if (Ellis::Input::IsKeyPressed(EL_KEY_D))
-			m_CameraRotation -= m_CameraRotationSpeed;
+			m_CameraRotation -= m_CameraRotationSpeed * ts;
 
 		Ellis::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		Ellis::RenderCommand::Clear();

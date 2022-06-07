@@ -5,6 +5,9 @@
 #include "Ellis/LayerStack.h"
 #include "Ellis/Events/Event.h"
 #include "Ellis/Events/ApplicationEvent.h"
+
+#include "Ellis/Core/Timestep.h"
+
 #include "Ellis/ImGui/ImGuiLayer.h"
 
 namespace Ellis {
@@ -17,6 +20,8 @@ namespace Ellis {
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
+
+		float m_LastFrameTime = 0.0f;
 
 		bool m_Running = true;
 	public:

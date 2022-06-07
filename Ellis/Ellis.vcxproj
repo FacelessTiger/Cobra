@@ -143,6 +143,7 @@
     <ClInclude Include="src\Ellis.h" />
     <ClInclude Include="src\Ellis\Application.h" />
     <ClInclude Include="src\Ellis\Core.h" />
+    <ClInclude Include="src\Ellis\Core\Timestep.h" />
     <ClInclude Include="src\Ellis\EntryPoint.h" />
     <ClInclude Include="src\Ellis\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ellis\Events\Event.h" />

@@ -6,6 +6,8 @@
 #include "Ellis/Layer.h"
 #include "Ellis/Log.h"
 
+#include "Ellis/Core/Timestep.h"
+
 #include "Ellis/Input.h"
 #include "Ellis/KeyCodes.h"
 #include "Ellis/MouseButtonCodes.h"

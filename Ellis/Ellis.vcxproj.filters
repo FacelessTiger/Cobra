@@ -1384,6 +1384,7 @@
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="src\Ellis\Core\Timestep.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Application.cpp">
