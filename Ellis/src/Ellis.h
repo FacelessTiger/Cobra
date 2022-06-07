@@ -12,6 +12,17 @@
 
 #include "Ellis/ImGui/ImGuiLayer.h"
 
+// --- Renderer ------
+#include "Ellis/Renderer/Renderer.h"
+#include "Ellis/Renderer/RenderCommand.h"
+
+#include "Ellis/Renderer/Shader.h"
+#include "Ellis/Renderer/Buffer.h"
+#include "Ellis/Renderer/VertexArray.h"
+
+#include "Ellis/Renderer/OrthographicCamera.h"
+// -------------------
+
 // --- Entry Point ---
 #include "Ellis/EntryPoint.h"
 // -------------------

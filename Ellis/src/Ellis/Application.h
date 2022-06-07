@@ -7,11 +7,6 @@
 #include "Ellis/Events/ApplicationEvent.h"
 #include "Ellis/ImGui/ImGuiLayer.h"
 
-#include "Ellis/Renderer/Shader.h"
-#include "Ellis/Renderer/Buffer.h"
-#include "Ellis/Renderer/VertexArray.h"
-#include "Ellis/Renderer/OrthographicCamera.h"
-
 namespace Ellis {
 
 	class Application
@@ -22,14 +17,6 @@ namespace Ellis {
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
-
-		std::shared_ptr<VertexArray> m_VertexArray;
-		std::shared_ptr<Shader> m_Shader;
-
-		std::shared_ptr<VertexArray> m_SquareVA;
-		std::shared_ptr<Shader> m_BlueShader;
-
-		OrthographicCamera m_Camera;
 
 		bool m_Running = true;
 	public:
