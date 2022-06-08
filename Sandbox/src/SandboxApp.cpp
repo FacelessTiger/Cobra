@@ -12,7 +12,9 @@ private:
 	Ellis::Ref<Ellis::Shader> m_Shader;
 	
 	Ellis::Ref<Ellis::VertexArray> m_SquareVA;
-	Ellis::Ref<Ellis::Shader> m_FlatColorShader;
+	Ellis::Ref<Ellis::Shader> m_FlatColorShader, m_TextureShader;
+
+	Ellis::Ref<Ellis::Texture2D> m_Texture;
 
 	Ellis::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
@@ -26,7 +28,7 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
 	{
-		m_VertexArray.reset(Ellis::VertexArray::Create());
+		m_VertexArray = Ellis::VertexArray::Create();
 
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
@@ -34,8 +36,7 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
-		Ellis::Ref<Ellis::VertexBuffer> vertexBuffer;
-		vertexBuffer.reset(Ellis::VertexBuffer::Create(vertices, sizeof(vertices)));
+		Ellis::Ref<Ellis::VertexBuffer> vertexBuffer = Ellis::VertexBuffer::Create(vertices, sizeof(vertices));
 		Ellis::BufferLayout layout = {
 			{ Ellis::ShaderDataType::Float3, "a_Position" },
 			{ Ellis::ShaderDataType::Float4, "a_Color" }
@@ -45,29 +46,27 @@ public:
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		Ellis::Ref<Ellis::IndexBuffer> indexBuffer;
-		indexBuffer.reset(Ellis::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		Ellis::Ref<Ellis::IndexBuffer> indexBuffer = Ellis::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		m_SquareVA.reset(Ellis::VertexArray::Create());
+		m_SquareVA = Ellis::VertexArray::Create();
 
-		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+		float squareVertices[5 * 4] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
-		Ellis::Ref<Ellis::VertexBuffer> squareVB;
-		squareVB.reset(Ellis::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+		Ellis::Ref<Ellis::VertexBuffer> squareVB = Ellis::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
 		squareVB->SetLayout({
-			{ Ellis::ShaderDataType::Float3, "a_Position" }
+			{ Ellis::ShaderDataType::Float3, "a_Position" },
+			{ Ellis::ShaderDataType::Float2, "a_TexCoord" }
 		});
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		Ellis::Ref<Ellis::IndexBuffer> squareIB;
-		squareIB.reset(Ellis::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		Ellis::Ref<Ellis::IndexBuffer> squareIB = Ellis::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
 		std::string vertexSource = R"(
@@ -140,6 +139,45 @@ public:
 		)";
 
 		m_FlatColorShader.reset(Ellis::Shader::Create(flatColorShaderVertexSource, flatColorShaderFragmentSource));
+
+		std::string textureShaderVertexSource = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_TexCoord;
+
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+			}
+		)";
+
+		std::string textureShaderFragmentSource = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 color;
+
+			uniform sampler2D u_Texture;
+
+			in vec2 v_TexCoord;
+
+			void main()
+			{
+				color = texture(u_Texture, v_TexCoord);
+			}
+		)";
+
+		m_TextureShader.reset(Ellis::Shader::Create(textureShaderVertexSource, textureShaderFragmentSource));
+
+		m_Texture = Ellis::Texture2D::Create("assets/textures/Checkerboard.png");
+		std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_TextureShader)->Bind();
+		std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Ellis::Timestep ts) override
@@ -183,7 +221,11 @@ public:
 			}
 		}
 
-		Ellis::Renderer::Submit(m_Shader, m_VertexArray);
+		m_Texture->Bind();
+		Ellis::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+		// Triangle
+		//Ellis::Renderer::Submit(m_Shader, m_VertexArray);
 		Ellis::Renderer::EndScene();
 	}
 

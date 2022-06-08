@@ -16,6 +16,7 @@ IncludeDir["GLFW"] = "Ellis/vendor/GLFW/include"
 IncludeDir["Glad"] = "Ellis/vendor/Glad/include"
 IncludeDir["ImGui"] = "Ellis/vendor/imgui"
 IncludeDir["glm"] = "Ellis/vendor/glm"
+IncludeDir["stb_image"] = "Ellis/vendor/stb_image"
 
 group "Dependencies"
 	include "Ellis/vendor/GLFW"
@@ -40,6 +41,8 @@ project "Ellis"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -56,7 +59,8 @@ project "Ellis"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links 
