@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #ifdef EL_PLATFORM_WINDOWS
 #else
 	#error Ellis only supports Windows!
@@ -20,3 +22,13 @@
 #define BIT(x) (1 << x)
 
 #define EL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+
+namespace Ellis {
+
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+
+}

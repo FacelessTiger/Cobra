@@ -8,11 +8,11 @@
 class ExampleLayer : public Ellis::Layer
 {
 private:
-	std::shared_ptr<Ellis::VertexArray> m_VertexArray;
-	std::shared_ptr<Ellis::Shader> m_Shader;
-
-	std::shared_ptr<Ellis::VertexArray> m_SquareVA;
-	std::shared_ptr<Ellis::Shader> m_FlatColorShader;
+	Ellis::Ref<Ellis::VertexArray> m_VertexArray;
+	Ellis::Ref<Ellis::Shader> m_Shader;
+	
+	Ellis::Ref<Ellis::VertexArray> m_SquareVA;
+	Ellis::Ref<Ellis::Shader> m_FlatColorShader;
 
 	Ellis::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
@@ -34,7 +34,7 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
-		std::shared_ptr<Ellis::VertexBuffer> vertexBuffer;
+		Ellis::Ref<Ellis::VertexBuffer> vertexBuffer;
 		vertexBuffer.reset(Ellis::VertexBuffer::Create(vertices, sizeof(vertices)));
 		Ellis::BufferLayout layout = {
 			{ Ellis::ShaderDataType::Float3, "a_Position" },
@@ -45,7 +45,7 @@ public:
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
 		uint32_t indices[3] = { 0, 1, 2 };
-		std::shared_ptr<Ellis::IndexBuffer> indexBuffer;
+		Ellis::Ref<Ellis::IndexBuffer> indexBuffer;
 		indexBuffer.reset(Ellis::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -58,7 +58,7 @@ public:
 			-0.5f,  0.5f, 0.0f
 		};
 
-		std::shared_ptr<Ellis::VertexBuffer> squareVB;
+		Ellis::Ref<Ellis::VertexBuffer> squareVB;
 		squareVB.reset(Ellis::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
 			{ Ellis::ShaderDataType::Float3, "a_Position" }
@@ -66,7 +66,7 @@ public:
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<Ellis::IndexBuffer> squareIB;
+		Ellis::Ref<Ellis::IndexBuffer> squareIB;
 		squareIB.reset(Ellis::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 

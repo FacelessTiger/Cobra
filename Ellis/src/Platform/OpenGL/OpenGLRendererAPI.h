@@ -10,7 +10,7 @@ namespace Ellis {
 		void SetClearColor(const glm::vec4& color) override;
 		void Clear() const override;
 
-		void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
+		void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
 	};
 
 }
