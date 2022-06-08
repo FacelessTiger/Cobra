@@ -14,7 +14,7 @@ private:
 	Ellis::Ref<Ellis::VertexArray> m_SquareVA;
 	Ellis::Ref<Ellis::Shader> m_FlatColorShader, m_TextureShader;
 
-	Ellis::Ref<Ellis::Texture2D> m_Texture;
+	Ellis::Ref<Ellis::Texture2D> m_Texture, m_ChernoLogoTexture;
 
 	Ellis::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
@@ -176,6 +176,8 @@ public:
 		m_TextureShader.reset(Ellis::Shader::Create(textureShaderVertexSource, textureShaderFragmentSource));
 
 		m_Texture = Ellis::Texture2D::Create("assets/textures/Checkerboard.png");
+		m_ChernoLogoTexture = Ellis::Texture2D::Create("assets/textures/ChernoLogo.png");
+
 		std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_TextureShader)->Bind();
 		std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
 	}
@@ -222,6 +224,9 @@ public:
 		}
 
 		m_Texture->Bind();
+		Ellis::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
+		m_ChernoLogoTexture->Bind();
 		Ellis::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		// Triangle
