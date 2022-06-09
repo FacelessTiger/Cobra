@@ -1,0 +1,38 @@
+#pragma once
+
+#include "Ellis/Renderer/OrthographicCamera.h"
+#include "Ellis/Core/Timestep.h"
+
+#include "Ellis/Events/ApplicationEvent.h"
+#include "Ellis/Events/MouseEvent.h"
+
+namespace Ellis {
+
+	class OrthographicCameraController
+	{
+	private:
+		float m_AspectRatio;
+		float m_ZoomLevel = 1.0f;
+		bool m_Rotation;
+
+		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
+		float m_CameraRotation = 0.0f;
+
+		float m_CameraTranslationSpeed = 5.0f;
+		float m_CameraRotationSpeed = 180.0f;
+
+		OrthographicCamera m_Camera;
+	public:
+		OrthographicCameraController(float aspectRatio, bool rotation = false);
+
+		void OnUpdate(Timestep ts);
+		void OnEvent(Event& e);
+
+		OrthographicCamera& GetCamera() { return m_Camera; }
+		const OrthographicCamera& GetCamera() const { return m_Camera; }
+	private:
+		bool OnMouseScrolled(MouseScrolledEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+	};
+
+}

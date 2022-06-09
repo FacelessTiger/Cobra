@@ -11,6 +11,7 @@
 #include "Ellis/Input.h"
 #include "Ellis/KeyCodes.h"
 #include "Ellis/MouseButtonCodes.h"
+#include "Ellis/OrthographicCameraController.h"
 
 #include "Ellis/ImGui/ImGuiLayer.h"
 
