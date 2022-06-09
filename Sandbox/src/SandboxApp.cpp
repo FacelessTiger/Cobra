@@ -8,11 +8,12 @@
 class ExampleLayer : public Ellis::Layer
 {
 private:
+	Ellis::ShaderLibrary m_ShaderLibrary;
 	Ellis::Ref<Ellis::VertexArray> m_VertexArray;
 	Ellis::Ref<Ellis::Shader> m_Shader;
 	
 	Ellis::Ref<Ellis::VertexArray> m_SquareVA;
-	Ellis::Ref<Ellis::Shader> m_FlatColorShader, m_TextureShader;
+	Ellis::Ref<Ellis::Shader> m_FlatColorShader;
 
 	Ellis::Ref<Ellis::Texture2D> m_Texture, m_ChernoLogoTexture;
 
@@ -104,7 +105,7 @@ public:
 			}
 		)";
 
-		m_Shader = Ellis::Shader::Create(vertexSource, fragmentSource);
+		m_Shader = Ellis::Shader::Create("VertexPosColor", vertexSource, fragmentSource);
 
 		std::string flatColorShaderVertexSource = R"(
 			#version 330 core
@@ -138,14 +139,14 @@ public:
 			}
 		)";
 
-		m_FlatColorShader = Ellis::Shader::Create(flatColorShaderVertexSource, flatColorShaderFragmentSource);
-		m_TextureShader = Ellis::Shader::Create("assets/shaders/Texture.glsl");
+		m_FlatColorShader = Ellis::Shader::Create("FlatColor", flatColorShaderVertexSource, flatColorShaderFragmentSource);
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = Ellis::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_ChernoLogoTexture = Ellis::Texture2D::Create("assets/textures/ChernoLogo.png");
 
-		std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<Ellis::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<Ellis::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 	}
 
 	void OnUpdate(Ellis::Timestep ts) override
@@ -189,11 +190,13 @@ public:
 			}
 		}
 
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 		m_Texture->Bind();
-		Ellis::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Ellis::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		m_ChernoLogoTexture->Bind();
-		Ellis::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Ellis::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		// Triangle
 		//Ellis::Renderer::Submit(m_Shader, m_VertexArray);
