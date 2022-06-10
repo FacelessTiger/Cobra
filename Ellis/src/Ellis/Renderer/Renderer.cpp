@@ -3,6 +3,8 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
+#include "Ellis/Renderer/Renderer2D.h"
+
 namespace Ellis {
 
 	Scope<Renderer::SceneData> Renderer::m_SceneData = CreateScope<Renderer::SceneData>();
@@ -10,6 +12,7 @@ namespace Ellis {
 	void Renderer::Init()
 	{
 		RenderCommand::Init();
+		Renderer2D::Init();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

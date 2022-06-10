@@ -17,6 +17,7 @@
 
 // --- Renderer ------
 #include "Ellis/Renderer/Renderer.h"
+#include "Ellis/Renderer/Renderer2D.h"
 #include "Ellis/Renderer/RenderCommand.h"
 
 #include "Ellis/Renderer/Shader.h"

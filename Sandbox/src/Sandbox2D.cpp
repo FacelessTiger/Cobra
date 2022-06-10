@@ -12,26 +12,7 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-	m_SquareVA = Ellis::VertexArray::Create();
-
-	float squareVertices[3 * 4] = {
-		-0.5f, -0.5f, 0.0f,
-		 0.5f, -0.5f, 0.0f,
-		 0.5f,  0.5f, 0.0f,
-		-0.5f,  0.5f, 0.0f,
-	};
-
-	Ellis::Ref<Ellis::VertexBuffer> squareVB = Ellis::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
-	squareVB->SetLayout({
-		{ Ellis::ShaderDataType::Float3, "a_Position" }
-	});
-	m_SquareVA->AddVertexBuffer(squareVB);
-
-	uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-	Ellis::Ref<Ellis::IndexBuffer> squareIB = Ellis::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t));
-	m_SquareVA->SetIndexBuffer(squareIB);
-
-	m_FlatColorShader = Ellis::Shader::Create("assets/shaders/FlatColor.glsl");
+	
 }
 
 void Sandbox2D::OnDetach()
@@ -46,13 +27,13 @@ void Sandbox2D::OnUpdate(Ellis::Timestep ts)
 	Ellis::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 	Ellis::RenderCommand::Clear();
 
-	Ellis::Renderer::BeginScene(m_CameraController.GetCamera());
+	Ellis::Renderer2D::BeginScene(m_CameraController.GetCamera());
+	Ellis::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+	// TODO: Shader::SetMat4, Shader::SetFloat4
+	//std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_FlatColorShader)->Bind();
+	//std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
 
-	std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_FlatColorShader)->Bind();
-	std::dynamic_pointer_cast<Ellis::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat4("u_Color", m_SquareColor);
-
-	Ellis::Renderer::Submit(m_FlatColorShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-	Ellis::Renderer::EndScene();
+	Ellis::Renderer2D::EndScene();
 }
 
 void Sandbox2D::OnImGuiRender()
