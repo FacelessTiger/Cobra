@@ -24,6 +24,7 @@ namespace Ellis {
 		float m_LastFrameTime = 0.0f;
 
 		bool m_Running = true;
+		bool m_Minimized = false;
 	public:
 		Application();
 		virtual ~Application();
@@ -40,6 +41,7 @@ namespace Ellis {
 		inline static Application& Get() { return *s_Instance; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
 	};
 
 	// To be defined in client
