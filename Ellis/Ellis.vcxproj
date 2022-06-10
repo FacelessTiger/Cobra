@@ -80,7 +80,9 @@
       <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\Glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -104,6 +106,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,6 +131,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -141,32 +145,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Ellis.h" />
-    <ClInclude Include="src\Ellis\Application.h" />
-    <ClInclude Include="src\Ellis\Core.h" />
+    <ClInclude Include="src\Ellis\Core\Application.h" />
+    <ClInclude Include="src\Ellis\Core\Core.h" />
+    <ClInclude Include="src\Ellis\Core\EntryPoint.h" />
+    <ClInclude Include="src\Ellis\Core\Input.h" />
+    <ClInclude Include="src\Ellis\Core\KeyCodes.h" />
+    <ClInclude Include="src\Ellis\Core\Layer.h" />
+    <ClInclude Include="src\Ellis\Core\LayerStack.h" />
+    <ClInclude Include="src\Ellis\Core\Log.h" />
+    <ClInclude Include="src\Ellis\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\Ellis\Core\Timestep.h" />
-    <ClInclude Include="src\Ellis\EntryPoint.h" />
+    <ClInclude Include="src\Ellis\Core\Window.h" />
     <ClInclude Include="src\Ellis\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ellis\Events\Event.h" />
     <ClInclude Include="src\Ellis\Events\KeyEvent.h" />
     <ClInclude Include="src\Ellis\Events\MouseEvent.h" />
     <ClInclude Include="src\Ellis\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Ellis\Input.h" />
-    <ClInclude Include="src\Ellis\KeyCodes.h" />
-    <ClInclude Include="src\Ellis\Layer.h" />
-    <ClInclude Include="src\Ellis\LayerStack.h" />
-    <ClInclude Include="src\Ellis\Log.h" />
-    <ClInclude Include="src\Ellis\MouseButtonCodes.h" />
-    <ClInclude Include="src\Ellis\OrthographicCameraController.h" />
     <ClInclude Include="src\Ellis\Renderer\Buffer.h" />
     <ClInclude Include="src\Ellis\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Ellis\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="src\Ellis\Renderer\OrthographicCameraController.h" />
     <ClInclude Include="src\Ellis\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Ellis\Renderer\Renderer.h" />
     <ClInclude Include="src\Ellis\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Ellis\Renderer\Shader.h" />
     <ClInclude Include="src\Ellis\Renderer\Texture.h" />
     <ClInclude Include="src\Ellis\Renderer\VertexArray.h" />
-    <ClInclude Include="src\Ellis\Window.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
@@ -594,15 +598,15 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Ellis\Application.cpp" />
+    <ClCompile Include="src\Ellis\Core\Application.cpp" />
+    <ClCompile Include="src\Ellis\Core\Layer.cpp" />
+    <ClCompile Include="src\Ellis\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Ellis\Core\Log.cpp" />
     <ClCompile Include="src\Ellis\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Ellis\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Ellis\Layer.cpp" />
-    <ClCompile Include="src\Ellis\LayerStack.cpp" />
-    <ClCompile Include="src\Ellis\Log.cpp" />
-    <ClCompile Include="src\Ellis\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Ellis\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Ellis\Renderer\OrthographicCamera.cpp" />
+    <ClCompile Include="src\Ellis\Renderer\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Ellis\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Ellis\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Ellis\Renderer\RendererAPI.cpp" />

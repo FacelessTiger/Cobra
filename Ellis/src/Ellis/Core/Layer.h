@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ellis/Core.h"
+#include "Ellis/Core/Core.h"
 #include "Ellis/Core/Timestep.h"
 #include "Ellis/Events/Event.h"
 

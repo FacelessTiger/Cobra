@@ -1,8 +1,8 @@
 #include "elpch.h"
 #include "Application.h"
 
-#include "Ellis/Log.h"
-#include "Ellis/Input.h"
+#include "Ellis/Core/Log.h"
+#include "Ellis/Core/Input.h"
 #include "Ellis/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>

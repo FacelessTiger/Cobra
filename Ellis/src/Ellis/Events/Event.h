@@ -1,7 +1,7 @@
 #pragma once
 
 #include "elpch.h"
-#include "Ellis/Core.h"
+#include "Ellis/Core/Core.h"
 
 namespace Ellis {
 

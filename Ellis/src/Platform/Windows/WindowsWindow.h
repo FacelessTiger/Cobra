@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ellis/Window.h"
+#include "Ellis/Core/Window.h"
 #include "Ellis/Renderer/GraphicsContext.h"
 
 #include <GLFW/glfw3.h>

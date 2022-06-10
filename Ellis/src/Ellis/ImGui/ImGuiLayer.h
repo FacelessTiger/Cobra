@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Ellis/Core.h"
-#include "Ellis/Layer.h"
+#include "Ellis/Core/Core.h"
+#include "Ellis/Core/Layer.h"
 
 #include "Ellis/Events/ApplicationEvent.h"
 #include "Ellis/Events/KeyEvent.h"

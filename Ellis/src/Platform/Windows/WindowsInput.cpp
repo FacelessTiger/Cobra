@@ -1,7 +1,7 @@
 #include "elpch.h"
 #include "WindowsInput.h"
 
-#include "Ellis/Application.h"
+#include "Ellis/Core/Application.h"
 
 #include <GLFW/glfw3.h>
 

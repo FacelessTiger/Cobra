@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ellis/Input.h"
+#include "Ellis/Core/Input.h"
 
 namespace Ellis {
 

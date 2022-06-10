@@ -194,11 +194,6 @@ public:
 	void OnEvent(Ellis::Event& e) override
 	{
 		m_CameraController.OnEvent(e);
-
-		if (e.GetEventType() == Ellis::EventType::WindowResize)
-		{
-			auto& re = (Ellis::WindowResizeEvent&)e;
-		}
 	}
 };
 

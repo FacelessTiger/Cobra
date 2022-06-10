@@ -57,17 +57,38 @@
     <ClInclude Include="src\Ellis.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\Application.h">
-      <Filter>src\Ellis</Filter>
+    <ClInclude Include="src\Ellis\Core\Application.h">
+      <Filter>src\Ellis\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\Core.h">
-      <Filter>src\Ellis</Filter>
+    <ClInclude Include="src\Ellis\Core\Core.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\EntryPoint.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\Input.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\KeyCodes.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\Layer.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\LayerStack.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\Log.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\MouseButtonCodes.h">
+      <Filter>src\Ellis\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Core\Timestep.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\EntryPoint.h">
-      <Filter>src\Ellis</Filter>
+    <ClInclude Include="src\Ellis\Core\Window.h">
+      <Filter>src\Ellis\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Events\ApplicationEvent.h">
       <Filter>src\Ellis\Events</Filter>
@@ -84,24 +105,6 @@
     <ClInclude Include="src\Ellis\ImGui\ImGuiLayer.h">
       <Filter>src\Ellis\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\Input.h">
-      <Filter>src\Ellis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ellis\KeyCodes.h">
-      <Filter>src\Ellis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ellis\Layer.h">
-      <Filter>src\Ellis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ellis\LayerStack.h">
-      <Filter>src\Ellis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ellis\Log.h">
-      <Filter>src\Ellis</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ellis\MouseButtonCodes.h">
-      <Filter>src\Ellis</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\Buffer.h">
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
@@ -109,6 +112,9 @@
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\OrthographicCamera.h">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Renderer\OrthographicCameraController.h">
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\RenderCommand.h">
@@ -128,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\VertexArray.h">
       <Filter>src\Ellis\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ellis\Window.h">
-      <Filter>src\Ellis</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
@@ -1407,11 +1410,19 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\OrthographicCameraController.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Ellis\Application.cpp">
-      <Filter>src\Ellis</Filter>
+    <ClCompile Include="src\Ellis\Core\Application.cpp">
+      <Filter>src\Ellis\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Core\Layer.cpp">
+      <Filter>src\Ellis\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Core\LayerStack.cpp">
+      <Filter>src\Ellis\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Core\Log.cpp">
+      <Filter>src\Ellis\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\ImGui\ImGuiBuild.cpp">
       <Filter>src\Ellis\ImGui</Filter>
@@ -1419,19 +1430,13 @@
     <ClCompile Include="src\Ellis\ImGui\ImGuiLayer.cpp">
       <Filter>src\Ellis\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ellis\Layer.cpp">
-      <Filter>src\Ellis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ellis\LayerStack.cpp">
-      <Filter>src\Ellis</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ellis\Log.cpp">
-      <Filter>src\Ellis</Filter>
-    </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\Buffer.cpp">
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\OrthographicCamera.cpp">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Renderer\OrthographicCameraController.cpp">
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\RenderCommand.cpp">
@@ -1482,6 +1487,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ellis\OrthographicCameraController.cpp" />
   </ItemGroup>
 </Project>

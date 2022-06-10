@@ -1,7 +1,7 @@
 #include "elpch.h"
 #include "ImGuiLayer.h"
 
-#include "Ellis/Application.h"
+#include "Ellis/Core/Application.h"
 
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>

@@ -2,7 +2,7 @@
 
 #include "elpch.h"
 
-#include "Ellis/Core.h"
+#include "Ellis/Core/Core.h"
 #include "Ellis/Events/Event.h"
 
 namespace Ellis {

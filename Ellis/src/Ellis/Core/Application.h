@@ -2,7 +2,7 @@
 
 #include "Core.h"
 #include "Window.h"
-#include "Ellis/LayerStack.h"
+#include "Ellis/Core/LayerStack.h"
 #include "Ellis/Events/Event.h"
 #include "Ellis/Events/ApplicationEvent.h"
 

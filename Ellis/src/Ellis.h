@@ -2,16 +2,16 @@
 
 // For use by Ellis applications
 
-#include "Ellis/Application.h"
-#include "Ellis/Layer.h"
-#include "Ellis/Log.h"
+#include "Ellis/Core/Application.h"
+#include "Ellis/Core/Layer.h"
+#include "Ellis/Core/Log.h"
 
 #include "Ellis/Core/Timestep.h"
 
-#include "Ellis/Input.h"
-#include "Ellis/KeyCodes.h"
-#include "Ellis/MouseButtonCodes.h"
-#include "Ellis/OrthographicCameraController.h"
+#include "Ellis/Core/Input.h"
+#include "Ellis/Core/KeyCodes.h"
+#include "Ellis/Core/MouseButtonCodes.h"
+#include "Ellis/Renderer/OrthographicCameraController.h"
 
 #include "Ellis/ImGui/ImGuiLayer.h"
 
@@ -28,5 +28,5 @@
 // -------------------
 
 // --- Entry Point ---
-#include "Ellis/EntryPoint.h"
+#include "Ellis/Core/EntryPoint.h"
 // -------------------

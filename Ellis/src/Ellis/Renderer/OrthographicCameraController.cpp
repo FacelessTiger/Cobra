@@ -1,8 +1,8 @@
 #include "elpch.h"
 #include "OrthographicCameraController.h"
 
-#include "Ellis/Input.h"
-#include "Ellis/KeyCodes.h"
+#include "Ellis/Core/Input.h"
+#include "Ellis/Core/KeyCodes.h"
 
 namespace Ellis {
 
