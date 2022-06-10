@@ -26,7 +26,3 @@
 
 #include "Ellis/Renderer/OrthographicCamera.h"
 // -------------------
-
-// --- Entry Point ---
-#include "Ellis/Core/EntryPoint.h"
-// -------------------

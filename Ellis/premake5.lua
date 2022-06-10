@@ -22,7 +22,8 @@ project "Ellis"
 
 	defines
 	{
-		"_CRT_SECURE_NO_WARNINGS"
+		"_CRT_SECURE_NO_WARNINGS",
+		"GLFW_INCLUDE_NONE"
 	}
 
 	includedirs
@@ -46,13 +47,6 @@ project "Ellis"
 
 	filter "system:windows"
 		systemversion "latest"
-
-		defines
-		{
-			"EL_PLATFORM_WINDOWS",
-			"EL_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
-		}
 
 	filter "configurations:Debug"
 		defines "EL_DEBUG"

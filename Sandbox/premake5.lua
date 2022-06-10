@@ -29,11 +29,6 @@ project "Sandbox"
 	filter "system:windows"
 		systemversion "latest"
 
-		defines
-		{
-			"EL_PLATFORM_WINDOWS"
-		}
-
 	filter "configurations:Debug"
 		defines "EL_DEBUG"
 		runtime "Debug"

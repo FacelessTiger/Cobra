@@ -14,7 +14,7 @@ namespace Ellis {
 			glm::mat4 ViewProjectionMatrix;
 		};
 
-		static SceneData* m_SceneData;
+		static Scope<SceneData> m_SceneData;
 	public:
 		static void Init();
 		static void OnWindowResize(uint32_t width, uint32_t height);

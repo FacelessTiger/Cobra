@@ -1,9 +1,12 @@
 #include <Ellis.h>
+#include <Ellis/Core/EntryPoint.h>
 #include <Platform/OpenGL/OpenGLShader.h>
 
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "Sandbox2D.h"
 
 class ExampleLayer : public Ellis::Layer
 {
@@ -202,13 +205,12 @@ class Sandbox : public Ellis::Application
 public:
 	Sandbox()
 	{
-		PushLayer(new ExampleLayer());
+		// PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()
-	{
-
-	}
+	{ }
 };
 
 Ellis::Application* Ellis::CreateApplication()
