@@ -12,6 +12,8 @@ namespace Ellis {
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
+		EL_PROFILE_FUNCTION();
+
 		if (Input::IsKeyPressed(EL_KEY_A))
 		{
 			m_CameraPosition.x -= cos(glm::radians(m_CameraRotation)) * m_CameraTranslationSpeed * ts;
@@ -55,6 +57,8 @@ namespace Ellis {
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
+		EL_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(EL_BIND_EVENT_FN(OrthographicCameraController::OnMouseScrolled));
 		dispatcher.Dispatch<WindowResizeEvent>(EL_BIND_EVENT_FN(OrthographicCameraController::OnWindowResize));
@@ -62,6 +66,8 @@ namespace Ellis {
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		EL_PROFILE_FUNCTION();
+
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
 
@@ -71,6 +77,8 @@ namespace Ellis {
 
 	bool OrthographicCameraController::OnWindowResize(WindowResizeEvent& e)
 	{
+		EL_PROFILE_FUNCTION();
+
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);

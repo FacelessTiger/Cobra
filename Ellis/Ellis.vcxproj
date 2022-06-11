@@ -156,6 +156,7 @@
     <ClInclude Include="src\Ellis\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\Ellis\Core\Timestep.h" />
     <ClInclude Include="src\Ellis\Core\Window.h" />
+    <ClInclude Include="src\Ellis\Debug\Instrumentor.h" />
     <ClInclude Include="src\Ellis\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ellis\Events\Event.h" />
     <ClInclude Include="src\Ellis\Events\KeyEvent.h" />

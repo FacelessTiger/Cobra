@@ -14,6 +14,8 @@ namespace Ellis {
 
 	void OpenGLContext::Init()
 	{
+		EL_PROFILE_FUNCTION();
+
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		EL_CORE_ASSERT(status, "Failed to initialize Glad!");
@@ -35,6 +37,8 @@ namespace Ellis {
 
 	void OpenGLContext::SwapBuffers()
 	{
+		EL_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 
