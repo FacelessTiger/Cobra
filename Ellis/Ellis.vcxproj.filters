@@ -10,6 +10,9 @@
     <Filter Include="src\Ellis\Core">
       <UniqueIdentifier>{0D6530F6-F932-24FC-E2C6-9422CE330061}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Ellis\Debug">
+      <UniqueIdentifier>{CB6149BC-37ED-B680-40FE-3975AC081381}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Ellis\Events">
       <UniqueIdentifier>{D9EDFF48-C5E6-1E9B-EE18-0420DA70FEA6}</UniqueIdentifier>
     </Filter>
@@ -90,6 +93,9 @@
     <ClInclude Include="src\Ellis\Core\Window.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ellis\Debug\Instrumentor.h">
+      <Filter>src\Ellis\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ellis\Events\ApplicationEvent.h">
       <Filter>src\Ellis\Events</Filter>
     </ClInclude>
@@ -121,6 +127,9 @@
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\Renderer.h">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Renderer\Renderer2D.h">
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\RendererAPI.h">
@@ -1410,8 +1419,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\Ellis\Debug\Instrumentor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Core\Application.cpp">
@@ -1445,6 +1452,9 @@
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\Renderer.cpp">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Renderer\Renderer2D.cpp">
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\RendererAPI.cpp">
@@ -1489,6 +1499,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ellis\Renderer\Renderer2D.cpp" />
   </ItemGroup>
 </Project>
