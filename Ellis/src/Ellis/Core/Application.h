@@ -10,12 +10,15 @@
 
 #include "Ellis/ImGui/ImGuiLayer.h"
 
+int main(int argc, char** argv);
+
 namespace Ellis {
 
 	class Application
 	{
 	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
@@ -29,7 +32,6 @@ namespace Ellis {
 		Application(const std::string& name = "Ellis App");
 		virtual ~Application();
 
-		void Run();
 		void Close();
 
 		void OnEvent(Event& e);
@@ -38,9 +40,12 @@ namespace Ellis {
 		void PushOverlay(Layer* layer);
 
 		inline Window& GetWindow() { return *m_Window; }
+		inline ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		inline static Application& Get() { return *s_Instance; }
 	private:
+		void Run();
+
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
 	};
