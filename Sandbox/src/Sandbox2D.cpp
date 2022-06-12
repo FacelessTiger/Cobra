@@ -61,7 +61,7 @@ void Sandbox2D::OnUpdate(Ellis::Timestep ts)
 
 void Sandbox2D::OnImGuiRender()
 {
-	EL_PROFILE_FUNCTION();
+    EL_PROFILE_FUNCTION();
 
 	ImGui::Begin("Settings");
 	
@@ -71,8 +71,9 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::Text("Quads: %d", stats.QuadCount);
 	ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 	ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
-
+	
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+
 	ImGui::End();
 }
 

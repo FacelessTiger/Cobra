@@ -17,7 +17,7 @@ namespace Ellis {
 	private:
 		static Application* s_Instance;
 
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
 
@@ -26,10 +26,11 @@ namespace Ellis {
 		bool m_Running = true;
 		bool m_Minimized = false;
 	public:
-		Application();
+		Application(const std::string& name = "Ellis App");
 		virtual ~Application();
 
 		void Run();
+		void Close();
 
 		void OnEvent(Event& e);
 

@@ -3,6 +3,9 @@
 !vendor/bin/premake
 bin-int/
 
+# Hazel Files
+*.log
+
 # Files
 .vs/
 **.sln

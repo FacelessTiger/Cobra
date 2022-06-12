@@ -21,6 +21,7 @@
 #include "Ellis/Renderer/RenderCommand.h"
 
 #include "Ellis/Renderer/Shader.h"
+#include "Ellis/Renderer/Framebuffer.h"
 #include "Ellis/Renderer/Texture.h"
 #include "Ellis/Renderer/Buffer.h"
 #include "Ellis/Renderer/VertexArray.h"

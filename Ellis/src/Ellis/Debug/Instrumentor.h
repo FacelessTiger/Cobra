@@ -122,7 +122,7 @@ namespace Ellis {
     };
 }
 
-#define EL_PROFILE 1
+#define EL_PROFILE 0
 #if EL_PROFILE
     #define EL_PROFILE_BEGIN_SESSION(name, filepath) ::Ellis::Instrumentor::Get().BeginSession(name, filepath)
     #define EL_PROFILE_END_SESSION() ::Ellis::Instrumentor::Get().EndSession()

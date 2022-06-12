@@ -2,7 +2,7 @@ include "Dependencies.lua"
 
 workspace "Ellis"
 	architecture "x86_64"
-	startproject "Sandbox"
+	startproject "Ellis-Editor"
 	
 	configurations
 	{
@@ -26,3 +26,4 @@ group ""
 
 include "Ellis"
 include "Sandbox"
+include "Ellis-Editor"
