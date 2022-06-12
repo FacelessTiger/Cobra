@@ -2,45 +2,7 @@
 
 #include <memory>
 
-#ifdef _WIN32
-	/* Windows x64/x86 */
-	#ifdef _WIN64
-		/* Windows x64  */
-		#define EL_PLATFORM_WINDOWS
-	#else
-		/* Windows x86 */
-		#error "x86 Builds are not supported!"
-	#endif
-#elif defined(__APPLE__) || defined(__MACH__)
-	#include <TargetConditionals.h>
-	/* TARGET_OS_MAC exists on all the platforms
-	 * so we must check all of them (in this order)
-	 * to ensure that we're running on MAC
-	 * and not some other Apple platform */
-	#if TARGET_IPHONE_SIMULATOR == 1
-		#error "IOS simulator is not supported!"
-	#elif TARGET_OS_IPHONE == 1
-		#define EL_PLATFORM_IOS
-		#error "IOS is not supported!"
-	#elif TARGET_OS_MAC == 1
-		#define EL_PLATFORM_MACOS
-		#error "MacOS is not supported!"
-	#else
-		#error "Unknown Apple platform!"
-	#endif
- /* We also have to check __ANDROID__ before __linux__
-  * since android is based on the linux kernel
-  * it has __linux__ defined */
-#elif defined(__ANDROID__)
-	#define EL_PLATFORM_ANDROID
-	#error "Android is not supported!"
-#elif defined(__linux__)
-	#define EL_PLATFORM_LINUX
-	#error "Linux is not supported!"
-#else
-	/* Unknown compiler/platform */
-	#error "Unknown platform!"
-#endif // End of platform detection
+#include "Ellis/Core/PlatformDetection.h"
 
 #ifdef EL_PLATFORM_WINDOWS
 #else
@@ -48,20 +10,25 @@
 #endif
 
 #ifdef EL_DEBUG
+	#if defined(EL_PLATFORM_WINDOWS)
+		#define EL_DEBUGBREAK() __debugbreak()
+	#elif defined(EL_PLATFORM_LINUX)
+		#include <signal.h>
+		#define EL_DEBUGBREAK() raise(SIGTRAP)
+	#else
+		#error "Platform doesn't support debugbreak yet!"
+	#endif
 	#define EL_ENABLE_ASSERTS
+#else
+	#define EL_DEBUGBREAK()
 #endif
 
-#ifdef EL_ENABLE_ASSERTS
-	#define EL_ASSERT(x, ...) { if(!(x)) { EL_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#define EL_CORE_ASSERT(x, ...) { if(!(x)) { EL_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-#else
-	#define EL_ASSERT(x, ...)
-	#define EL_CORE_ASSERT(x, ...)
-#endif
+#define EL_EXPAND_MACRO(x) x
+#define EL_STRINGIFY_MACRO(x) #x
 
 #define BIT(x) (1 << x)
 
-#define EL_BIND_EVENT_FN(fn) std::bind(&fn, this, std::placeholders::_1)
+#define EL_BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
 namespace Ellis {
 
@@ -84,3 +51,6 @@ namespace Ellis {
 	}
 
 }
+
+#include "Ellis/Core/Log.h"
+#include "Ellis/Core/Assert.h"
