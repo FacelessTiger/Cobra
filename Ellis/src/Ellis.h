@@ -15,6 +15,10 @@
 
 #include "Ellis/ImGui/ImGuiLayer.h"
 
+#include "Ellis/Scene/Scene.h"
+#include "Ellis/Scene/Entity.h"
+#include "Ellis/Scene/Components.h"
+
 // --- Renderer ------
 #include "Ellis/Renderer/Renderer.h"
 #include "Ellis/Renderer/Renderer2D.h"

@@ -63,6 +63,9 @@
     <ClInclude Include="src\Ellis\Core\Application.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ellis\Core\Assert.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ellis\Core\Core.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
@@ -85,6 +88,9 @@
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Core\MouseButtonCodes.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Core\PlatformDetection.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Core\Timestep.h">
@@ -1422,8 +1428,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\Core\PlatformDetection.h" />
-    <ClInclude Include="src\Ellis\Core\Assert.h" />
+    <ClInclude Include="src\Ellis\Scene\Scene.h" />
+    <ClInclude Include="src\Ellis\Scene\Components.h" />
+    <ClInclude Include="src\Ellis\Scene\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Core\Application.cpp">
@@ -1510,5 +1517,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ellis\Scene\Scene.cpp" />
+    <ClCompile Include="src\Ellis\Scene\Entity.cpp" />
   </ItemGroup>
 </Project>

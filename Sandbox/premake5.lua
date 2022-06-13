@@ -18,7 +18,8 @@ project "Sandbox"
 		"%{wks.location}/Ellis/vendor/spdlog/include",
 		"%{wks.location}/Ellis/src",
 		"%{wks.location}/Ellis/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
