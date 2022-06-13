@@ -165,6 +165,7 @@
     <ClInclude Include="src\Ellis\Events\MouseEvent.h" />
     <ClInclude Include="src\Ellis\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Ellis\Renderer\Buffer.h" />
+    <ClInclude Include="src\Ellis\Renderer\Camera.h" />
     <ClInclude Include="src\Ellis\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Ellis\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Ellis\Renderer\OrthographicCamera.h" />
