@@ -1433,6 +1433,7 @@
     <ClInclude Include="src\Ellis\Scene\Entity.h" />
     <ClInclude Include="src\Ellis\Renderer\Camera.h" />
     <ClInclude Include="src\Ellis\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Ellis\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Core\Application.cpp">

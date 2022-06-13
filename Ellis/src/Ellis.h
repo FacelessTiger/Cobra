@@ -17,6 +17,7 @@
 
 #include "Ellis/Scene/Scene.h"
 #include "Ellis/Scene/Entity.h"
+#include "Ellis/Scene/ScriptableEntity.h"
 #include "Ellis/Scene/Components.h"
 
 // --- Renderer ------
