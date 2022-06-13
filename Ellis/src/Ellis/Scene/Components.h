@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "Ellis/Renderer/Camera.h"
+#include "Ellis/Scene/SceneCamera.h"
 
 namespace Ellis {
 
@@ -44,14 +44,12 @@ namespace Ellis {
 
 	struct CameraComponent
 	{
-		Ellis::Camera Camera;
+		SceneCamera Camera;
 		bool Primary = true;
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projection)
-			: Camera(projection)
-		{ }
 	};
 
 }
