@@ -22,6 +22,7 @@ group "Dependencies"
 	include "Ellis/vendor/GLFW"
 	include "Ellis/vendor/Glad"
 	include "Ellis/vendor/imgui"
+	include "Ellis/vendor/yaml-cpp"
 group ""
 
 include "Ellis"

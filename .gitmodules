@@ -14,3 +14,6 @@
 	path = Ellis/vendor/imgui
 	url = https://github.com/FacelessTiger/imgui/
 	branch = docking
+[submodule "Ellis/vendor/yaml-cpp"]
+	path = Ellis/vendor/yaml-cpp
+	url = https://github.com/FacelessTiger/yaml-cpp

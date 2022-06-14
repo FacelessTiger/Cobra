@@ -3,6 +3,8 @@
 #include <imgui/imgui.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <Ellis/Scene/SceneSerializer.h>
+
 namespace Ellis {
 
 	EditorLayer::EditorLayer()
@@ -13,8 +15,6 @@ namespace Ellis {
 	{
 		EL_PROFILE_FUNCTION();
 
-		m_CheckerboardTexture = Texture2D::Create("assets/textures/Checkerboard.png");
-
 		FramebufferSpecification fbSpec;
 		fbSpec.Width = 1280;
 		fbSpec.Height = 720;
@@ -22,18 +22,19 @@ namespace Ellis {
 
 		m_ActiveScene = CreateRef<Scene>();
 
+#if 0
 		// Entity
-		m_SquareEntity = m_ActiveScene->CreateEntity("Green Square");
-		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		auto squareEntity = m_ActiveScene->CreateEntity("Green Square");
+		squareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 
 		auto redSquare = m_ActiveScene->CreateEntity("Red Square");
 		redSquare.AddComponent<SpriteRendererComponent>(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
-		m_CameraEntity.AddComponent<CameraComponent>();
+		auto cameraEntity = m_ActiveScene->CreateEntity("Camera A");
+		cameraEntity.AddComponent<CameraComponent>();
 
-		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
-		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
+		auto secondCamera = m_ActiveScene->CreateEntity("Camera B");
+		auto& cc = secondCamera.AddComponent<CameraComponent>();
 		cc.Primary = false;
 
 		class CameraController : public ScriptableEntity
@@ -64,8 +65,9 @@ namespace Ellis {
 			}
 		};
 
-		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
-		m_SecondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		cameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		secondCamera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
 
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
@@ -144,6 +146,18 @@ namespace Ellis {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
+				if (ImGui::MenuItem("Serialize"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Serialize("assets/scenes/Example.ellis");
+				}
+
+				if (ImGui::MenuItem("Deserialize"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.Deserialize("assets/scenes/Example.ellis");
+				}
+
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 				ImGui::EndMenu();
 			}
