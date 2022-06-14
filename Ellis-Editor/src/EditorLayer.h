@@ -20,6 +20,7 @@ namespace Ellis {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		std::filesystem::path m_EditorScenePath;
 	public:
 		EditorLayer();
 		virtual ~EditorLayer() = default;
@@ -30,6 +31,16 @@ namespace Ellis {
 		void OnUpdate(Timestep ts) override;
 		void OnImGuiRender() override;
 		void OnEvent(Event& e) override;
+	private:
+		bool OnKeyPressed(KeyPressedEvent& e);
+
+		void NewScene();
+		void OpenScene();
+		void OpenScene(const std::filesystem::path& path);
+		void SaveScene();
+		void SaveSceneAs();
+
+		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
 	};
 
 }

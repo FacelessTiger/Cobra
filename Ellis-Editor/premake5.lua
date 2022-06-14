@@ -27,6 +27,11 @@ project "Ellis-Editor"
 		"Ellis"
 	}
 
+	defines
+	{
+		"YAML_CPP_STATIC_DEFINE"
+	}
+
 	filter "system:windows"
 		systemversion "latest"
 
