@@ -21,6 +21,7 @@ namespace Ellis {
 		void OnImGuiRender();
 	private:
 		void DrawEntityNode(Entity entity);
+		void DrawComponents(Entity entity);
 	};
 
 }
