@@ -19,7 +19,8 @@ project "Ellis-Editor"
 		"%{wks.location}/Ellis/src",
 		"%{wks.location}/Ellis/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links

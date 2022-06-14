@@ -17,3 +17,6 @@
 [submodule "Ellis/vendor/yaml-cpp"]
 	path = Ellis/vendor/yaml-cpp
 	url = https://github.com/FacelessTiger/yaml-cpp
+[submodule "Ellis/vendor/ImGuizmo"]
+	path = Ellis/vendor/ImGuizmo
+	url = https://github.com/FacelessTiger/ImGuizmo
