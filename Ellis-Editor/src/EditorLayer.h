@@ -2,6 +2,7 @@
 
 #include <Ellis.h>
 #include <Ellis/Scene/Scene.h>
+#include <Ellis/Renderer/EditorCamera.h>
 
 #include "Panels/SceneHierarchyPanel.h"
 
@@ -14,6 +15,8 @@ namespace Ellis {
 
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Scene> m_ActiveScene;
+
+		EditorCamera m_EditorCamera;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };

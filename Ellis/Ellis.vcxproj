@@ -167,6 +167,7 @@
     <ClInclude Include="src\Ellis\Math\Math.h" />
     <ClInclude Include="src\Ellis\Renderer\Buffer.h" />
     <ClInclude Include="src\Ellis\Renderer\Camera.h" />
+    <ClInclude Include="src\Ellis\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Ellis\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Ellis\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Ellis\Renderer\OrthographicCamera.h" />
@@ -621,6 +622,7 @@
     <ClCompile Include="src\Ellis\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Ellis\Math\Math.cpp" />
     <ClCompile Include="src\Ellis\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Ellis\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Ellis\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Ellis\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Ellis\Renderer\OrthographicCameraController.cpp" />
