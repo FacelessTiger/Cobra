@@ -5,6 +5,7 @@
 #include <Ellis/Renderer/EditorCamera.h>
 
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Ellis {
 
@@ -22,10 +23,11 @@ namespace Ellis {
 		glm::vec2 m_ViewportBounds[2];
 
 		int m_GizmoType = -1;
+		std::filesystem::path m_EditorScenePath;
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		std::filesystem::path m_EditorScenePath;
+		ContentBrowserPanel m_ContentBrowserPanel;
 	public:
 		EditorLayer();
 		virtual ~EditorLayer() = default;
