@@ -19,6 +19,9 @@
     <Filter Include="src\Ellis\ImGui">
       <UniqueIdentifier>{7FCCA7BC-EB57-1581-F468-987560737181}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Ellis\Math">
+      <UniqueIdentifier>{8EA535F6-7A73-29FC-6307-9A224F740561}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Ellis\Renderer">
       <UniqueIdentifier>{DBD6AD7F-C7BA-6ED5-301B-69281C1E5957}</UniqueIdentifier>
     </Filter>
@@ -102,6 +105,9 @@
     <ClInclude Include="src\Ellis\Core\PlatformDetection.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ellis\Core\Timer.h">
+      <Filter>src\Ellis\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ellis\Core\Timestep.h">
       <Filter>src\Ellis\Core</Filter>
     </ClInclude>
@@ -126,10 +132,16 @@
     <ClInclude Include="src\Ellis\ImGui\ImGuiLayer.h">
       <Filter>src\Ellis\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ellis\Math\Math.h">
+      <Filter>src\Ellis\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\Buffer.h">
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\Camera.h">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Renderer\EditorCamera.h">
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\Framebuffer.h">
@@ -160,6 +172,9 @@
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\Texture.h">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ellis\Renderer\UniformBuffer.h">
       <Filter>src\Ellis\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ellis\Renderer\VertexArray.h">
@@ -202,6 +217,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
@@ -1464,8 +1482,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ellis\Math\Math.h" />
-    <ClInclude Include="src\Ellis\Renderer\EditorCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Ellis\Core\Application.cpp">
@@ -1486,7 +1502,13 @@
     <ClCompile Include="src\Ellis\ImGui\ImGuiLayer.cpp">
       <Filter>src\Ellis\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ellis\Math\Math.cpp">
+      <Filter>src\Ellis\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\Buffer.cpp">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Renderer\EditorCamera.cpp">
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\Framebuffer.cpp">
@@ -1514,6 +1536,9 @@
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\Texture.cpp">
+      <Filter>src\Ellis\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ellis\Renderer\UniformBuffer.cpp">
       <Filter>src\Ellis\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ellis\Renderer\VertexArray.cpp">
@@ -1549,6 +1574,9 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1570,7 +1598,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ellis\Math\Math.cpp" />
-    <ClCompile Include="src\Ellis\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>

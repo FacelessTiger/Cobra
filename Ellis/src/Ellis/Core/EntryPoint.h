@@ -1,15 +1,17 @@
 #pragma once
 
+#include "Ellis/Core/Application.h"
+
 #ifdef EL_PLATFORM_WINDOWS
 
-extern Ellis::Application* Ellis::CreateApplication();
+extern Ellis::Application* Ellis::CreateApplication(ApplicationCommandLineArgs args);
 
 int main(int argc, char** argv)
 {
 	Ellis::Log::Init();
 
 	EL_PROFILE_BEGIN_SESSION("Startup", "EllisProfile-Startup.json");
-	auto app = Ellis::CreateApplication();
+	auto app = Ellis::CreateApplication({ argc, argv });
 	EL_PROFILE_END_SESSION();
 
 	EL_PROFILE_BEGIN_SESSION("Runtime", "EllisProfile-Runtime.json");

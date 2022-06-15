@@ -8,8 +8,8 @@ namespace Ellis {
 	class EllisEditor : public Application
 	{
 	public:
-		EllisEditor()
-			: Application("Ellis Editor")
+		EllisEditor(ApplicationCommandLineArgs args)
+			: Application("Ellis Editor", args)
 		{
 			PushLayer(new EditorLayer());
 		}
@@ -18,9 +18,9 @@ namespace Ellis {
 		{ }
 	};
 
-	Application* CreateApplication()
+	Application* CreateApplication(ApplicationCommandLineArgs args)
 	{
-		return new EllisEditor();
+		return new EllisEditor(args);
 	}
 
 }
