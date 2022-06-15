@@ -25,9 +25,15 @@ namespace Ellis {
 		int m_GizmoType = -1;
 		std::filesystem::path m_EditorScenePath;
 
+		enum class SceneState { Edit = 0, Play = 1 };
+		SceneState m_SceneState = SceneState::Edit;
+
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ContentBrowserPanel m_ContentBrowserPanel;
+
+		// Editor resources
+		Ref<Texture2D> m_IconPlay, m_IconStop;
 	public:
 		EditorLayer();
 		virtual ~EditorLayer() = default;
@@ -49,6 +55,12 @@ namespace Ellis {
 		void SaveSceneAs();
 
 		void SerializeScene(Ref<Scene> scene, const std::filesystem::path& path);
+
+		void OnScenePlay();
+		void OnSceneStop();
+
+		// UI Panels
+		void UI_Toolbar();
 	};
 
 }
