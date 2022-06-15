@@ -5,10 +5,10 @@
 
 namespace Ellis {
 
-	static const std::filesystem::path s_AssetsPath = "assets";
+	extern const std::filesystem::path g_AssetsPath = "assets";
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_CurrentDirectory(s_AssetsPath)
+		: m_CurrentDirectory(g_AssetsPath)
 	{ 
 		m_DirectoryIcon = Texture2D::Create("Resources/Icons/ContentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
@@ -18,7 +18,7 @@ namespace Ellis {
 	{
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != s_AssetsPath)
+		if (m_CurrentDirectory != g_AssetsPath)
 		{
 			if (ImGui::Button("<-"))
 			{
@@ -40,11 +40,21 @@ namespace Ellis {
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			const auto& path = directoryEntry.path();
-			auto relativePath = std::filesystem::relative(path, s_AssetsPath);
+			auto relativePath = std::filesystem::relative(path, g_AssetsPath);
 			std::string filenameString = relativePath.filename().string();
 
+			ImGui::PushID(filenameString.c_str());
 			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, { 0, 1}, { 1, 0 });
+			ImGui::PopStyleColor();
+
+			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+			{
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				ImGui::EndDragDropSource();
+			}
 
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
@@ -53,8 +63,8 @@ namespace Ellis {
 			}
 
 			ImGui::TextWrapped(filenameString.c_str());
-
 			ImGui::NextColumn();
+			ImGui::PopID();
 		}
 
 		ImGui::Columns(1);

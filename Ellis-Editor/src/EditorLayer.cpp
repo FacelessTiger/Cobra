@@ -10,6 +10,8 @@
 
 namespace Ellis {
 
+	extern const std::filesystem::path g_AssetsPath;
+
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{ }
@@ -181,6 +183,18 @@ namespace Ellis {
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
 		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, { 0, 1 }, { 1, 0 });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+
+				OpenScene(g_AssetsPath / path);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
 
 		// Gizmos
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
