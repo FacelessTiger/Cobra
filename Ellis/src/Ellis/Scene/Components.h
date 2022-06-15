@@ -7,6 +7,7 @@
 #include <glm/gtx/quaternion.hpp>
 
 #include "Ellis/Scene/SceneCamera.h"
+#include "Ellis/Renderer/Texture.h"
 
 namespace Ellis {
 
@@ -43,6 +44,8 @@ namespace Ellis {
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+		Ref<Texture2D> Texture;
+		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
