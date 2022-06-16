@@ -14,6 +14,7 @@ namespace Ellis {
 	private:
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_EditorScene;
 
 		Entity m_HoveredEntity;
 		EditorCamera m_EditorCamera;
@@ -58,6 +59,8 @@ namespace Ellis {
 
 		void OnScenePlay();
 		void OnSceneStop();
+
+		void OnDuplicateEntity();
 
 		// UI Panels
 		void UI_Toolbar();
