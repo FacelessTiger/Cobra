@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Ellis/Core/UUID.h"
 #include "Ellis/Core/Timestep.h"
 #include "Ellis/Renderer/EditorCamera.h"
 
@@ -29,6 +30,7 @@ namespace Ellis {
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
 
 		void OnRuntimeStart();

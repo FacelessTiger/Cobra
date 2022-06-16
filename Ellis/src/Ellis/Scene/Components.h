@@ -1,15 +1,24 @@
 #pragma once
 
+#include "Ellis/Core/UUID.h"
+#include "Ellis/Scene/SceneCamera.h"
+#include "Ellis/Renderer/Texture.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#include "Ellis/Scene/SceneCamera.h"
-#include "Ellis/Renderer/Texture.h"
-
 namespace Ellis {
+
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+	};
 
 	struct TagComponent
 	{
@@ -64,6 +73,7 @@ namespace Ellis {
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	// Forward declaration 
 	class ScriptableEntity;
 
 	struct NativeScriptComponent

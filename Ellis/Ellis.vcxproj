@@ -158,6 +158,7 @@
     <ClInclude Include="src\Ellis\Core\PlatformDetection.h" />
     <ClInclude Include="src\Ellis\Core\Timer.h" />
     <ClInclude Include="src\Ellis\Core\Timestep.h" />
+    <ClInclude Include="src\Ellis\Core\UUID.h" />
     <ClInclude Include="src\Ellis\Core\Window.h" />
     <ClInclude Include="src\Ellis\Debug\Instrumentor.h" />
     <ClInclude Include="src\Ellis\Events\ApplicationEvent.h" />
@@ -621,6 +622,7 @@
     <ClCompile Include="src\Ellis\Core\Layer.cpp" />
     <ClCompile Include="src\Ellis\Core\LayerStack.cpp" />
     <ClCompile Include="src\Ellis\Core\Log.cpp" />
+    <ClCompile Include="src\Ellis\Core\UUID.cpp" />
     <ClCompile Include="src\Ellis\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Ellis\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Ellis\Math\Math.cpp" />
