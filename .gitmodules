@@ -20,3 +20,6 @@
 [submodule "Ellis/vendor/ImGuizmo"]
 	path = Ellis/vendor/ImGuizmo
 	url = https://github.com/FacelessTiger/ImGuizmo
+[submodule "Ellis/vendor/Box2D"]
+	path = Ellis/vendor/Box2D
+	url = https://github.com/FacelessTiger/box2d

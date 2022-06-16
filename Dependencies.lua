@@ -1,14 +1,15 @@
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
 IncludeDir = {}
+IncludeDir["stb_image"] = "%{wks.location}/Ellis/vendor/stb_image"
+IncludeDir["yaml_cpp"] = "%{wks.location}/Ellis/vendor/yaml-cpp/include"
+IncludeDir["Box2D"] = "%{wks.location}/Ellis/vendor/Box2D/include"
 IncludeDir["GLFW"] = "%{wks.location}/Ellis/vendor/GLFW/include"
 IncludeDir["Glad"] = "%{wks.location}/Ellis/vendor/Glad/include"
 IncludeDir["ImGui"] = "%{wks.location}/Ellis/vendor/imgui"
-IncludeDir["glm"] = "%{wks.location}/Ellis/vendor/glm"
-IncludeDir["stb_image"] = "%{wks.location}/Ellis/vendor/stb_image"
-IncludeDir["entt"] = "%{wks.location}/Ellis/vendor/entt/include"
-IncludeDir["yaml_cpp"] = "%{wks.location}/Ellis/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "%{wks.location}/Ellis/vendor/ImGuizmo"
+IncludeDir["glm"] = "%{wks.location}/Ellis/vendor/glm"
+IncludeDir["entt"] = "%{wks.location}/Ellis/vendor/entt/include"
 IncludeDir["shaderc"] = "%{wks.location}/Hazel/vendor/shaderc/include"
 IncludeDir["SPIRV_Cross"] = "%{wks.location}/Hazel/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"

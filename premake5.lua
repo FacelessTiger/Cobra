@@ -19,6 +19,7 @@ workspace "Ellis"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
+	include "Ellis/vendor/Box2D"
 	include "Ellis/vendor/GLFW"
 	include "Ellis/vendor/Glad"
 	include "Ellis/vendor/imgui"

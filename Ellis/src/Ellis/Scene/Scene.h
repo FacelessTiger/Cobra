@@ -5,6 +5,8 @@
 
 #include <entt.hpp>
 
+class b2World;
+
 namespace Ellis {
 
 	class Entity;
@@ -20,12 +22,17 @@ namespace Ellis {
 
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
+
+		b2World* m_PhysicsWorld = nullptr;
 	public:
 		Scene();
 		~Scene();
 
 		Entity CreateEntity(const std::string& name = std::string());
 		void DestroyEntity(Entity entity);
+
+		void OnRuntimeStart();
+		void OnRuntimeStop();
 
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, EditorCamera& camera);
