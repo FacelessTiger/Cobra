@@ -24,6 +24,7 @@ namespace Ellis {
 		glm::vec2 m_ViewportBounds[2];
 
 		int m_GizmoType = -1;
+		bool m_ShowPhysicsColliders = false;
 		std::filesystem::path m_EditorScenePath;
 
 		enum class SceneState { Edit = 0, Play = 1 };
@@ -48,6 +49,7 @@ namespace Ellis {
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		void OnOverlayRender();
 
 		void NewScene();
 		void OpenScene();

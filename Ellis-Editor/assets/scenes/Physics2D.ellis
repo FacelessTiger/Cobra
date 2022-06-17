@@ -16,7 +16,7 @@ Entities:
       FixedRotation: false
     CircleCollider2DComponent:
       Offset: [0, 0]
-      Radius: 0.649999976
+      Radius: 0.5
       Density: 1
       Friction: 0.5
       Restitution: 0
@@ -109,10 +109,10 @@ Entities:
       Fade: 0.00999999978
     Rigidbody2DComponent:
       BodyType: Dynamic
-      FixedRotation: false
+      FixedRotation: true
     CircleCollider2DComponent:
-      Offset: [0, 0.5]
-      Radius: 1.17999995
+      Offset: [-1, 0.5]
+      Radius: 0.5
       Density: 1
       Friction: 0.5
       Restitution: 0
