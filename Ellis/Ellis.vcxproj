@@ -182,6 +182,7 @@
     <ClInclude Include="src\Ellis\Renderer\Texture.h" />
     <ClInclude Include="src\Ellis\Renderer\UniformBuffer.h" />
     <ClInclude Include="src\Ellis\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Ellis\Scene\Common.h" />
     <ClInclude Include="src\Ellis\Scene\Components.h" />
     <ClInclude Include="src\Ellis\Scene\Entity.h" />
     <ClInclude Include="src\Ellis\Scene\Scene.h" />

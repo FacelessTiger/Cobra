@@ -15,6 +15,10 @@
 
 namespace Ellis {
 
+	struct list_of_types {
+		typedef TYPE_LIST type;
+	};
+
 	static b2BodyType Rigidbody2DTypeToBox2DBody(Rigidbody2DComponent::BodyType bodyType)
 	{
 		switch (bodyType)
@@ -38,8 +42,25 @@ namespace Ellis {
 		delete m_PhysicsWorld;
 	}
 
+	template<typename Component, typename... Types>
+	static void CopyComponent(TypeList<Component, Types...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		auto view = src.view<Component>();
+		for (auto e : view)
+		{
+			UUID uuid = src.get<IDComponent>(e).ID;
+			EL_CORE_ASSERT(enttMap.find(uuid) != enttMap.end());
+			entt::entity dstEnttID = enttMap.at(uuid);
+
+			auto& component = src.get<Component>(e);
+			dst.emplace_or_replace<Component>(dstEnttID, component);
+		}
+		
+		CopyComponent(TypeList<Types...>(), dst, src, enttMap);
+	}
+
 	template<typename Component>
-	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	static void CopyComponent(TypeList<Component>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
 	{
 		auto view = src.view<Component>();
 		for (auto e : view)
@@ -53,8 +74,17 @@ namespace Ellis {
 		}
 	}
 
+	template<typename Component, typename... Types>
+	static void CopyComponentIfExists(TypeList<Component, Types...>, Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+
+		CopyComponentIfExists(TypeList<Types...>(), dst, src);
+	}
+
 	template<typename Component>
-	static void CopyComponentIfExists(Entity dst, Entity src)
+	static void CopyComponentIfExists(TypeList<Component>, Entity dst, Entity src)
 	{
 		if (src.HasComponent<Component>())
 			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
@@ -82,14 +112,7 @@ namespace Ellis {
 		}
 
 		// Copy components (except IDComponent and TagComponent)
-		CopyComponent<TransformComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<SpriteRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleRendererComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CameraComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<NativeScriptComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<Rigidbody2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<BoxCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
-		CopyComponent<CircleCollider2DComponent>(dstSceneRegistry, srcSceneRegistry, enttMap);
+		CopyComponent(list_of_types::type(), dstSceneRegistry, srcSceneRegistry, enttMap);
 
 		return newScene;
 	}
@@ -277,14 +300,7 @@ namespace Ellis {
 		std::string name = entity.GetName();
 		Entity newEntity = CreateEntity(name);
 
-		CopyComponentIfExists<TransformComponent>(newEntity, entity);
-		CopyComponentIfExists<SpriteRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<CircleRendererComponent>(newEntity, entity);
-		CopyComponentIfExists<CameraComponent>(newEntity, entity);
-		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
-		CopyComponentIfExists<Rigidbody2DComponent>(newEntity, entity);
-		CopyComponentIfExists<BoxCollider2DComponent>(newEntity, entity);
-		CopyComponentIfExists<CircleCollider2DComponent>(newEntity, entity);
+		CopyComponentIfExists(list_of_types::type(), newEntity, entity);
 	}
 
 	Entity Scene::GetPrimaryCameraEntity()
@@ -391,16 +407,8 @@ namespace Ellis {
 	template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		static_assert(false);
+		//static_assert(false);
 	}
-
-	template<>
-	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
-	{ }
 
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
@@ -408,33 +416,5 @@ namespace Ellis {
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
-
-	template<>
-	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<Rigidbody2DComponent>(Entity entity, Rigidbody2DComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
-	{ }
-
-	template<>
-	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
-	{ }
 
 }

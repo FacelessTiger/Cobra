@@ -207,6 +207,40 @@ namespace Ellis {
 		}
 	}
 
+	template<typename T, typename... Types>
+	static void DrawAddPrompt(TypeList<T, Types...>, Entity& selectionContext)
+	{
+		if (!selectionContext.HasComponent<T>())
+		{
+			if (!(std::string(T::Name) == "Native Script" || std::string(T::Name) == "Transform"))
+			{
+				if (ImGui::MenuItem(T::Name))
+				{
+					selectionContext.AddComponent<T>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+
+		DrawAddPrompt(TypeList<Types...>(), selectionContext);
+	}
+
+	template<typename T>
+	static void DrawAddPrompt(TypeList<T>, Entity& selectionContext)
+	{
+		if (!selectionContext.HasComponent<T>())
+		{
+			if (!(std::string(T::Name) == "Native Script" || std::string(T::Name) == "Transform"))
+			{
+				if (ImGui::MenuItem(T::Name))
+				{
+					selectionContext.AddComponent<T>();
+					ImGui::CloseCurrentPopup();
+				}
+			}
+		}
+	}
+
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
 		if (entity.HasComponent<TagComponent>())
@@ -229,62 +263,13 @@ namespace Ellis {
 		if (ImGui::Button("Add Component"))
 			ImGui::OpenPopup("AddComponent");
 
+		struct list_of_types {
+			typedef TYPE_LIST type;
+		};
+
 		if (ImGui::BeginPopup("AddComponent"))
 		{
-			if (!m_SelectionContext.HasComponent<CameraComponent>())
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectionContext.AddComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite Renderer"))
-				{
-					m_SelectionContext.AddComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<CircleRendererComponent>())
-			{
-				if (ImGui::MenuItem("Circle Renderer"))
-				{
-					m_SelectionContext.AddComponent<CircleRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<Rigidbody2DComponent>())
-			{
-				if (ImGui::MenuItem("Rigidbody 2D"))
-				{
-					m_SelectionContext.AddComponent<Rigidbody2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<BoxCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Box Collider 2D"))
-				{
-					m_SelectionContext.AddComponent<BoxCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectionContext.HasComponent<CircleCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("Circle Collider 2D"))
-				{
-					m_SelectionContext.AddComponent<CircleCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
+			DrawAddPrompt(list_of_types::type(), m_SelectionContext);
 			ImGui::EndPopup();
 		}
 
