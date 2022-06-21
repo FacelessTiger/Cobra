@@ -1,15 +1,16 @@
 #pragma once
 
 #include "Event.h"
+#include "Ellis/Core/KeyCodes.h"
 
 namespace Ellis {
 
 	class KeyEvent : public Event
 	{
 	protected:
-		int m_KeyCode;
+		KeyCode m_KeyCode;
 	public:
-		inline int GetKeyCode() const { return m_KeyCode; }
+		inline KeyCode GetKeyCode() const { return m_KeyCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
@@ -20,17 +21,17 @@ namespace Ellis {
 	class KeyPressedEvent : public KeyEvent
 	{
 	private:
-		int m_RepeatCount;
+		bool m_IsRepeat;
 	public:
-		KeyPressedEvent(int keycode, int repeatCount)
-			: KeyEvent(keycode), m_RepeatCount(repeatCount) { }
+		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
+			: KeyEvent(keycode), m_IsRepeat(isRepeat) { }
 
-		inline int GetRepeatCount() const { return m_RepeatCount; }
+		bool IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+			ss << "KeyPressedEvent: " << m_KeyCode << " (repeat = " << m_IsRepeat << ")";
 			return ss.str();
 		}
 
@@ -40,7 +41,7 @@ namespace Ellis {
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keycode)
+		KeyReleasedEvent(KeyCode keycode)
 			: KeyEvent(keycode) { }
 
 		std::string ToString() const override
@@ -56,7 +57,7 @@ namespace Ellis {
 	class KeyTypedEvent : public KeyEvent
 	{
 	public:
-		KeyTypedEvent(int keycode)
+		KeyTypedEvent(KeyCode keycode)
 			: KeyEvent(keycode) { }
 
 		std::string ToString() const override

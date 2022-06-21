@@ -10,7 +10,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-#include "Common.h"
 
 namespace Ellis {
 
@@ -35,7 +34,6 @@ namespace Ellis {
 
 	struct TransformComponent
 	{
-		static constexpr char* Name = "Transform";
 		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
@@ -53,14 +51,8 @@ namespace Ellis {
 		}
 	};
 
-	typedef typename concat<TYPE_LIST, TransformComponent>::type TypeListTransformComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListTransformComponent
-
 	struct SpriteRendererComponent
 	{
-		static constexpr char* Name = "Sprite Renderer";
-
 		glm::vec4 Color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		Ref<Texture2D> Texture;
 		float TilingFactor = 1.0f;
@@ -72,14 +64,8 @@ namespace Ellis {
 		{ }
 	};
 
-	typedef typename concat<TYPE_LIST, SpriteRendererComponent>::type TypeListSpriteRendererComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListSpriteRendererComponent
-
 	struct CircleRendererComponent
 	{
-		static constexpr char* Name = "Circle Renderer";
-
 		glm::vec4 Color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		float Thickness = 1.0f;
 		float Fade = 0.005f; // TODO: Redesign this, not user friendly and resolution dependant
@@ -88,14 +74,8 @@ namespace Ellis {
 		CircleRendererComponent(const CircleRendererComponent&) = default;
 	};
 
-	typedef typename concat<TYPE_LIST, CircleRendererComponent>::type TypeListCircleRendererComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListCircleRendererComponent
-
 	struct CameraComponent
 	{
-		static constexpr char* Name = "Camera";
-
 		SceneCamera Camera;
 		bool Primary = true;
 		bool FixedAspectRatio = false;
@@ -104,17 +84,11 @@ namespace Ellis {
 		CameraComponent(const CameraComponent&) = default;
 	};
 
-	typedef typename concat<TYPE_LIST, CameraComponent>::type TypeListCameraComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListCameraComponent
-
 	// Forward declaration 
 	class ScriptableEntity;
 
 	struct NativeScriptComponent
 	{
-		static constexpr char* Name = "Native Script";
-
 		ScriptableEntity* Instance = nullptr;
 
 		ScriptableEntity* (*InstantiateScript)();
@@ -128,15 +102,9 @@ namespace Ellis {
 		}
 	};
 
-	typedef typename concat<TYPE_LIST, NativeScriptComponent>::type TypeListNativeScriptComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListNativeScriptComponent
-
 	// Physics
 	struct Rigidbody2DComponent
 	{
-		static constexpr char* Name = "Rigidbody 2D";
-
 		enum class BodyType { Static = 0, Dynamic, Kinematic };
 		BodyType Type = BodyType::Static;
 		bool FixedRotation = false;
@@ -148,14 +116,8 @@ namespace Ellis {
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 	};
 
-	typedef typename concat<TYPE_LIST, Rigidbody2DComponent>::type TypeListRigidbody2DComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListRigidbody2DComponent
-
 	struct BoxCollider2DComponent
 	{
-		static constexpr char* Name = "Box Collider 2D";
-
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		glm::vec2 Size = { 0.5f, 0.5f };
 
@@ -172,14 +134,8 @@ namespace Ellis {
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 	};
 
-	typedef typename concat<TYPE_LIST, BoxCollider2DComponent>::type TypeListBoxCollider2DComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListBoxCollider2DComponent
-
 	struct CircleCollider2DComponent
 	{
-		static constexpr char* Name = "Circle Collider 2D";
-
 		glm::vec2 Offset = { 0.0f, 0.0f };
 		float Radius = 0.5f;
 
@@ -196,8 +152,13 @@ namespace Ellis {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
-	typedef typename concat<TYPE_LIST, CircleCollider2DComponent>::type TypeListCircleCollider2DComponent;
-	#undef TYPE_LIST
-	#define TYPE_LIST TypeListCircleCollider2DComponent
+	template<typename... Component>
+	struct ComponentGroup
+	{ };
+
+	using AllComponents =
+		ComponentGroup<TransformComponent, SpriteRendererComponent,
+		CircleRendererComponent, CameraComponent, NativeScriptComponent,
+		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 
 }
