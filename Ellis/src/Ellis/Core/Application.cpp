@@ -4,8 +4,7 @@
 #include "Ellis/Core/Log.h"
 #include "Ellis/Core/Input.h"
 #include "Ellis/Renderer/Renderer.h"
-
-#include <GLFW/glfw3.h>
+#include "Ellis/Utils/PlatformUtils.h"
 
 namespace Ellis {
 
@@ -80,7 +79,7 @@ namespace Ellis {
 		{
 			EL_PROFILE_SCOPE("RunLoop");
 
-			float time = (float)glfwGetTime();
+			float time = Time::GetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

@@ -301,6 +301,7 @@ namespace Ellis {
 		}
 		catch (YAML::ParserException e)
 		{
+			EL_CORE_ERROR("Failed to load .ellis file \"{0}\"\n     {1}", filepath, e.what());
 			return false;
 		}
 
