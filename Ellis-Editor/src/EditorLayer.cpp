@@ -220,8 +220,27 @@ namespace Ellis {
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
 				const wchar_t* path = (const wchar_t*)payload->Data;
+				std::filesystem::path filePath = std::filesystem::path(path);
 
-				OpenScene(g_AssetsPath / path);
+				if (filePath.extension().string() == ".ellis")
+				{
+					OpenScene(g_AssetsPath / path);
+				}
+				else if (filePath.extension().string() == ".png")
+				{
+					std::filesystem::path texturePath = g_AssetsPath / path;
+					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
+
+					if (texture->IsLoaded())
+					{
+						if (m_HoveredEntity && m_HoveredEntity.HasComponent<SpriteRendererComponent>())
+							m_HoveredEntity.GetComponent<SpriteRendererComponent>().Texture = texture;
+					}
+					else
+					{
+						EL_WARN("Could not load texture {0}", texturePath.filename().string());
+					}
+				}
 			}
 
 			ImGui::EndDragDropTarget();
