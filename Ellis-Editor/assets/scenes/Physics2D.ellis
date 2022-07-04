@@ -13,7 +13,7 @@ Entities:
       Fade: 0.00999999978
     Rigidbody2DComponent:
       BodyType: Dynamic
-      FixedRotation: true
+      FixedRotation: false
     CircleCollider2DComponent:
       Offset: [-1, 0.5]
       Radius: 0.5
@@ -30,6 +30,7 @@ Entities:
       Scale: [16.6777573, 0.999999881, 1]
     SpriteRendererComponent:
       Color: [1, 0.532818496, 0, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -49,6 +50,7 @@ Entities:
       Scale: [16.0106354, 0.959999979, 0.959999979]
     SpriteRendererComponent:
       Color: [1, 0.532818496, 0, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Static
       FixedRotation: false
@@ -68,11 +70,12 @@ Entities:
       Scale: [1, 1, 1]
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
+      TilingFactor: 1
     Rigidbody2DComponent:
       BodyType: Dynamic
       FixedRotation: false
     BoxCollider2DComponent:
-      Offset: [0, 0]
+      Offset: [-2, 0]
       Size: [0.5, 0.5]
       Density: 1
       Friction: 0.5
