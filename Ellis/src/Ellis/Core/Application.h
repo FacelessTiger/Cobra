@@ -26,23 +26,30 @@ namespace Ellis {
 		}
 	};
 
+	struct ApplicationSpecification
+	{
+		std::string Name = "Ellis Application";
+		std::string WorkingDirecory;
+		ApplicationCommandLineArgs CommandLineArgs;
+	};
+
 	class Application
 	{
 	private:
 		static Application* s_Instance;
 		friend int ::main(int argc, char** argv);
 
+		ApplicationSpecification m_Specification;
 		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		LayerStack m_LayerStack;
-		ApplicationCommandLineArgs m_CommandLineArgs;
 
 		float m_LastFrameTime = 0.0f;
 
 		bool m_Running = true;
 		bool m_Minimized = false;
 	public:
-		Application(const std::string& name = "Ellis App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
 
 		void Close();
@@ -57,7 +64,7 @@ namespace Ellis {
 
 		inline static Application& Get() { return *s_Instance; }
 
-		ApplicationCommandLineArgs GetCommandLineArgs() const { return m_CommandLineArgs; }
+		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
 	private:
 		void Run();
 

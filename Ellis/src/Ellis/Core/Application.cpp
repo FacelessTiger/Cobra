@@ -10,15 +10,19 @@ namespace Ellis {
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application(const std::string& name, ApplicationCommandLineArgs args)
-		: m_CommandLineArgs(args)
+	Application::Application(const ApplicationSpecification& specification)
+		: m_Specification(specification)
 	{
 		EL_PROFILE_FUNCTION();
 
 		EL_CORE_ASSERT(!s_Instance, "Application alreay exists!");
 		s_Instance = this;
 
-		m_Window = Window::Create(WindowProps(name));
+		// Set working directory here
+		if (!m_Specification.WorkingDirecory.empty())
+			std::filesystem::current_path(m_Specification.WorkingDirecory);
+
+		m_Window = Window::Create(WindowProps(m_Specification.Name));
 		m_Window->SetEventCallback(EL_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();

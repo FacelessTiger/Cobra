@@ -2,7 +2,7 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
@@ -19,12 +19,18 @@ project "Sandbox"
 		"%{wks.location}/Ellis/src",
 		"%{wks.location}/Ellis/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links
 	{
 		"Ellis"
+	}
+
+	defines
+	{
+		"YAML_CPP_STATIC_DEFINE"
 	}
 
 	filter "system:windows"

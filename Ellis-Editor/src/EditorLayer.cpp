@@ -33,7 +33,7 @@ namespace Ellis {
 		m_EditorScene = CreateRef<Scene>();
 		m_ActiveScene = m_EditorScene;
 
-		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
 			auto sceneFilePath = commandLineArgs[1];
@@ -42,8 +42,9 @@ namespace Ellis {
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
-
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
+
+		Renderer2D::SetLineWidth(4.0f);
 	}
 
 	void EditorLayer::OnDetach()
@@ -162,6 +163,7 @@ namespace Ellis {
 			{
 				if (ImGui::MenuItem("New", "Ctrl+N")) NewScene();
 				if (ImGui::MenuItem("Open...", "Crtl+O")) OpenScene();
+				if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
 
@@ -456,6 +458,13 @@ namespace Ellis {
 					Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.05f);
 				}
 			}
+		}
+
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity)
+		{
+			const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 		}
 
 		Renderer2D::EndScene();

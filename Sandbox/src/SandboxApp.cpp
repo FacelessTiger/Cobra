@@ -6,7 +6,8 @@
 class Sandbox : public Ellis::Application
 {
 public:
-	Sandbox()
+	Sandbox(const Ellis::ApplicationSpecification& specification)
+		: Ellis::Application(specification)
 	{
 		PushLayer(new Sandbox2D());
 	}
@@ -15,7 +16,12 @@ public:
 	{ }
 };
 
-Ellis::Application* Ellis::CreateApplication()
+Ellis::Application* Ellis::CreateApplication(Ellis::ApplicationCommandLineArgs args)
 {
-	return new Sandbox();
+	ApplicationSpecification spec;
+	spec.Name = "Sandbox";
+	spec.WorkingDirecory = "../Ellis-Editor";
+	spec.CommandLineArgs = args;
+
+	return new Sandbox(spec);
 }
