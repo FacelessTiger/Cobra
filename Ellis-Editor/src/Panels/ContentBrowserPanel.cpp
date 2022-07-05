@@ -43,7 +43,27 @@ namespace Ellis {
 			std::string filenameString = path.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+
+			Ref<Texture2D> icon;
+			if (directoryEntry.is_directory())
+			{
+				icon = m_DirectoryIcon;
+			}
+			else
+			{
+				if (path.extension().string() == ".png")
+				{
+					if (m_Textures.find(path.string()) == m_Textures.end())
+						m_Textures[path.string()] = Texture2D::Create(path.string());
+
+					icon = m_Textures[path.string()];
+				}
+				else
+				{
+					icon = m_FileIcon;
+				}
+			}
+
 			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 			ImGui::ImageButton((ImTextureID)icon->GetRendererID(), {thumbnailSize, thumbnailSize}, { 0, 1}, { 1, 0 });
 			ImGui::PopStyleColor();

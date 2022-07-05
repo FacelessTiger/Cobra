@@ -20,7 +20,7 @@ Entities:
       Scale: [3.21359968, 3.21359968, 1]
     SpriteRendererComponent:
       Color: [1, 0, 0, 1]
-      TexturePath: assets\textures\ChernoLogo.png
+      TexturePath: assets\textures\InstagramLogo.png
       TilingFactor: 1
   - Entity: 6729994321717599845
     TagComponent:
