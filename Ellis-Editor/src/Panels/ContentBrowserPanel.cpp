@@ -37,6 +37,15 @@ namespace Ellis {
 
 		ImGui::Columns(columnCount, 0, false);
 
+		// Make sure cached texture icons exist, if they dont remove them from cache
+		for (auto it = m_ImageIcons.cbegin(), next_it = it; it != m_ImageIcons.cend(); it = next_it)
+		{
+			++next_it;
+
+			if (!std::filesystem::exists((*it).first))
+				m_ImageIcons.erase(it);
+		}
+
 		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 		{
 			const auto& path = directoryEntry.path();
@@ -44,24 +53,13 @@ namespace Ellis {
 
 			ImGui::PushID(filenameString.c_str());
 
-			Ref<Texture2D> icon;
-			if (directoryEntry.is_directory())
+			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+			if (path.extension().string() == ".png")
 			{
-				icon = m_DirectoryIcon;
-			}
-			else
-			{
-				if (path.extension().string() == ".png")
-				{
-					if (m_Textures.find(path.string()) == m_Textures.end())
-						m_Textures[path.string()] = Texture2D::Create(path.string());
+				if (m_ImageIcons.find(path.string()) == m_ImageIcons.end())
+					m_ImageIcons[path.string()] = Texture2D::Create(path.string());
 
-					icon = m_Textures[path.string()];
-				}
-				else
-				{
-					icon = m_FileIcon;
-				}
+				icon = m_ImageIcons[path.string()];
 			}
 
 			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });

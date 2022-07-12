@@ -4,6 +4,7 @@
 #include "Ellis/Core/Log.h"
 #include "Ellis/Core/Input.h"
 #include "Ellis/Renderer/Renderer.h"
+#include "Ellis/Scripting/ScriptEngine.h"
 #include "Ellis/Utils/PlatformUtils.h"
 
 namespace Ellis {
@@ -26,6 +27,7 @@ namespace Ellis {
 		m_Window->SetEventCallback(EL_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();
+		ScriptEngine::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
@@ -35,6 +37,7 @@ namespace Ellis {
 	{
 		EL_PROFILE_FUNCTION();
 
+		ScriptEngine::Shutdown();
 		Renderer::Shutdown();
 	}
 

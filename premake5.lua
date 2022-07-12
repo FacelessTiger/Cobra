@@ -26,6 +26,15 @@ group "Dependencies"
 	include "Ellis/vendor/yaml-cpp"
 group ""
 
-include "Ellis"
-include "Sandbox"
-include "Ellis-Editor"
+group "Core"
+	include "Ellis"
+	include "Ellis-ScriptCore"
+group ""
+
+group "Tools"
+	include "Ellis-Editor"
+group ""
+
+group "Misc"
+	include "Sandbox"
+group ""

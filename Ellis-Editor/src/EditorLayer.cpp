@@ -448,6 +448,11 @@ namespace Ellis {
 
 		if (m_ShowPhysicsColliders)
 		{
+			// Calculate z index for translation
+			float zIndex = 0.001f;
+			glm::vec3 cameraForwardDirection = m_EditorCamera.GetForwardDirection();
+			glm::vec3 projectionCollider = cameraForwardDirection * glm::vec3(zIndex);
+
 			// Box Colliders
 			{
 				auto view = m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
@@ -459,7 +464,7 @@ namespace Ellis {
 
 					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation) 
 										* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0, 0, 1)) 
-										* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
+										* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, -projectionCollider.z))
 										* glm::scale(glm::mat4(1.0f), scale);
 					Renderer2D::DrawRect(transform, glm::vec4(0, 1, 0, 1));
 				}
@@ -476,7 +481,7 @@ namespace Ellis {
 
 					glm::mat4 transform = glm::translate(glm::mat4(1.0f), tc.Translation)
 										* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0, 0, 1))
-										* glm::translate(glm::mat4(1.0f), glm::vec3(cc2d.Offset, 0.001f))
+										* glm::translate(glm::mat4(1.0f), glm::vec3(cc2d.Offset, -projectionCollider.z))
 										* glm::scale(glm::mat4(1.0f), scale);
 					Renderer2D::DrawCircle(transform, glm::vec4(0, 1, 0, 1), 0.05f);
 				}
