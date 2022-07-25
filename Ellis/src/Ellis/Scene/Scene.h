@@ -24,6 +24,8 @@ namespace Ellis {
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 
+		std::unordered_map<UUID, entt::entity> m_EntityMap;
+
 		b2World* m_PhysicsWorld = nullptr;
 	public:
 		Scene();
@@ -48,6 +50,7 @@ namespace Ellis {
 
 		void DuplicateEntity(Entity entity);
 
+		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
 
 		template<typename... Components>

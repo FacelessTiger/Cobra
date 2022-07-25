@@ -1,6 +1,10 @@
 #include "elpch.h"
 #include "ScriptGlue.h"
 
+#include "Ellis/Scripting/ScriptEngine.h"
+#include "Ellis/Core/KeyCodes.h"
+#include "Ellis/Core/Input.h"
+
 #include <mono/metadata/object.h>
 
 namespace Ellis {
@@ -28,11 +32,37 @@ namespace Ellis {
 		return glm::dot(*parameter, *parameter);
 	}
 
+	static void Entity_GetTranslation(UUID entityID, glm::vec3* outTranslation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(entityID);
+
+		*outTranslation = entity.GetComponent<TransformComponent>().Translation;
+	}
+
+	static void Entity_SetTranslation(UUID entityID, glm::vec3* translation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		Entity entity = scene->GetEntityByUUID(entityID);
+
+		entity.GetComponent<TransformComponent>().Translation = *translation;
+	}
+
+	static bool Input_IsKeyDown(KeyCode keycode)
+	{
+		return Input::IsKeyPressed(keycode);
+	}
+
 	void ScriptGlue::RegisterFunctions()
 	{
 		EL_ADD_INTERNAL_CALL(NativeLog);
 		EL_ADD_INTERNAL_CALL(NativeLog_Vector);
 		EL_ADD_INTERNAL_CALL(NativeLog_VectorDot);
+
+		EL_ADD_INTERNAL_CALL(Entity_GetTranslation);
+		EL_ADD_INTERNAL_CALL(Entity_SetTranslation);
+
+		EL_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
 
 }

@@ -5,6 +5,7 @@
 #include "Ellis/Scene/ScriptableEntity.h"
 #include "Ellis/Scene/Entity.h"
 #include "Ellis/Renderer/Renderer2D.h"
+#include "Ellis/Scripting/ScriptEngine.h"
 
 #include <glm/glm.hpp>
 #include <box2d/b2_world.h>
@@ -115,22 +116,38 @@ namespace Ellis {
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
 
+		m_EntityMap[uuid] = entity;
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		m_Registry.destroy(entity);
+		m_EntityMap.erase(entity.GetUUID());
 	}
 
 	void Scene::OnRuntimeStart()
 	{
 		OnPhysics2DStart();
+
+		// Scripting
+		{
+			ScriptEngine::OnRuntimeStart(this);
+
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnCreateEntity(entity);
+			}
+		}
 	}
 
 	void Scene::OnRuntimeStop()
 	{
 		OnPhysics2DStop();
+
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
@@ -147,6 +164,14 @@ namespace Ellis {
 	{
 		// Update scripts
 		{
+			// C# Entity OnUpdate
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnUpdateEntity(entity, ts);
+			}
+
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 			{
 				// TODO: Move to Scene::OnScenePlay
@@ -287,6 +312,14 @@ namespace Ellis {
 		CopyComponentIfExists(AllComponents{}, newEntity, entity);
 	}
 
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		if (m_EntityMap.find(uuid) != m_EntityMap.end())
+			return { m_EntityMap.at(uuid), this };
+
+		return {};
+	}
+
 	Entity Scene::GetPrimaryCameraEntity()
 	{
 		auto view = m_Registry.view<CameraComponent>();
@@ -408,6 +441,10 @@ namespace Ellis {
 		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
 			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
 	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
+	{ }
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
