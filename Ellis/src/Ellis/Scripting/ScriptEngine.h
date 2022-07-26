@@ -31,7 +31,7 @@ namespace Ellis {
 		MonoMethod* GetMethod(const std::string& name, int parameterCount);
 
 		template<typename... T>
-		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, T*... params);
+		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, T&... params);
 	};
 
 	class ScriptInstance

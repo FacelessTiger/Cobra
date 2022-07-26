@@ -35,6 +35,7 @@ namespace Ellis
 
     public static class InternalCalls
     {
+        #region NativeLog
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void NativeLog(string text, int parameter);
 
@@ -43,16 +44,20 @@ namespace Ellis
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static float NativeLog_VectorDot(ref Vector3 parameter);
+        #endregion
 
-
+        #region Entity
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Entity_GetTranslation(ulong entityID, out Vector3 translation);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Entity_SetTranslation(ulong entityID, ref Vector3 translation);
+        #endregion
 
+        #region Input
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Input_IsKeyDown(KeyCode keycode);
+        #endregion
     }
 
     public class Entity

@@ -274,7 +274,7 @@ namespace Ellis {
 	}
 
 	template<typename... T>
-	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, T*... params)
+	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, T&... params)
 	{
 		if constexpr (sizeof...(T) == 0)
 		{
@@ -282,7 +282,8 @@ namespace Ellis {
 		}
 		else
 		{
-			void* paramsPtr[] = { params... };
+			void* paramsPtr[] = { &params... };
+
 			return mono_runtime_invoke(method, instance, paramsPtr, nullptr);
 		}
 	}
@@ -296,8 +297,7 @@ namespace Ellis {
 		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
 
-		UUID entityID = entity.GetUUID();
-		m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, &entityID);
+		m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, entity.GetUUID());
 	}
 
 	void ScriptInstance::InvokeOnCreate()
@@ -307,7 +307,7 @@ namespace Ellis {
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &ts);
+		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, ts);
 	}
 
 }

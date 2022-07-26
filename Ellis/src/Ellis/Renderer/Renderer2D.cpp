@@ -349,7 +349,7 @@ namespace Ellis {
 				NextBatch();
 
 			textureIndex = (float)s_Data.TextureSlotIndex;
-			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
+			s_Data.TextureSlots[(uint32_t)s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
 		}
 

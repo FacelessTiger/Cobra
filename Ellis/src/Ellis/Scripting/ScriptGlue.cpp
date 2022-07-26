@@ -11,6 +11,7 @@ namespace Ellis {
 
 #define EL_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Ellis.InternalCalls::" #Name, Name)
 
+	#pragma region NativeLog
 	static void NativeLog(MonoString* string, int parameter)
 	{
 		char* cStr = mono_string_to_utf8(string);
@@ -31,7 +32,9 @@ namespace Ellis {
 		EL_CORE_WARN("Value: {0}", *parameter);
 		return glm::dot(*parameter, *parameter);
 	}
+	#pragma endregion
 
+	#pragma region Entity
 	static void Entity_GetTranslation(UUID entityID, glm::vec3* outTranslation)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -47,11 +50,14 @@ namespace Ellis {
 
 		entity.GetComponent<TransformComponent>().Translation = *translation;
 	}
+	#pragma endregion
 
+	#pragma region Input
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
 		return Input::IsKeyPressed(keycode);
 	}
+	#pragma endregion
 
 	void ScriptGlue::RegisterFunctions()
 	{

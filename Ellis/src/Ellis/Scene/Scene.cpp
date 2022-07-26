@@ -122,8 +122,8 @@ namespace Ellis {
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-		m_Registry.destroy(entity);
 		m_EntityMap.erase(entity.GetUUID());
+		m_Registry.destroy(entity);
 	}
 
 	void Scene::OnRuntimeStart()
@@ -397,7 +397,6 @@ namespace Ellis {
 	void Scene::RenderScene(EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
-
 		// Draw sprites
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
