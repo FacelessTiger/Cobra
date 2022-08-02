@@ -1,24 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Ellis;
+﻿using Ellis;
 
 namespace Sandbox
 {
     public class Camera : Entity
     {
-        private TransformComponent m_Transform;
-
-        void OnCreate()
-        {
-            Console.WriteLine($"Camera.OnCreate - {ID}");
-
-            m_Transform = GetComponent<TransformComponent>();
-        }
-
         void OnUpdate(float ts)
         {
             float speed = 5.0f;
@@ -35,7 +20,7 @@ namespace Sandbox
                 velocity.X = 1.0f;
 
             velocity *= speed;
-            m_Transform.Translation += velocity * ts;
+            Translation += velocity * ts;
         }
     }
 }
