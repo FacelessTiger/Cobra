@@ -112,6 +112,7 @@ namespace Ellis {
 		LoadAssembly("Resources/Scripts/Ellis-ScriptCore.dll");
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 		
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("Ellis", "Entity");
@@ -249,6 +250,11 @@ namespace Ellis {
 		}
 	}
 
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
+	}
+
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
 	{
 		MonoObject* instance = mono_object_new(s_Data->AppDomain, monoClass);
@@ -283,7 +289,6 @@ namespace Ellis {
 		else
 		{
 			void* paramsPtr[] = { &params... };
-
 			return mono_runtime_invoke(method, instance, paramsPtr, nullptr);
 		}
 	}
@@ -302,12 +307,14 @@ namespace Ellis {
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
+		if (m_OnCreateMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnCreateMethod);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-		m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, ts);
+		if (m_OnUpdateMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, ts);
 	}
 
 }
