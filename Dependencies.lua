@@ -11,8 +11,8 @@ IncludeDir["ImGuizmo"] = "%{wks.location}/Ellis/vendor/ImGuizmo"
 IncludeDir["glm"] = "%{wks.location}/Ellis/vendor/glm"
 IncludeDir["entt"] = "%{wks.location}/Ellis/vendor/entt/include"
 IncludeDir["mono"] = "%{wks.location}/Ellis/vendor/mono/include"
-IncludeDir["shaderc"] = "%{wks.location}/Hazel/vendor/shaderc/include"
-IncludeDir["SPIRV_Cross"] = "%{wks.location}/Hazel/vendor/SPIRV-Cross"
+IncludeDir["shaderc"] = "%{wks.location}/Ellis/vendor/shaderc/include"
+IncludeDir["SPIRV_Cross"] = "%{wks.location}/Ellis/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
 
 LibraryDir = {}

@@ -3,8 +3,8 @@ project "Ellis-ScriptCore"
 	language "C#"
 	dotnetframework "4.7.2"
 
-	targetdir ("%{wks.location}/Ellis-Editor/Resources/Scripts")
-	objdir ("%{wks.location}/Ellis-Editor/Resources/Scripts/Intermediates")
+	targetdir ("../Ellis-Editor/Resources/Scripts")
+	objdir ("../Ellis-Editor/Resources/Scripts/Intermediates")
 
 	files
 	{

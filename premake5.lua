@@ -1,3 +1,4 @@
+include "/vendor/premake/premake_customization/solution_items.lua"
 include "Dependencies.lua"
 
 workspace "Ellis"
