@@ -4,9 +4,11 @@ namespace Sandbox
 {
     public class Camera : Entity
     {
+        public Entity OtherEntity;
+
         void OnUpdate(float ts)
         {
-            float speed = 5.0f;
+            float speed = 10.0f;
             Vector3 velocity = Vector3.Zero;
 
             if (Input.IsKeyDown(KeyCode.Up))

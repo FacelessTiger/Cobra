@@ -50,6 +50,150 @@ namespace Ellis {
 
 		entity.GetComponent<TransformComponent>().Translation = *translation;
 	}
+
+	static void TransformComponent_GetRotation(UUID entityID, glm::vec3* outRotation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outRotation = entity.GetComponent<TransformComponent>().Rotation;
+	}
+
+	static void TransformComponent_SetRotation(UUID entityID, glm::vec3* rotation)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<TransformComponent>().Rotation = *rotation;
+	}
+
+	static void TransformComponent_GetScale(UUID entityID, glm::vec3* outScale)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outScale = entity.GetComponent<TransformComponent>().Scale;
+	}
+
+	static void TransformComponent_SetScale(UUID entityID, glm::vec3* scale)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<TransformComponent>().Scale = *scale;
+	}
+	#pragma endregion
+
+	#pragma region SpriteRendererComponent
+	static void SpriteRendererComponent_GetColor(UUID entityID, glm::vec4* outColor)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outColor = entity.GetComponent<SpriteRendererComponent>().Color;
+	}
+
+	static void SpriteRendererComponent_SetColor(UUID entityID, glm::vec4* color)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<SpriteRendererComponent>().Color = *color;
+	}
+
+	static void SpriteRendererComponent_GetTilingFactor(UUID entityID, float* outTilingFactor)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outTilingFactor = entity.GetComponent<SpriteRendererComponent>().TilingFactor;
+	}
+
+	static void SpriteRendererComponent_SetTilingFactor(UUID entityID, float* tilingFactor)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<SpriteRendererComponent>().TilingFactor = *tilingFactor;
+	}
+	#pragma endregion
+
+	#pragma region CircleRendererComponent
+	static void CircleRendererComponent_GetColor(UUID entityID, glm::vec4* outColor)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outColor = entity.GetComponent<CircleRendererComponent>().Color;
+	}
+
+	static void CircleRendererComponent_SetColor(UUID entityID, glm::vec4* color)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<CircleRendererComponent>().Color = *color;
+	}
+
+	static void CircleRendererComponent_GetThickness(UUID entityID, float* outThickness)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outThickness = entity.GetComponent<CircleRendererComponent>().Thickness;
+	}
+
+	static void CircleRendererComponent_SetThickness(UUID entityID, float* thickness)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<CircleRendererComponent>().Thickness = *thickness;
+	}
+
+	static void CircleRendererComponent_GetFade(UUID entityID, float* outFade)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outFade = entity.GetComponent<CircleRendererComponent>().Fade;
+	}
+
+	static void CircleRendererComponent_SetFade(UUID entityID, float* fade)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<CircleRendererComponent>().Fade = *fade;
+	}
 	#pragma endregion
 
 	#pragma region Rigidbody2DComponent
@@ -125,6 +269,22 @@ namespace Ellis {
 
 		EL_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EL_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
+		EL_ADD_INTERNAL_CALL(TransformComponent_GetRotation);
+		EL_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
+		EL_ADD_INTERNAL_CALL(TransformComponent_GetScale);
+		EL_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+
+		EL_ADD_INTERNAL_CALL(SpriteRendererComponent_GetColor);
+		EL_ADD_INTERNAL_CALL(SpriteRendererComponent_SetColor);
+		EL_ADD_INTERNAL_CALL(SpriteRendererComponent_GetTilingFactor);
+		EL_ADD_INTERNAL_CALL(SpriteRendererComponent_SetTilingFactor);
+
+		EL_ADD_INTERNAL_CALL(CircleRendererComponent_GetColor);
+		EL_ADD_INTERNAL_CALL(CircleRendererComponent_SetColor);
+		EL_ADD_INTERNAL_CALL(CircleRendererComponent_GetThickness);
+		EL_ADD_INTERNAL_CALL(CircleRendererComponent_SetThickness);
+		EL_ADD_INTERNAL_CALL(CircleRendererComponent_GetFade);
+		EL_ADD_INTERNAL_CALL(CircleRendererComponent_SetFade);
 
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulse);
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulseToCenter);

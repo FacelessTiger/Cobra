@@ -7,6 +7,7 @@
 #include <Ellis/Scene/SceneSerializer.h>
 #include <Ellis/Utils/PlatformUtils.h>
 #include <Ellis/Math/Math.h>
+#include <Ellis/Scripting/ScriptEngine.h>
 
 namespace Ellis {
 
@@ -194,6 +195,10 @@ namespace Ellis {
 
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+		if (ImGui::Button("Reload App"))
+		{
+			ScriptEngine::ReloadAppAssembly();
+		}
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
