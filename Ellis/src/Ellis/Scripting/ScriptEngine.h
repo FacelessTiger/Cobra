@@ -36,6 +36,38 @@ namespace Ellis {
 		MonoClassField* ClassField;
 	};
 
+	// ScriptField + data storage
+	class ScriptFieldInstance
+	{
+	private:
+		uint8_t m_Buffer[16];
+
+		friend class ScriptEngine;
+	public:
+		ScriptField Field;
+
+		ScriptFieldInstance()
+		{
+			memset(m_Buffer, 0, sizeof(m_Buffer));
+		}
+
+		template<typename T>
+		T GetValue()
+		{
+			static_assert(sizeof(T) <= 16, "Type too large!");
+			return *(T*)m_Buffer;
+		}
+
+		template<typename T>
+		void SetValue(T value)
+		{
+			static_assert(sizeof(T) <= 16, "Type too large!");
+			memcpy(m_Buffer, &value, sizeof(T));
+		}
+	};
+
+	using ScriptFieldMap = std::unordered_map<std::string, ScriptFieldInstance>;
+
 	class ScriptClass
 	{
 	private:
@@ -70,7 +102,9 @@ namespace Ellis {
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
 
-		inline static char s_FieldValueBuffer[8];
+		inline static uint8_t s_FieldValueBuffer[16];
+
+		friend class ScriptEngine;
 	public:
 		ScriptInstance(Ref<ScriptClass> scriptClass, Entity entity);
 
@@ -82,6 +116,8 @@ namespace Ellis {
 		template<typename T>
 		T GetFieldValue(const std::string& name)
 		{
+			static_assert(sizeof(T) <= 16, "Type too large!");
+
 			bool success = GetFieldValueInternal(name, s_FieldValueBuffer);
 			if (!success)
 				return T();
@@ -90,8 +126,9 @@ namespace Ellis {
 		}
 
 		template<typename T>
-		void SetFieldValue(const std::string& name, const T& value)
+		void SetFieldValue(const std::string& name, T value)
 		{
+			static_assert(sizeof(T) <= 16, "Type too large!");
 			SetFieldValueInternal(name, &value);
 		}
 	private:
@@ -124,7 +161,9 @@ namespace Ellis {
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID entityID);
 
+		static Ref<ScriptClass> GetEntityClass(const std::string& name);
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
+		static ScriptFieldMap& GetScriptFieldMap(Entity entity);
 
 		static MonoImage* GetCoreAssemblyImage();
 	private:

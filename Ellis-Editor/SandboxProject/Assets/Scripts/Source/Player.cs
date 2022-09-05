@@ -9,11 +9,11 @@ namespace Sandbox
 
         public float Speed;
         public float Time = 0.0f;
-        public Vector3 Velocity;
 
         void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
+            Console.WriteLine($"Player.Speed - {Speed}");
 
             m_Rigidbody = GetComponent<Rigidbody2DComponent>();
         }
@@ -21,7 +21,6 @@ namespace Sandbox
         void OnUpdate(float ts)
         {
             Time += ts;
-
             Vector3 velocity = Vector3.Zero;
 
             if (Input.IsKeyDown(KeyCode.W))
@@ -35,7 +34,6 @@ namespace Sandbox
                 velocity.X = 1.0f;
 
             velocity *= Speed;
-            Velocity = velocity;
             m_Rigidbody.ApplyLinearImpulse(velocity.XY * ts, true);
         }
     }

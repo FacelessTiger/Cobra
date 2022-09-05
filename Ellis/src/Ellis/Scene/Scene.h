@@ -27,6 +27,7 @@ namespace Ellis {
 		std::unordered_map<UUID, entt::entity> m_EntityMap;
 
 		b2World* m_PhysicsWorld = nullptr;
+		bool m_IsRunning = false;
 	public:
 		Scene();
 		~Scene();
@@ -52,6 +53,8 @@ namespace Ellis {
 
 		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
+
+		bool IsRunning() const { return m_IsRunning; }
 
 		template<typename... Components>
 		auto GetAllEntitiesWith()
