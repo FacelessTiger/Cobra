@@ -13,7 +13,6 @@ namespace Sandbox
         void OnCreate()
         {
             Console.WriteLine($"Player.OnCreate - {ID}");
-            Console.WriteLine($"Player.Speed - {Speed}");
 
             m_Rigidbody = GetComponent<Rigidbody2DComponent>();
         }

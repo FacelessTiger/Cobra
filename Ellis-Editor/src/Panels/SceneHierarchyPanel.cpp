@@ -318,15 +318,22 @@ namespace Ellis {
 		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 		{
 			bool scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
+			bool stylePushed = false;
 
 			static char buffer[64];
 			strcpy_s(buffer, sizeof(buffer), component.ClassName.c_str());
 
 			if (!scriptClassExists)
+			{
 				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.2f, 0.3f, 1.0f));
+				stylePushed = true;
+			}
 
 			if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+			{
 				component.ClassName = buffer;
+				scriptClassExists = ScriptEngine::EntityClassExists(component.ClassName);
+			}
 
 			// Fields
 			if (scene->IsRunning())
@@ -390,7 +397,7 @@ namespace Ellis {
 				}
 			}
 
-			if (!scriptClassExists)
+			if (stylePushed)
 				ImGui::PopStyleColor();
 		});
 

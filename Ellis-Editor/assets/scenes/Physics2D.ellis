@@ -70,6 +70,13 @@ Entities:
       Scale: [1, 1, 1]
     ScriptComponent:
       ClassName: Sandbox.Player
+      ScriptFields:
+        - Name: Speed
+          Type: Float
+          Data: 20
+        - Name: Time
+          Type: Float
+          Data: -5
     SpriteRendererComponent:
       Color: [1, 1, 1, 1]
       TilingFactor: 1
@@ -103,6 +110,8 @@ Entities:
       FixedAspectRatio: false
     ScriptComponent:
       ClassName: Sandbox.Camera
+      ScriptFields:
+        []
   - Entity: 12605842102142915698
     TagComponent:
       Tag: Block
