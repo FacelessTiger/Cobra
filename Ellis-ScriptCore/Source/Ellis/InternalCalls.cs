@@ -8,6 +8,12 @@ namespace Ellis
         #region Entity
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Entity_HasComponent(ulong entityID, Type componentType);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static ulong Entity_FindEntityByName(string name);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static object Entity_GetScriptInstance(ulong entityID);
         #endregion
 
         #region TransformComponent

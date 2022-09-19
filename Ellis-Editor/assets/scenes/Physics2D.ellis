@@ -111,7 +111,9 @@ Entities:
     ScriptComponent:
       ClassName: Sandbox.Camera
       ScriptFields:
-        []
+        - Name: DistanceFromPlayer
+          Type: Float
+          Data: 10
   - Entity: 12605842102142915698
     TagComponent:
       Tag: Block

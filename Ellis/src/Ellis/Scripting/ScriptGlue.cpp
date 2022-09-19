@@ -28,6 +28,26 @@ namespace Ellis {
 		EL_CORE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 	}
+
+	static uint64_t Entity_FindEntityByName(MonoString* name)
+	{
+		char* nameCStr = mono_string_to_utf8(name);
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->FindEntityByName(nameCStr);
+		mono_free(nameCStr);
+
+		if (!entity)
+			return 0;
+
+		return entity.GetUUID();
+	}
+
+	static MonoObject* Entity_GetScriptInstance(UUID entityID)
+	{
+		return ScriptEngine::GetManagedInstance(entityID);
+	}
 	#pragma endregion
 
 	#pragma region TransformComponent
@@ -266,6 +286,8 @@ namespace Ellis {
 	void ScriptGlue::RegisterFunctions()
 	{
 		EL_ADD_INTERNAL_CALL(Entity_HasComponent);
+		EL_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+		EL_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
 
 		EL_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		EL_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
