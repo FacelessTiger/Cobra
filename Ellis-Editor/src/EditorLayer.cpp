@@ -170,6 +170,13 @@ namespace Ellis {
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload assembly", "Ctrl+R")) ScriptEngine::ReloadAssembly();
+
+				ImGui::EndMenu();
+			}
+
 			ImGui::EndMenuBar();
 		}
 
@@ -194,10 +201,6 @@ namespace Ellis {
 
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
-		if (ImGui::Button("Reload App"))
-		{
-			ScriptEngine::ReloadAppAssembly();
-		}
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
@@ -408,17 +411,37 @@ namespace Ellis {
 
 			// Gizmo
 			case Key::Q:
-				m_GizmoType = -1;
+			{
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = -1;
 				break;
+			}
 			case Key::W:
-				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+			{
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
+			}
 			case Key::E:
-				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+			{
+				if (!ImGuizmo::IsUsing())
+					m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
+			}
 			case Key::R:
-				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+			{
+				if (control)
+				{
+					ScriptEngine::ReloadAssembly();
+				}
+				else
+				{
+					if (!ImGuizmo::IsUsing())
+						m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				}
+
 				break;
+			}
 		}
 
 		return false;
@@ -507,7 +530,6 @@ namespace Ellis {
 		m_EditorScene = CreateRef<Scene>();
 		m_ActiveScene = m_EditorScene;
 
-		//m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 
 		m_EditorScenePath = std::filesystem::path();
@@ -537,7 +559,6 @@ namespace Ellis {
 		if (serializer.Deserialize(path.string()))
 		{
 			m_EditorScene = newScene;
-			//m_EditorScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetContext(m_EditorScene);
 
 			m_ActiveScene = m_EditorScene;

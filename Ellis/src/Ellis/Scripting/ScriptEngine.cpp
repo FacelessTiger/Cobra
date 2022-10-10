@@ -132,6 +132,9 @@ namespace Ellis {
 		MonoAssembly* AppAssembly = nullptr;
 		MonoImage* AppAssemblyImage = nullptr;
 
+		std::filesystem::path CoreAssemblyFilepath;
+		std::filesystem::path AppAssemblyFilepath;
+
 		ScriptClass EntityClass;
 
 		std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
@@ -149,12 +152,13 @@ namespace Ellis {
 		s_Data = new ScriptEngineData();
 
 		InitMono();
+		ScriptGlue::RegisterFunctions();
+
 		LoadAssembly("Resources/Scripts/Ellis-ScriptCore.dll");
 		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
 		LoadAssemblyClasses();
 		
 		ScriptGlue::RegisterComponents();
-		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("Ellis", "Entity", true);
 	}
@@ -190,6 +194,7 @@ namespace Ellis {
 		s_Data->AppDomain = mono_domain_create_appdomain("EllisScriptRuntime", nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
+		s_Data->CoreAssemblyFilepath = filepath;
 		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath);
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
 		// Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
@@ -197,8 +202,23 @@ namespace Ellis {
 
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
+		s_Data->AppAssemblyFilepath = filepath;
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath);
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
+	}
+
+	void ScriptEngine::ReloadAssembly()
+	{
+		mono_domain_set(mono_get_root_domain(), false);
+		mono_domain_unload(s_Data->AppDomain);
+
+		LoadAssembly(s_Data->CoreAssemblyFilepath);
+		LoadAppAssembly(s_Data->AppAssemblyFilepath);
+		LoadAssemblyClasses();
+
+		ScriptGlue::RegisterComponents();
+
+		s_Data->EntityClass = ScriptClass("Ellis", "Entity", true);
 	}
 
 	bool ScriptEngine::EntityClassExists(const std::string& fullClassName)
@@ -246,21 +266,6 @@ namespace Ellis {
 	{
 		s_Data->SceneContext = nullptr;
 		s_Data->EntityInstances.clear();
-	}
-
-	void ScriptEngine::ReloadAppAssembly()
-	{
-		mono_domain_set(mono_get_root_domain(), true);
-		mono_domain_unload(s_Data->AppDomain);
-
-		LoadAssembly("Resources/Scripts/Ellis-ScriptCore.dll");
-		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
-		LoadAssemblyClasses();
-
-		ScriptGlue::RegisterComponents();
-		ScriptGlue::RegisterFunctions();
-
-		s_Data->EntityClass = ScriptClass("Ellis", "Entity", true);
 	}
 
 	Scene* ScriptEngine::GetSceneContext()

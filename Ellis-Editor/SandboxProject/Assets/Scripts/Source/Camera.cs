@@ -33,6 +33,8 @@ namespace Sandbox
                 velocity.X = 1.0f;
 
             velocity *= speed;
+            DistanceFromPlayer += ts;
+
             Translation += velocity * ts;
         }
     }

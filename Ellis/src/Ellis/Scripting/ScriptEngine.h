@@ -150,15 +150,14 @@ namespace Ellis {
 		static void LoadAssembly(const std::filesystem::path& filepath);
 		static void LoadAppAssembly(const std::filesystem::path& filepath);
 
+		static void ReloadAssembly();
+
 		static bool EntityClassExists(const std::string& fullClassName);
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, Timestep ts);
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
-
-		// Temp
-		static void ReloadAppAssembly();
 
 		static Scene* GetSceneContext();
 		static Ref<ScriptInstance> GetEntityScriptInstance(UUID entityID);
