@@ -48,6 +48,9 @@ namespace Ellis {
 
 		bool m_Running = true;
 		bool m_Minimized = false;
+
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueMutex;
 	public:
 		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
@@ -58,6 +61,8 @@ namespace Ellis {
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
+
+		void SubmitToMainThread(const std::function<void()>& function);
 
 		inline Window& GetWindow() { return *m_Window; }
 		inline ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
@@ -70,6 +75,8 @@ namespace Ellis {
 
 		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
+
+		void ExecuteMainThreadQueue();
 	};
 
 	// To be defined in client

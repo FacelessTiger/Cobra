@@ -18,8 +18,9 @@ project "Ellis-Editor"
 		"%{wks.location}/Ellis/vendor/spdlog/include",
 		"%{wks.location}/Ellis/src",
 		"%{wks.location}/Ellis/vendor",
-		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.filewatch}",
+		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGuizmo}"
 	}
 
