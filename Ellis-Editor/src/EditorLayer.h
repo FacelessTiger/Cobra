@@ -35,7 +35,7 @@ namespace Ellis {
 		ContentBrowserPanel m_ContentBrowserPanel;
 
 		// Editor resources
-		Ref<Texture2D> m_IconPlay, m_IconSimulate, m_IconStop;
+		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconSimulate, m_IconStep, m_IconStop;
 	public:
 		EditorLayer();
 		virtual ~EditorLayer() = default;
@@ -62,6 +62,7 @@ namespace Ellis {
 		void OnScenePlay();
 		void OnSceneSimulate();
 		void OnSceneStop();
+		void OnScenePause();
 
 		void OnDuplicateEntity();
 

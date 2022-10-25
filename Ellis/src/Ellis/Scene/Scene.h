@@ -28,6 +28,8 @@ namespace Ellis {
 
 		b2World* m_PhysicsWorld = nullptr;
 		bool m_IsRunning = false;
+		bool m_IsPaused = false;
+		int m_StepFrames = 0;
 	public:
 		Scene();
 		~Scene();
@@ -56,6 +58,11 @@ namespace Ellis {
 		Entity GetPrimaryCameraEntity();
 
 		bool IsRunning() const { return m_IsRunning; }
+		bool IsPaused() const { return m_IsPaused; }
+
+		void SetPause(bool paused) { m_IsPaused = paused; }
+
+		void Step(int frames);
 
 		template<typename... Components>
 		auto GetAllEntitiesWith()
