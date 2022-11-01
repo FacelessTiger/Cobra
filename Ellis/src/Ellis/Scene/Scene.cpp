@@ -164,7 +164,7 @@ namespace Ellis {
 
 	void Scene::OnUpdateRuntime(Timestep ts)
 	{
-		if (!m_IsPaused || m_StepFrames-- > 0)
+		if (!m_IsPaused || m_StepFrames > 0)
 		{
 			// Update scripts
 			{
@@ -212,6 +212,8 @@ namespace Ellis {
 					transform.Rotation.z = body->GetAngle();
 				}
 			}
+
+			m_StepFrames = m_StepFrames > 0 ? --m_StepFrames : m_StepFrames;
 		}
 
 		// Render 2D
@@ -263,7 +265,7 @@ namespace Ellis {
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
 	{
-		if (!m_IsPaused || m_StepFrames-- > 0)
+		if (!m_IsPaused || m_StepFrames > 0)
 		{
 			// Physics
 			{
@@ -287,6 +289,8 @@ namespace Ellis {
 					transform.Rotation.z = body->GetAngle();
 				}
 			}
+
+			m_StepFrames = m_StepFrames > 0 ? --m_StepFrames : m_StepFrames;
 		}
 
 		// Render
