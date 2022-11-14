@@ -304,7 +304,7 @@ namespace Ellis {
 		}
 		else
 		{
-			EL_CORE_ERROR("Could not find ScriptInstance for entity {}", entity);
+			EL_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
 		}
 	}
 
