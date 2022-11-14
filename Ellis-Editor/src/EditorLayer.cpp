@@ -336,7 +336,7 @@ namespace Ellis {
 		{
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? m_IconPlay : m_IconStop;
 
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
 					OnScenePlay();
@@ -351,7 +351,7 @@ namespace Ellis {
 				ImGui::SameLine();
 
 			Ref<Texture2D> icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? m_IconSimulate : m_IconStop;
-			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
 			{
 				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
 					OnSceneSimulate();
@@ -365,7 +365,7 @@ namespace Ellis {
 			bool isPaused = m_ActiveScene->IsPaused();
 
 			ImGui::SameLine();
-			if (ImGui::ImageButton((ImTextureID)m_IconPause->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
+			if (ImGui::ImageButton((ImTextureID)(uint64_t)m_IconPause->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
 			{
 				m_ActiveScene->SetPause(!isPaused);
 			}
@@ -374,7 +374,7 @@ namespace Ellis {
 			if (isPaused)
 			{
 				ImGui::SameLine();
-				if (ImGui::ImageButton((ImTextureID)m_IconStep->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
+				if (ImGui::ImageButton((ImTextureID)(uint64_t)m_IconStep->GetRendererID(), { size, size }, { 0, 0 }, { 1, 1 }, 0, { 0, 0, 0, 0 }, tintColor) && toolbarEnabled)
 				{
 					m_ActiveScene->Step(1);
 				}

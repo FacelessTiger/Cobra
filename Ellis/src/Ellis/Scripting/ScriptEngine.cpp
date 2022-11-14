@@ -2,7 +2,9 @@
 #include "ScriptEngine.h"
 
 #include "ScriptGlue.h"
-#include "Ellis/Core/Application.h"
+#include <Ellis/Core/Application.h>
+#include <Ellis/Core/Buffer.h>
+#include <Ellis/Core/FileSystem.h>
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
@@ -38,42 +40,13 @@ namespace Ellis {
 
 	namespace Utils {
 
-		static char* ReadBytes(const std::filesystem::path& filepath, uint32_t* outSize)
-		{
-			std::ifstream stream(filepath, std::ios::binary | std::ios::ate);
-
-			if (!stream)
-			{
-				// Failed to open the file
-				return nullptr;
-			}
-
-			std::streampos end = stream.tellg();
-			stream.seekg(0, std::ios::beg);
-			uint64_t size = end - stream.tellg();
-
-			if (size == 0)
-			{
-				// File is empty
-				return nullptr;
-			}
-
-			char* buffer = new char[size];
-			stream.read((char*)buffer, size);
-			stream.close();
-
-			*outSize = (uint32_t)size;
-			return buffer;
-		}
-
 		static MonoAssembly* LoadMonoAssembly(const std::filesystem::path& assemblyPath, bool loadPDB = false)
 		{
-			uint32_t fileSize = 0;
-			char* fileData = ReadBytes(assemblyPath, &fileSize);
+			ScopedBuffer fileData = FileSystem::ReadFileBinary(assemblyPath);
 
 			// NOTE: We can't use this image for anything other than loading the assembly because this image doesn't have a reference to the assembly
 			MonoImageOpenStatus status;
-			MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
+			MonoImage* image = mono_image_open_from_data_full(fileData.As<char>(), fileData.Size(), 1, &status, 0);
 
 			if (status != MONO_IMAGE_OK)
 			{
@@ -89,21 +62,16 @@ namespace Ellis {
 
 				if (std::filesystem::exists(pdbPath))
 				{
-					uint32_t pdbFileSize = 0;
-					char* pdbFileData = ReadBytes(pdbPath, &pdbFileSize);
+					ScopedBuffer pdbFileData = FileSystem::ReadFileBinary(pdbPath);
 
-					mono_debug_open_image_from_memory(image, (const mono_byte*)pdbFileData, pdbFileSize);
+					mono_debug_open_image_from_memory(image, pdbFileData.As<const mono_byte>(), pdbFileData.Size());
 					EL_CORE_INFO("Loaded PDB {}", pdbPath);
-					delete[] pdbFileData;
 				}
 			}
 
 			std::string pathString = assemblyPath.string();
 			MonoAssembly* assembly = mono_assembly_load_from_full(image, pathString.c_str(), &status, 0);
 			mono_image_close(image);
-
-			// Don't forget to free the file data
-			delete[] fileData;
 
 			return assembly;
 		}
@@ -180,8 +148,20 @@ namespace Ellis {
 		InitMono();
 		ScriptGlue::RegisterFunctions();
 
-		LoadAssembly("Resources/Scripts/Ellis-ScriptCore.dll");
-		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		bool status = LoadAssembly("Resources/Scripts/Ellis-ScriptCore.dll");
+		if (!status) 
+		{
+			EL_CORE_ERROR("[ScriptEngine] Could not load Ellis-ScriptCore assembly");
+			return;
+		}
+
+		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		if (!status)
+		{
+			EL_CORE_ERROR("[ScriptEngine] Could not load app assembly");
+			return;
+		}
+
 		LoadAssemblyClasses();
 		
 		ScriptGlue::RegisterComponents();
@@ -231,15 +211,18 @@ namespace Ellis {
 		s_Data->RootDomain = nullptr;
 	}
 
-	void ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->AppDomain = mono_domain_create_appdomain("EllisScriptRuntime", nullptr);
 		mono_domain_set(s_Data->AppDomain, true);
 
 		s_Data->CoreAssemblyFilepath = filepath;
 		s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath, s_Data->EnableDebugging);
+		if (s_Data->CoreAssembly == nullptr)
+			return false;
+
 		s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
-		// Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
+		return true;
 	}
 
 	static void OnAppAssemblyFileSystemEvent(const std::string& path, const filewatch::Event change_type)
@@ -256,14 +239,18 @@ namespace Ellis {
 		}
 	}
 
-	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
+	bool ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->AppAssemblyFilepath = filepath;
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath, s_Data->EnableDebugging);
+		if (s_Data->AppAssembly == nullptr)
+			return false;
+
 		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 
 		s_Data->AppAssemblyFileWatcher = CreateScope<filewatch::FileWatch<std::string>>(filepath.string(), OnAppAssemblyFileSystemEvent);
 		s_Data->AssemblyReloadPending = false;
+		return true;
 	}
 
 	void ScriptEngine::ReloadAssembly()
@@ -310,10 +297,15 @@ namespace Ellis {
 	void ScriptEngine::OnUpdateEntity(Entity entity, Timestep ts)
 	{
 		UUID entityUUID = entity.GetUUID();
-		EL_CORE_ASSERT(s_Data->EntityInstances.find(entityUUID) != s_Data->EntityInstances.end());
-
-		Ref<ScriptInstance> instance = s_Data->EntityInstances[entityUUID];
-		instance->InvokeOnUpdate((float)ts);
+		if (s_Data->EntityInstances.find(entityUUID) != s_Data->EntityInstances.end())
+		{
+			Ref<ScriptInstance> instance = s_Data->EntityInstances[entityUUID];
+			instance->InvokeOnUpdate((float)ts);
+		}
+		else
+		{
+			EL_CORE_ERROR("Could not find ScriptInstance for entity {}", entity);
+		}
 	}
 
 	void ScriptEngine::OnRuntimeStart(Scene* scene)
