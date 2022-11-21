@@ -11,8 +11,6 @@
 
 namespace Ellis {
 
-	extern const std::filesystem::path g_AssetsPath;
-
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
 	{ }
@@ -39,8 +37,13 @@ namespace Ellis {
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
-			auto sceneFilePath = commandLineArgs[1];
-			OpenScene(sceneFilePath);
+			auto projectFilePath = commandLineArgs[1];
+			OpenProject(projectFilePath);
+		}
+		else
+		{
+			// TODO: prompt the user to select a directory
+			NewProject();
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -183,7 +186,7 @@ namespace Ellis {
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
-		m_ContentBrowserPanel.OnImGuiRender();
+		m_ContentBrowserPanel->OnImGuiRender();
 
 		ImGui::Begin("Stats");
 
@@ -233,11 +236,11 @@ namespace Ellis {
 
 				if (filePath.extension().string() == ".ellis")
 				{
-					OpenScene(g_AssetsPath / path);
+					OpenScene(path);
 				}
 				else if (filePath.extension().string() == ".png")
 				{
-					std::filesystem::path texturePath = g_AssetsPath / path;
+					std::filesystem::path texturePath = path;
 					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
 
 					if (texture->IsLoaded())
@@ -554,6 +557,26 @@ namespace Ellis {
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void EditorLayer::NewProject()
+	{
+		Project::New();
+	}
+
+	void EditorLayer::OpenProject(const std::filesystem::path& path)
+	{
+		if (Project::Load(path))
+		{
+			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
+			OpenScene(startScenePath);
+			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+		}
+	}
+
+	void EditorLayer::SaveProject()
+	{
+		// Project::SaveActive();
 	}
 
 	void EditorLayer::NewScene()

@@ -32,7 +32,7 @@ namespace Ellis {
 
 		// Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
-		ContentBrowserPanel m_ContentBrowserPanel;
+		Scope<ContentBrowserPanel> m_ContentBrowserPanel;
 
 		// Editor resources
 		Ref<Texture2D> m_IconPlay, m_IconPause, m_IconSimulate, m_IconStep, m_IconStop;
@@ -50,6 +50,10 @@ namespace Ellis {
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
 		void OnOverlayRender();
+
+		void NewProject();
+		void OpenProject(const std::filesystem::path& path);
+		void SaveProject();
 
 		void NewScene();
 		void OpenScene();

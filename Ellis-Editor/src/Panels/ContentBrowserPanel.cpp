@@ -1,14 +1,14 @@
 #include "elpch.h"
 #include "ContentBrowserPanel.h"
 
+#include "Ellis/Project/Project.h"
+
 #include <imgui/imgui.h>
 
 namespace Ellis {
 
-	extern const std::filesystem::path g_AssetsPath = "assets";
-
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_CurrentDirectory(g_AssetsPath)
+		: m_BaseDirectory(Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
 	{ 
 		m_DirectoryIcon = Texture2D::Create("Resources/Icons/ContentBrowser/DirectoryIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/ContentBrowser/FileIcon.png");
@@ -18,7 +18,7 @@ namespace Ellis {
 	{
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != g_AssetsPath)
+		if (m_CurrentDirectory != m_BaseDirectory)
 		{
 			if (ImGui::Button("<-"))
 			{
@@ -68,7 +68,7 @@ namespace Ellis {
 
 			if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 			{
-				auto relativePath = std::filesystem::relative(path, g_AssetsPath);
+				std::filesystem::path relativePath(path);
 				const wchar_t* itemPath = relativePath.c_str();
 
 				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));

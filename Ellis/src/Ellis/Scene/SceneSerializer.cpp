@@ -5,6 +5,7 @@
 #include "Ellis/Scene/Components.h"
 #include "Ellis/Scripting/ScriptEngine.h"
 #include "Ellis/Core/UUID.h"
+#include "Ellis/Project/Project.h"
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -290,7 +291,7 @@ namespace Ellis {
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			if (spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << spriteRendererComponent.Texture->GetPath();
+				out << YAML::Key << "TexturePath" << YAML::Value << std::filesystem::relative(spriteRendererComponent.Texture->GetPath(), Project::GetAssetDirectory()).string();
 
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 
@@ -508,7 +509,11 @@ namespace Ellis {
 
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					if (spriteRendererComponent["TexturePath"])
-						src.Texture = Texture2D::Create(spriteRendererComponent["TexturePath"].as<std::string>());
+					{
+						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
+						auto path = Project::GetAssetFileSystemPath(texturePath);
+						src.Texture = Texture2D::Create(path.string());
+					}
 
 					if (spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();

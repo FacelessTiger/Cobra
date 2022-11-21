@@ -20,6 +20,8 @@
 #include "Ellis/Scene/ScriptableEntity.h"
 #include "Ellis/Scene/Components.h"
 
+#include "Ellis/Project/Project.h"
+
 // --- Renderer ------
 #include "Ellis/Renderer/Renderer.h"
 #include "Ellis/Renderer/Renderer2D.h"

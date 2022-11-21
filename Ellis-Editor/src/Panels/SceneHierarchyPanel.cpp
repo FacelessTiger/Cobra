@@ -10,8 +10,6 @@
 
 namespace Ellis {
 
-	extern const std::filesystem::path g_AssetsPath;
-
 	SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
 	{
 		SetContext(context);
@@ -413,7 +411,7 @@ namespace Ellis {
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
 					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path texturePath = g_AssetsPath / path;
+					std::filesystem::path texturePath(path);
 					component.Texture = Texture2D::Create(texturePath.string());
 				}
 
