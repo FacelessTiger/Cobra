@@ -43,7 +43,11 @@ namespace Ellis {
 		else
 		{
 			// TODO: prompt the user to select a directory
-			NewProject();
+			// NewProject();
+
+			// if no project is open close Ellis
+			if (!OpenProject())
+				Application::Get().Close();
 		}
 
 		m_EditorCamera = EditorCamera(30.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -166,8 +170,11 @@ namespace Ellis {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New", "Ctrl+N")) NewScene();
-				if (ImGui::MenuItem("Open...", "Crtl+O")) OpenScene();
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O")) OpenProject();
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("New Scene", "Ctrl+N")) NewScene();
 				if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
 				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
 				if (ImGui::MenuItem("Exit")) Application::Get().Close();
@@ -419,7 +426,7 @@ namespace Ellis {
 			case Key::O:
 			{
 				if (control)
-					OpenScene();
+					OpenProject();
 				break;
 			}
 
@@ -562,6 +569,16 @@ namespace Ellis {
 	void EditorLayer::NewProject()
 	{
 		Project::New();
+	}
+
+	bool EditorLayer::OpenProject()
+	{
+		std::string filepath = FileDialogs::OpenFile("Ellis Project (*.eproj)\0*.eproj\0");
+		if (filepath.empty())
+			return false;
+
+		OpenProject(filepath);
+		return true;
 	}
 
 	void EditorLayer::OpenProject(const std::filesystem::path& path)
