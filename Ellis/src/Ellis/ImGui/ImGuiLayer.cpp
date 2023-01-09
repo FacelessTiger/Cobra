@@ -4,6 +4,8 @@
 #include "Ellis/Core/Application.h"
 
 #include <imgui.h>
+#include <imgui_internal.h>
+
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
@@ -142,6 +144,11 @@ namespace Ellis {
 		colors[ImGuiCol_TitleBg] = { 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgActive] = { 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed] = { 0.15f, 0.1505f, 0.151f, 1.0f };
+	}
+
+	uint32_t ImGuiLayer::GetActiveWidgetID() const
+	{
+		return GImGui->ActiveId;
 	}
 
 }

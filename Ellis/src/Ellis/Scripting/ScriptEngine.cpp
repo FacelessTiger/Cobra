@@ -5,6 +5,7 @@
 #include <Ellis/Core/Application.h>
 #include <Ellis/Core/Buffer.h>
 #include <Ellis/Core/FileSystem.h>
+#include <Ellis/Project/Project.h>
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
@@ -159,7 +160,9 @@ namespace Ellis {
 			return;
 		}
 
-		status = LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
+		auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		status = LoadAppAssembly(scriptModulePath);
+
 		if (!status)
 		{
 			EL_CORE_ERROR("[ScriptEngine] Could not load app assembly");

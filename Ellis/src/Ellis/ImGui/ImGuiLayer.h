@@ -27,6 +27,8 @@ namespace Ellis {
 
 		void BlockEvents(bool block) { m_BlockEvents = block; }
 		void SetDarkThemeColors();
+
+		uint32_t GetActiveWidgetID() const;
 	};
 
 }

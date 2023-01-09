@@ -4,6 +4,7 @@
 #include "Ellis/Scripting/ScriptEngine.h"
 #include "Ellis/Core/KeyCodes.h"
 #include "Ellis/Core/Input.h"
+#include "Ellis/Physics/Physics2D.h"
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
@@ -242,6 +243,46 @@ namespace Ellis {
 
 		body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
 	}
+
+	static void Rigidbody2DComponent_GetLinearVelocity(UUID entityID, glm::vec2* outLinearVelocity)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+
+		const b2Vec2& linearVelocity = body->GetLinearVelocity();
+		*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
+	}
+
+	static Rigidbody2DComponent::BodyType Rigidbody2DComponent_GetType(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+
+		return Utils::Rigidbody2DTypeFromBox2DBody(body->GetType());
+	}
+
+	static void Rigidbody2DComponent_SetType(UUID entityID, Rigidbody2DComponent::BodyType bodyType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		auto& rb2d = entity.GetComponent<Rigidbody2DComponent>();
+		b2Body* body = (b2Body*)rb2d.RuntimeBody;
+
+		body->SetType(Utils::Rigidbody2DTypeToBox2DBody(bodyType));
+	}
 	#pragma endregion
 
 	#pragma region Input
@@ -311,6 +352,9 @@ namespace Ellis {
 
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulse);
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulseToCenter);
+		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
+		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
+		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetType);
 
 		EL_ADD_INTERNAL_CALL(Input_IsKeyDown);
 	}
