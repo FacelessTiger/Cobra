@@ -8,12 +8,17 @@
 #include <Ellis/Utils/PlatformUtils.h>
 #include <Ellis/Math/Math.h>
 #include <Ellis/Scripting/ScriptEngine.h>
+#include <Ellis/Renderer/Font.h>
 
 namespace Ellis {
 
+	static Ref<Font> s_Font;
+
 	EditorLayer::EditorLayer()
 		: Layer("EditorLayer")
-	{ }
+	{ 
+		s_Font = Font::GetDefault();
+	}
 
 	void EditorLayer::OnAttach()
 	{
@@ -215,6 +220,9 @@ namespace Ellis {
 
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
+
+		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
+
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0, 0 });
