@@ -3,6 +3,7 @@
 #include "Ellis/Core/UUID.h"
 #include "Ellis/Scene/SceneCamera.h"
 #include "Ellis/Renderer/Texture.h"
+#include "Ellis/Renderer/Font.h"
 
 #include <glm/glm.hpp>
 #include <string>
@@ -160,6 +161,18 @@ namespace Ellis {
 		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
 	};
 
+	struct TextComponent
+	{
+		std::string TextString;
+		Ref<Font> FontAsset = Font::GetDefault();
+		float Kerning = 0.0f;
+		float LineSpacing = 0.0f;
+		glm::vec4 Color = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+		TextComponent() = default;
+		TextComponent(const TextComponent&) = default;
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{ };
@@ -167,6 +180,6 @@ namespace Ellis {
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
-		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
+		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, TextComponent>;
 
 }
