@@ -7,12 +7,23 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <optional>
 #include <glm/gtc/matrix_transform.hpp>
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+#include <entt.hpp>
 
 namespace Ellis {
+
+	struct RelationshipComponent
+	{
+		std::vector<UUID> Children;
+		std::optional<UUID> Parent;
+
+		RelationshipComponent() = default;
+		RelationshipComponent(const RelationshipComponent&) = default;
+	};
 
 	struct IDComponent
 	{
@@ -178,7 +189,7 @@ namespace Ellis {
 	{ };
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,
+		ComponentGroup<RelationshipComponent, TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, TextComponent>;
 

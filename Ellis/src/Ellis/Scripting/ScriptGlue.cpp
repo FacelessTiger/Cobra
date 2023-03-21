@@ -3,15 +3,51 @@
 
 #include "Ellis/Scripting/ScriptEngine.h"
 #include "Ellis/Core/KeyCodes.h"
+#include "Ellis/Core/MouseButtonCodes.h"
 #include "Ellis/Core/Input.h"
 #include "Ellis/Physics/Physics2D.h"
+#include "Ellis/Core/Application.h"
 
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
+#include <mono/metadata/appdomain.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <box2d/b2_body.h>
 
 namespace Ellis {
+
+	namespace Utils {
+		std::string MonoStringToString(MonoString* string)
+		{
+			char* cStr = mono_string_to_utf8(string);
+			std::string str(cStr);
+			
+			mono_free(cStr);
+			return str;
+		}
+
+		MonoArray* Mat4ToMonoArray(const glm::mat4& matrix)
+		{
+			float* pointer = (float*)glm::value_ptr(matrix);
+			MonoArray* ret = ScriptEngine::CreateArray(mono_get_single_class(), 4 * 4);
+
+			for (int i = 0; i < 4 * 4; i++)
+				mono_array_set(ret, float, i, pointer[i]);
+
+			return ret;
+		}
+
+		glm::mat4 MonoArrayToMat4(MonoArray* array)
+		{
+			float cppArray[16];
+
+			for (int i = 0; i < 4 * 4; i++)
+				cppArray[i] = mono_array_get(array, float, i);
+
+			return glm::make_mat4(cppArray);
+		}
+	}
 
 	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
 
@@ -43,6 +79,16 @@ namespace Ellis {
 			return 0;
 
 		return entity.GetUUID();
+	}
+
+	static uint32_t Entity_GetWindowWidth()
+	{
+		return Application::Get().GetWindow().GetWidth();
+	}
+
+	static uint32_t Entity_GetWindowHeight()
+	{
+		return Application::Get().GetWindow().GetHeight();
 	}
 
 	static MonoObject* Entity_GetScriptInstance(UUID entityID)
@@ -110,6 +156,17 @@ namespace Ellis {
 		EL_CORE_ASSERT(entity);
 
 		entity.GetComponent<TransformComponent>().Scale = *scale;
+	}
+
+	static MonoArray* TransformComponent_GetTransform(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		glm::mat4 transform = entity.GetComponent<TransformComponent>().GetTransform();
+		return Utils::Mat4ToMonoArray(transform);
 	}
 	#pragma endregion
 
@@ -217,6 +274,19 @@ namespace Ellis {
 	}
 	#pragma endregion
 
+	#pragma region CameraComponent
+	static MonoArray* CameraComponent_GetProjection(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		glm::mat4 projection = entity.GetComponent<CameraComponent>().Camera.GetProjection();
+		return Utils::Mat4ToMonoArray(projection);
+	}
+	#pragma endregion
+
 	#pragma region Rigidbody2DComponent
 	static void Rigidbody2DComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* worldPosition, bool wake)
 	{
@@ -285,10 +355,134 @@ namespace Ellis {
 	}
 	#pragma endregion
 
+	#pragma region TextComponent
+	static MonoString* TextComponent_GetText(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+		EL_CORE_ASSERT(entity.HasComponent<TextComponent>());
+
+		auto& str = entity.GetComponent<TextComponent>().TextString;
+		return ScriptEngine::CreateString(str.c_str());
+	}
+
+	static void TextComponent_SetText(UUID entityID, MonoString* textString)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+		EL_CORE_ASSERT(entity.HasComponent<TextComponent>());
+
+		entity.GetComponent<TextComponent>().TextString = Utils::MonoStringToString(textString);
+	}
+
+	static void TextComponent_GetKerning(UUID entityID, float* outKerning)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outKerning = entity.GetComponent<TextComponent>().Kerning;
+	}
+
+	static void TextComponent_SetKerning(UUID entityID, float* kerning)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<TextComponent>().Kerning = *kerning;
+	}
+
+	static void TextComponent_GetLineSpacing(UUID entityID, float* outLineSpacing)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outLineSpacing = entity.GetComponent<TextComponent>().LineSpacing;
+	}
+
+	static void TextComponent_SetLineSpacing(UUID entityID, float* lineSpacing)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<TextComponent>().LineSpacing = *lineSpacing;
+	}
+
+	static void TextComponent_GetColor(UUID entityID, glm::vec4* outColor)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		*outColor = entity.GetComponent<TextComponent>().Color;
+	}
+
+	static void TextComponent_SetColor(UUID entityID, glm::vec4* color)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		entity.GetComponent<TextComponent>().Color = *color;
+	}
+	#pragma endregion
+
 	#pragma region Input
 	static bool Input_IsKeyDown(KeyCode keycode)
 	{
 		return Input::IsKeyPressed(keycode);
+	}
+
+	static bool Input_IsMouseButtonDown(MouseCode mousecode)
+	{
+		return Input::IsMouseButtonPressed(mousecode);
+	}
+
+	static float Input_GetMouseX()
+	{
+		return Input::GetMouseX();
+	}
+
+	static float Input_GetMouseY()
+	{
+		return Input::GetMouseY();
+	}
+	#pragma endregion
+
+	#pragma region Matrix4
+	static MonoArray* Matrix4_Inverse(MonoArray* array)
+	{
+		glm::mat4 inversedMatrix = glm::inverse(Utils::MonoArrayToMat4(array));
+		return Utils::Mat4ToMonoArray(inversedMatrix);
+	}
+
+	static MonoArray* Matrix4_MultiplyMat4Mat4(MonoArray* left, MonoArray* right)
+	{
+		glm::mat4 leftMatrix = Utils::MonoArrayToMat4(left);
+		glm::mat4 rightMatrix = Utils::MonoArrayToMat4(right);
+
+		glm::mat4 ret = leftMatrix * rightMatrix;
+		return Utils::Mat4ToMonoArray(ret);
+	}
+
+	static glm::vec4 Matrix4_MultiplyMat4Vec4(MonoArray* left, glm::vec4 right)
+	{
+		glm::mat4 leftMatrix = Utils::MonoArrayToMat4(left);
+
+		return leftMatrix * right;
 	}
 	#pragma endregion
 
@@ -329,6 +523,8 @@ namespace Ellis {
 	{
 		EL_ADD_INTERNAL_CALL(Entity_HasComponent);
 		EL_ADD_INTERNAL_CALL(Entity_FindEntityByName);
+		EL_ADD_INTERNAL_CALL(Entity_GetWindowWidth);
+		EL_ADD_INTERNAL_CALL(Entity_GetWindowHeight);
 		EL_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
 
 		EL_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
@@ -337,6 +533,7 @@ namespace Ellis {
 		EL_ADD_INTERNAL_CALL(TransformComponent_SetRotation);
 		EL_ADD_INTERNAL_CALL(TransformComponent_GetScale);
 		EL_ADD_INTERNAL_CALL(TransformComponent_SetScale);
+		EL_ADD_INTERNAL_CALL(TransformComponent_GetTransform);
 
 		EL_ADD_INTERNAL_CALL(SpriteRendererComponent_GetColor);
 		EL_ADD_INTERNAL_CALL(SpriteRendererComponent_SetColor);
@@ -350,13 +547,31 @@ namespace Ellis {
 		EL_ADD_INTERNAL_CALL(CircleRendererComponent_GetFade);
 		EL_ADD_INTERNAL_CALL(CircleRendererComponent_SetFade);
 
+		EL_ADD_INTERNAL_CALL(CameraComponent_GetProjection);
+
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulse);
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulseToCenter);
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetLinearVelocity);
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_GetType);
 		EL_ADD_INTERNAL_CALL(Rigidbody2DComponent_SetType);
 
+		EL_ADD_INTERNAL_CALL(TextComponent_GetText);
+		EL_ADD_INTERNAL_CALL(TextComponent_SetText);
+		EL_ADD_INTERNAL_CALL(TextComponent_GetKerning);
+		EL_ADD_INTERNAL_CALL(TextComponent_SetKerning);
+		EL_ADD_INTERNAL_CALL(TextComponent_GetLineSpacing);
+		EL_ADD_INTERNAL_CALL(TextComponent_SetLineSpacing);
+		EL_ADD_INTERNAL_CALL(TextComponent_GetColor);
+		EL_ADD_INTERNAL_CALL(TextComponent_SetColor);
+
 		EL_ADD_INTERNAL_CALL(Input_IsKeyDown);
+		EL_ADD_INTERNAL_CALL(Input_IsMouseButtonDown);
+		EL_ADD_INTERNAL_CALL(Input_GetMouseX);
+		EL_ADD_INTERNAL_CALL(Input_GetMouseY);
+
+		EL_ADD_INTERNAL_CALL(Matrix4_Inverse);
+		EL_ADD_INTERNAL_CALL(Matrix4_MultiplyMat4Mat4);
+		EL_ADD_INTERNAL_CALL(Matrix4_MultiplyMat4Vec4);
 	}
 
 }

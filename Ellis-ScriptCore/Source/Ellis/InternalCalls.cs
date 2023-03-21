@@ -14,6 +14,12 @@ namespace Ellis
         internal extern static ulong Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static uint Entity_GetWindowWidth();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static uint Entity_GetWindowHeight();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static object Entity_GetScriptInstance(ulong entityID);
         #endregion
 
@@ -35,6 +41,9 @@ namespace Ellis
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void TransformComponent_SetScale(ulong entityID, ref Vector3 scale);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float[] TransformComponent_GetTransform(ulong entityID);
         #endregion
 
         #region SpriteRendererComponent
@@ -71,6 +80,11 @@ namespace Ellis
         internal extern static void CircleRendererComponent_SetFade(ulong entityID, ref float fade);
         #endregion
 
+        #region CameraComponent
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float[] CameraComponent_GetProjection(ulong entityID);
+        #endregion
+
         #region Rigidbody2DComponent
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Rigidbody2DComponent_ApplyLinearImpulse(ulong entityID, ref Vector2 impulse, ref Vector2 worldPosition, bool wake);
@@ -87,10 +101,56 @@ namespace Ellis
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static void Rigidbody2DComponent_SetType(ulong entityID, Rigidbody2DComponent.BodyType bodyType);
         #endregion
+        
+        #region TextComponent
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static string TextComponent_GetText(ulong entityID);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_SetText(ulong entityID, string textString);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_GetKerning(ulong entityID, out float kerning);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_SetKerning(ulong entityID, ref float kerning);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_GetLineSpacing(ulong entityID, out float lineSpacing);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_SetLineSpacing(ulong entityID, ref float lineSpacing);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_GetColor(ulong entityID, out Vector4 color);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static void TextComponent_SetColor(ulong entityID, ref Vector4 color);
+        #endregion
 
         #region Input
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static bool Input_IsKeyDown(KeyCode keycode);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Input_IsMouseButtonDown(MouseCode mousecode);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetMouseX();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float Input_GetMouseY();
+        #endregion
+
+        #region Matrix4
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float[] Matrix4_Inverse(float[] array);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float[] Matrix4_MultiplyMat4Mat4(float[] left, float[] right);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector4 Matrix4_MultiplyMat4Vec4(float[] left, Vector4 right);
         #endregion
     }
 }

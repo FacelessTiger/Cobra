@@ -26,6 +26,13 @@
             Z = z;
         }
 
+        public Vector3(float x, Vector2 yz)
+        {
+            X = x;
+            Y = yz.X;
+            Z = yz.Y;
+        }
+
         public Vector2 XY
         {
             get => new Vector2(X, Y);
@@ -33,6 +40,16 @@
             {
                 X = value.X;
                 Y = value.Y;
+            }
+        }
+
+        public Vector2 YZ
+        {
+            get => new Vector2(Y, Z);
+            set
+            {
+                Y = value.X;
+                Z = value.Y;
             }
         }
 
@@ -44,6 +61,16 @@
         public static Vector3 operator *(Vector3 vector, float scalar)
         {
             return new Vector3(vector.X * scalar, vector.Y * scalar, vector.Z * scalar);
+        }
+
+        public static Vector3 operator /(Vector3 vector, float scalar)
+        {
+            return new Vector3(vector.X / scalar, vector.Y / scalar, vector.Z / scalar);
+        }
+
+        public static Vector3 operator -(Vector3 vector, float scalar)
+        {
+            return new Vector3(vector.X - scalar, vector.Y - scalar, vector.Z - scalar);
         }
     }
 }

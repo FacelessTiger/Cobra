@@ -21,6 +21,14 @@
             W = w;
         }
 
+        public Vector4(Vector3 xyz, float w)
+        {
+            X = xyz.X;
+            Y = xyz.Y;
+            Z = xyz.Z;
+            W = w;
+        }
+
         public Vector2 XY
         {
             get => new Vector2(X, Y);
@@ -28,6 +36,17 @@
             {
                 X = value.X;
                 Y = value.Y;
+            }
+        }
+
+        public Vector3 XYZ
+        {
+            get => new Vector3(X, Y, Z);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+                Z = value.Z;
             }
         }
 

@@ -79,6 +79,16 @@ namespace Ellis
             return new Entity(entityID);
         }
 
+        public uint GetWindowWidth()
+        {
+            return InternalCalls.Entity_GetWindowWidth();
+        }
+
+        public uint GetWindowHeight()
+        {
+            return InternalCalls.Entity_GetWindowHeight();
+        }
+
         public T As<T>() where T : Entity, new()
         {
             object instance = InternalCalls.Entity_GetScriptInstance(ID);

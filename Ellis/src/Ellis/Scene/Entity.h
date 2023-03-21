@@ -14,6 +14,31 @@ namespace Ellis {
 		entt::entity m_EntityHandle = entt::null;
 		Scene* m_Scene = nullptr;
 	public:
+		class EntityChildrenIterator
+		{
+		private:
+			std::vector<UUID>::iterator m_Iterator;
+			Scene* m_Scene;
+		public:
+			EntityChildrenIterator(std::vector<UUID>::iterator iterator, Scene* scene) : m_Iterator(iterator), m_Scene(scene) { }
+
+			EntityChildrenIterator& operator++()
+			{
+				m_Iterator++;
+				return *this;
+			}
+
+			EntityChildrenIterator operator++(int)
+			{
+				EntityChildrenIterator iterator = *this;
+				++*this;
+				return iterator;
+			}
+
+			bool operator!=(const EntityChildrenIterator& iterator) { return m_Iterator != iterator.m_Iterator; }
+			Entity operator*() { return m_Scene->GetEntityByUUID(*m_Iterator); }
+		};
+
 		Entity() = default;
 		Entity(entt::entity handle, Scene* scene);
 		Entity(const Entity& other) = default;
@@ -57,9 +82,17 @@ namespace Ellis {
 			m_Scene->m_Registry.remove<T>(m_EntityHandle);
 		}
 
+		void AddChild(Entity child);
+		void RemoveParent();
+		bool HasParent() { return GetComponent<RelationshipComponent>().Parent.has_value(); }
+		glm::mat4 GetRelativeTranslation();
+
 		operator bool() const { return m_EntityHandle != entt::null; }
 		operator entt::entity() const { return m_EntityHandle; }
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+
+		EntityChildrenIterator begin() { return EntityChildrenIterator(GetComponent<RelationshipComponent>().Children.begin(), m_Scene); }
+		EntityChildrenIterator end() { return EntityChildrenIterator(GetComponent<RelationshipComponent>().Children.end(), m_Scene); }
 
 		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }

@@ -54,7 +54,9 @@ namespace Ellis {
 			ImGui::PushID(filenameString.c_str());
 
 			Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
-			if (path.extension().string() == ".png")
+			std::unordered_set<std::string> imageExtensions = { ".png", ".jpg" };
+
+			if (imageExtensions.find(path.extension().string()) != imageExtensions.end())
 			{
 				if (m_ImageIcons.find(path.string()) == m_ImageIcons.end())
 					m_ImageIcons[path.string()] = Texture2D::Create(path.string());

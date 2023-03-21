@@ -26,7 +26,7 @@ namespace Ellis {
 		template<typename T>
 		void DisplayAddComponentEntry(const std::string& entryName);
 
-		void DrawEntityNode(Entity entity);
+		void DrawEntityNode(Entity entity, bool exception = false);
 		void DrawComponents(Entity entity);
 	};
 

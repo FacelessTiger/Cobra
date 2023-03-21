@@ -36,6 +36,11 @@ namespace Ellis {
 		fbSpec.Height = 720;
 		m_Framebuffer = Framebuffer::Create(fbSpec);
 
+		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+		fbSpec.Width = 300;
+		fbSpec.Height = 169;
+		m_CameraPreviewFramebuffer = Framebuffer::Create(fbSpec);
+
 		m_EditorScene = CreateRef<Scene>();
 		m_ActiveScene = m_EditorScene;
 
@@ -132,6 +137,13 @@ namespace Ellis {
 		OnOverlayRender();
 
 		m_Framebuffer->Unbind();
+
+		m_CameraPreviewFramebuffer->Bind();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+		RenderCommand::Clear();
+
+		m_ActiveScene->RenderRunningScene();
+		m_CameraPreviewFramebuffer->Unbind();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -206,7 +218,7 @@ namespace Ellis {
 		std::string name = "None";
 		if (m_HoveredEntity)
 			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-		ImGui::Text("Hovered Entity: %s", name.c_str());
+		ImGui::Text("Hovered Entity: %u", (uint32_t)m_SceneHierarchyPanel.GetSelectedEntity());
 #endif
 
 		auto stats = Renderer2D::GetStats();
@@ -221,7 +233,8 @@ namespace Ellis {
 		ImGui::Begin("Settings");
 		ImGui::Checkbox("Show physics colliders", &m_ShowPhysicsColliders);
 
-		ImGui::Image((ImTextureID)s_Font->GetAtlasTexture()->GetRendererID(), { 512, 512 }, { 0, 1 }, { 1, 0 });
+		uint32_t texturePreviewID = m_CameraPreviewFramebuffer->GetColorAttachmentRendererID();
+		ImGui::Image((void*)texturePreviewID, { 300, 169 }, { 0, 1 }, { 1, 0 });
 
 		ImGui::End();
 
@@ -251,11 +264,13 @@ namespace Ellis {
 				const wchar_t* path = (const wchar_t*)payload->Data;
 				std::filesystem::path filePath = std::filesystem::path(path);
 
+				std::unordered_set<std::string> imageExtensions = { ".png", ".jpg" };
+
 				if (filePath.extension().string() == ".ellis")
 				{
 					OpenScene(path);
 				}
-				else if (filePath.extension().string() == ".png")
+				else if (imageExtensions.find(filePath.extension().string()) != imageExtensions.end())
 				{
 					std::filesystem::path texturePath = path;
 					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
@@ -513,7 +528,7 @@ namespace Ellis {
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
-		if (e.GetMouseButton() == Mouse::ButtonLeft)
+		if (e.GetMouseButton() == Mouse::ButtonLeft && m_SceneState != SceneState::Play)
 		{
 			if (m_ViewportHovered && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
 				m_SceneHierarchyPanel.SetSelectedEntity(m_HoveredEntity);
@@ -582,8 +597,8 @@ namespace Ellis {
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
-			const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+			//const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+			Renderer2D::DrawRect(selectedEntity.GetRelativeTranslation(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 		}
 
 		Renderer2D::EndScene();

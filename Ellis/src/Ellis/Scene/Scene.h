@@ -63,6 +63,7 @@ namespace Ellis {
 		void SetPause(bool paused) { m_IsPaused = paused; }
 
 		void Step(int frames);
+		void RenderRunningScene();
 
 		template<typename... Components>
 		auto GetAllEntitiesWith()

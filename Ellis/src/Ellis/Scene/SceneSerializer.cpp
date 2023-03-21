@@ -104,6 +104,23 @@ namespace YAML {
 		}
 	};
 
+	template<>
+	struct convert<wchar_t>
+	{
+		static Node encode(const wchar_t& wchar)
+		{
+			Node node;
+			node.push_back(wchar);
+			return node;
+		}
+
+		static bool decode(const Node& node, wchar_t& wchar)
+		{
+			wchar = node.as<wchar_t>();
+			return true;
+		}
+	};
+
 }
 
 namespace Ellis {
@@ -175,6 +192,20 @@ namespace Ellis {
 
 		out << YAML::BeginMap;
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
+
+		if (entity.HasComponent<RelationshipComponent>())
+		{
+			out << YAML::Key << "RelationshipComponent";
+			out << YAML::BeginMap; // RelationshipComponent
+
+			auto& parent = entity.GetComponent<RelationshipComponent>().Parent;
+			if (parent.has_value())
+				out << YAML::Key << "Parent" << YAML::Value << *parent;
+
+			out << YAML::Key << "Children" << YAML::Value << entity.GetComponent<RelationshipComponent>().Children;
+
+			out << YAML::EndMap; // RelationshipComponent
+		}
 
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -260,7 +291,7 @@ namespace Ellis {
 						WRITE_SCRIPT_FIELD(Float, float);
 						WRITE_SCRIPT_FIELD(Double, double);
 						WRITE_SCRIPT_FIELD(Bool, bool);
-						WRITE_SCRIPT_FIELD(Char, char);
+						WRITE_SCRIPT_FIELD(Char, wchar_t);
 						WRITE_SCRIPT_FIELD(Byte, uint8_t);
 						WRITE_SCRIPT_FIELD(Short, int16_t);
 						WRITE_SCRIPT_FIELD(Int, int32_t);
@@ -437,6 +468,18 @@ namespace Ellis {
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
 
+				auto relationshipComponent = entity["RelationshipComponent"];
+				if (relationshipComponent)
+				{
+					auto& rc = deserializedEntity.GetComponent<RelationshipComponent>();
+
+					if (relationshipComponent["Parent"])
+					{
+						rc.Parent = relationshipComponent["Parent"].as<UUID>();
+					}
+					rc.Children = relationshipComponent["Children"].as<std::vector<UUID>>();
+				}
+
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
 				{
@@ -499,7 +542,7 @@ namespace Ellis {
 									READ_SCRIPT_FIELD(Float, float);
 									READ_SCRIPT_FIELD(Double, double);
 									READ_SCRIPT_FIELD(Bool, bool);
-									READ_SCRIPT_FIELD(Char, char);
+									READ_SCRIPT_FIELD(Char, wchar_t);
 									READ_SCRIPT_FIELD(Byte, uint8_t);
 									READ_SCRIPT_FIELD(Short, int16_t);
 									READ_SCRIPT_FIELD(Int, int32_t);

@@ -13,6 +13,7 @@ namespace Ellis {
 	{
 	private:
 		Ref<Framebuffer> m_Framebuffer;
+		Ref<Framebuffer> m_CameraPreviewFramebuffer;
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
 

@@ -1,4 +1,7 @@
-﻿namespace Ellis
+﻿using System.Runtime.InteropServices;
+using System;
+
+namespace Ellis
 {
     public abstract class Component
     {
@@ -44,6 +47,11 @@
             {
                 InternalCalls.TransformComponent_SetScale(Entity.ID, ref value);
             }
+        }
+
+        public Matrix4 GetTransform()
+        {
+            return new Matrix4(InternalCalls.TransformComponent_GetTransform(Entity.ID));
         }
     }
 
@@ -118,6 +126,14 @@
         }
     }
 
+    public class CameraComponent : Component
+    {
+        public Matrix4 GetProjection()
+        {
+            return new Matrix4(InternalCalls.CameraComponent_GetProjection(Entity.ID));
+        }
+    }
+
     public class Rigidbody2DComponent : Component
     {
         public enum BodyType { Static = 0, Dynamic, Kinematic };
@@ -145,6 +161,54 @@
         public void ApplyLinearImpulse(Vector2 impulse, bool wake)
         {
             InternalCalls.Rigidbody2DComponent_ApplyLinearImpulseToCenter(Entity.ID, ref impulse, wake);
+        }
+    }
+
+    public class TextComponent : Component
+    {
+        public string Text
+        {
+            get => InternalCalls.TextComponent_GetText(Entity.ID);
+            set => InternalCalls.TextComponent_SetText(Entity.ID, value);
+        }
+
+        public float Kerning
+        {
+            get
+            {
+                InternalCalls.TextComponent_GetKerning(Entity.ID, out float kerning);
+                return kerning;
+            }
+            set
+            {
+                InternalCalls.TextComponent_SetKerning(Entity.ID, ref value);
+            }
+        }
+
+        public float LineSpacing
+        {
+            get
+            {
+                InternalCalls.TextComponent_GetLineSpacing(Entity.ID, out float lineSpacing);
+                return lineSpacing;
+            }
+            set
+            {
+                InternalCalls.TextComponent_SetLineSpacing(Entity.ID, ref value);
+            }
+        }
+
+        public Vector4 Color
+        {
+            get
+            {
+                InternalCalls.TextComponent_GetColor(Entity.ID, out Vector4 color);
+                return color;
+            }
+            set
+            {
+                InternalCalls.TextComponent_SetColor(Entity.ID, ref value);
+            }
         }
     }
 }

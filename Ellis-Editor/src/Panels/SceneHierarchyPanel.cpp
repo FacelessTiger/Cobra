@@ -46,6 +46,16 @@ namespace Ellis {
 
 				ImGui::EndPopup();
 			}
+
+			ImRect boundingBox = ImRect(ImGui::GetWindowPos(), ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y));
+			if (ImGui::BeginDragDropTargetCustom(boundingBox, 20))
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_DRAG"))
+				{
+					Entity* entity = (Entity*)payload->Data;
+					entity->RemoveParent();
+				}
+			}
 		}
 
 		ImGui::End();
@@ -65,10 +75,13 @@ namespace Ellis {
 		m_SelectionContext = entity;
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
+	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool exception)
 	{
+		if (entity.HasParent() && !exception)
+			return;
+
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
-		
+
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 
@@ -76,6 +89,23 @@ namespace Ellis {
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionContext = entity;
+		}
+
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			ImGui::SetDragDropPayload("ENTITY_DRAG", &entity, sizeof(Entity));
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_DRAG"))
+			{
+				Entity* draggedEntity = (Entity*)payload->Data;
+				entity.AddChild(*draggedEntity);
+			}
+
+			ImGui::EndDragDropTarget();
 		}
 
 		bool entityDeleted = false;
@@ -91,6 +121,11 @@ namespace Ellis {
 
 		if (opened)
 		{
+			for (auto& child : entity)
+			{
+				DrawEntityNode(child, true);
+			}
+
 			ImGui::TreePop();
 		}
 
@@ -165,6 +200,42 @@ namespace Ellis {
 
 		ImGui::Columns(1);
 		ImGui::PopID();
+	}
+
+	template<typename Cpptype, ScriptFieldType FieldType, typename Func>
+	static void DrawScriptFieldRunning(const ScriptField& field, Ref<ScriptInstance>& scriptInstance, const std::string& name, Func func)
+	{
+		if (field.Type == FieldType)
+		{
+			Cpptype data = scriptInstance->GetFieldValue<Cpptype>(name);
+			if (func(data))
+				scriptInstance->SetFieldValue(name, data);
+		}
+	}
+
+	template<typename CppType, ScriptFieldType FieldType, typename Func>
+	static void DrawScriptFieldSet(const ScriptField& field, ScriptFieldInstance& scriptField, Func func)
+	{
+		if (field.Type == FieldType)
+		{
+			CppType data = scriptField.GetValue<CppType>();
+			if (func(data))
+				scriptField.SetValue(data);
+		}
+	}
+
+	template<typename CppType, ScriptFieldType FieldType, typename Func>
+	static void DrawScriptField(const ScriptField& field, ScriptFieldInstance& fieldInstance, CppType defaultValue, Func func)
+	{
+		if (field.Type == FieldType)
+		{
+			CppType data = defaultValue;
+			if (func(data))
+			{
+				fieldInstance.Field = field;
+				fieldInstance.SetValue(data);
+			}
+		}
 	}
 
 	template<typename T, typename UIFunction>
@@ -341,14 +412,20 @@ namespace Ellis {
 
 					for (const auto& [name, field] : fields)
 					{
-						if (field.Type == ScriptFieldType::Float)
-						{
-							float data = scriptInstance->GetFieldValue<float>(name);
-							if (ImGui::DragFloat(name.c_str(), &data))
-							{
-								scriptInstance->SetFieldValue(name, data);
-							}
-						}
+						DrawScriptFieldRunning<float, ScriptFieldType::Float>(field, scriptInstance, name, [&name](float& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_Float, &data); });
+						DrawScriptFieldRunning<double, ScriptFieldType::Double>(field, scriptInstance, name, [&name](double& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_Double, &data); });
+						DrawScriptFieldRunning<bool, ScriptFieldType::Bool>(field, scriptInstance, name, [&name](bool& data) { return ImGui::Checkbox(name.c_str(), &data); });
+						DrawScriptFieldRunning<wchar_t, ScriptFieldType::Char>(field, scriptInstance, name, [&name](wchar_t& data) { char sData[2]; std::wcstombs(sData, &data, 1); sData[1] = '\0'; bool ret = ImGui::InputText(name.c_str(), sData, 2); if (ret) std::mbstowcs(&data, sData, 1); return ret; });
+						DrawScriptFieldRunning<uint8_t, ScriptFieldType::Byte>(field, scriptInstance, name, [&name](uint8_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U8, &data); });
+						DrawScriptFieldRunning<int16_t, ScriptFieldType::Short>(field, scriptInstance, name, [&name](int16_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S16, &data); });
+						DrawScriptFieldRunning<int32_t, ScriptFieldType::Int>(field, scriptInstance, name, [&name](int32_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S32, &data); });
+						DrawScriptFieldRunning<int64_t, ScriptFieldType::Long>(field, scriptInstance, name, [&name](int64_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S64, &data); });
+						DrawScriptFieldRunning<uint16_t, ScriptFieldType::UShort>(field, scriptInstance, name, [&name](uint16_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U16, &data); });
+						DrawScriptFieldRunning<uint32_t, ScriptFieldType::UInt>(field, scriptInstance, name, [&name](uint32_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U32, &data); });
+						DrawScriptFieldRunning<uint64_t, ScriptFieldType::ULong>(field, scriptInstance, name, [&name](uint64_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U64, &data); });
+						DrawScriptFieldRunning<glm::vec2, ScriptFieldType::Vector2>(field, scriptInstance, name, [&name](glm::vec2& data) { return ImGui::DragFloat2(name.c_str(), glm::value_ptr(data)); });
+						DrawScriptFieldRunning<glm::vec3, ScriptFieldType::Vector3>(field, scriptInstance, name, [&name](glm::vec3& data) { return ImGui::DragFloat3(name.c_str(), glm::value_ptr(data)); });
+						DrawScriptFieldRunning<glm::vec4, ScriptFieldType::Vector4>(field, scriptInstance, name, [&name](glm::vec4& data) { return ImGui::DragFloat4(name.c_str(), glm::value_ptr(data)); });
 					}
 				}
 			}
@@ -368,26 +445,40 @@ namespace Ellis {
 							ScriptFieldInstance& scriptField = entityFields.at(name);
 
 							// Display control to set it
-							if (field.Type == ScriptFieldType::Float)
-							{
-								float data = scriptField.GetValue<float>();
-								if (ImGui::DragFloat(name.c_str(), &data))
-									scriptField.SetValue(data);
-							}
+							DrawScriptFieldSet<float, ScriptFieldType::Float>(field, scriptField, [&name](float& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_Float, &data); });
+							DrawScriptFieldSet<double, ScriptFieldType::Double>(field, scriptField, [&name](double& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_Double, &data); });
+							DrawScriptFieldSet<bool, ScriptFieldType::Bool>(field, scriptField, [&name](bool& data) { return ImGui::Checkbox(name.c_str(), &data); });
+							DrawScriptFieldSet<wchar_t, ScriptFieldType::Char>(field, scriptField, [&name](wchar_t& data) { char sData[2]; std::wcstombs(sData, &data, 1); sData[1] = '\0'; bool ret = ImGui::InputText(name.c_str(), sData, 2); if (ret) std::mbstowcs(&data, sData, 1); return ret; });
+							DrawScriptFieldSet<uint8_t, ScriptFieldType::Byte>(field, scriptField, [&name](uint8_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U8, &data); });
+							DrawScriptFieldSet<int16_t, ScriptFieldType::Short>(field, scriptField, [&name](int16_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S16, &data); });
+							DrawScriptFieldSet<int32_t, ScriptFieldType::Int>(field, scriptField, [&name](int32_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S32, &data); });
+							DrawScriptFieldSet<int64_t, ScriptFieldType::Long>(field, scriptField, [&name](int64_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S64, &data); });
+							DrawScriptFieldSet<uint16_t, ScriptFieldType::UShort>(field, scriptField, [&name](uint16_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U16, &data); });
+							DrawScriptFieldSet<uint32_t, ScriptFieldType::UInt>(field, scriptField, [&name](uint32_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U32, &data); });
+							DrawScriptFieldSet<uint64_t, ScriptFieldType::ULong>(field, scriptField, [&name](uint64_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U64, &data); });
+							DrawScriptFieldSet<glm::vec2, ScriptFieldType::Vector2>(field, scriptField, [&name](glm::vec2& data) { return ImGui::DragFloat2(name.c_str(), glm::value_ptr(data)); });
+							DrawScriptFieldSet<glm::vec3, ScriptFieldType::Vector3>(field, scriptField, [&name](glm::vec3& data) { return ImGui::DragFloat3(name.c_str(), glm::value_ptr(data)); });
+							DrawScriptFieldSet<glm::vec4, ScriptFieldType::Vector4>(field, scriptField, [&name](glm::vec4& data) { return ImGui::DragFloat4(name.c_str(), glm::value_ptr(data)); });
 						}
 						else
 						{
+							ScriptFieldInstance& fieldInstance = entityFields[name];
+
 							// Display control to set it
-							if (field.Type == ScriptFieldType::Float)
-							{
-								float data = 0.0f;
-								if (ImGui::DragFloat(name.c_str(), &data))
-								{
-									ScriptFieldInstance& fieldInstance = entityFields[name];
-									fieldInstance.Field = field;
-									fieldInstance.SetValue(data);
-								}
-							}
+							DrawScriptField<float, ScriptFieldType::Float>(field, fieldInstance, 0.0f, [&name](float& data)  { return ImGui::DragScalar(name.c_str(), ImGuiDataType_Float, &data); });
+							DrawScriptField<double, ScriptFieldType::Double>(field, fieldInstance, 0.0, [&name](double& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_Double, &data); });
+							DrawScriptField<bool, ScriptFieldType::Bool>(field, fieldInstance, false, [&name](bool& data) { return ImGui::Checkbox(name.c_str(), &data); });
+							DrawScriptField<wchar_t, ScriptFieldType::Char>(field, fieldInstance, ' ', [&name](wchar_t& data) { char sData[2]; std::wcstombs(sData, &data, 1); sData[1] = '\0'; bool ret = ImGui::InputText(name.c_str(), sData, 2); if (ret) std::mbstowcs(&data, sData, 1); return ret; });
+							DrawScriptField<uint8_t, ScriptFieldType::Byte>(field, fieldInstance, 0, [&name](uint8_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U8, &data); });
+							DrawScriptField<int16_t, ScriptFieldType::Short>(field, fieldInstance, 0, [&name](int16_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S16, &data); });
+							DrawScriptField<int32_t, ScriptFieldType::Int>(field, fieldInstance, 0, [&name](int32_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S32, &data); });
+							DrawScriptField<int64_t, ScriptFieldType::Long>(field, fieldInstance, 0, [&name](int64_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_S64, &data); });
+							DrawScriptField<uint16_t, ScriptFieldType::UShort>(field, fieldInstance, 0, [&name](uint16_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U16, &data); });
+							DrawScriptField<uint32_t, ScriptFieldType::UInt>(field, fieldInstance, 0, [&name](uint32_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U32, &data); });
+							DrawScriptField<uint64_t, ScriptFieldType::ULong>(field, fieldInstance, 0, [&name](uint64_t& data) { return ImGui::DragScalar(name.c_str(), ImGuiDataType_U64, &data); });
+							DrawScriptField<glm::vec2, ScriptFieldType::Vector2>(field, fieldInstance, { 0.0f, 0.0f }, [&name](glm::vec2& data) { return ImGui::DragFloat2(name.c_str(), glm::value_ptr(data)); });
+							DrawScriptField<glm::vec3, ScriptFieldType::Vector3>(field, fieldInstance, { 0.0f, 0.0f, 0.0f }, [&name](glm::vec3& data) { return ImGui::DragFloat3(name.c_str(), glm::value_ptr(data)); });
+							DrawScriptField<glm::vec4, ScriptFieldType::Vector4>(field, fieldInstance, { 0.0f, 0.0f, 0.0f, 0.0f }, [&name](glm::vec4& data) { return ImGui::DragFloat4(name.c_str(), glm::value_ptr(data)); });
 						}
 					}
 				}
@@ -473,7 +564,7 @@ namespace Ellis {
 
 		DrawComponent<TextComponent>("Text", entity, [](TextComponent& component)
 		{
-			ImGui::InputTextMultiline("Text String", &component.TextString);
+			ImGui::InputTextMultiline("Text String", &component.TextString, ImVec2(0, 0), ImGuiInputTextFlags_AllowTabInput);
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 			ImGui::DragFloat("Kerning", &component.Kerning, 0.025f);
 			ImGui::DragFloat("Line Spacing", &component.LineSpacing, 0.025f);

@@ -20,7 +20,7 @@ Ellis::Application* Ellis::CreateApplication(Ellis::ApplicationCommandLineArgs a
 {
 	ApplicationSpecification spec;
 	spec.Name = "Sandbox";
-	spec.WorkingDirecory = "../Ellis-Editor";
+	//spec.WorkingDirecory = "../Ellis-Editor";
 	spec.CommandLineArgs = args;
 
 	return new Sandbox(spec);

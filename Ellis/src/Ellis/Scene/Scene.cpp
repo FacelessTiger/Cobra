@@ -100,6 +100,7 @@ namespace Ellis {
 	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
 		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<RelationshipComponent>();
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
@@ -204,61 +205,7 @@ namespace Ellis {
 			m_StepFrames = m_StepFrames > 0 ? --m_StepFrames : m_StepFrames;
 		}
 
-		// Render 2D
-		Camera* mainCamera = nullptr;
-		glm::mat4 cameraTransform;
-
-		{
-			auto view = m_Registry.view<TransformComponent, CameraComponent>();
-			for (auto entity : view)
-			{
-				auto[transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
-
-				if (camera.Primary)
-				{
-					mainCamera = &camera.Camera;
-					cameraTransform = transform.GetTransform();
-					break;
-				}
-			}
-		}
-
-		if (mainCamera)
-		{
-			Renderer2D::BeginScene(*mainCamera, cameraTransform);
-
-			// Draw sprites
-			{
-				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-				for (auto entity : group)
-				{
-					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-				}
-			}
-
-			// Draw circles
-			{
-				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
-				for (auto entity : view)
-				{
-					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
-				}
-			}
-
-			// Draw Text
-			{
-				auto view = m_Registry.view<TransformComponent, TextComponent>();
-				for (auto entity : view)
-				{
-					auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
-					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
-				}
-			}
-
-			Renderer2D::EndScene();
-		}
+		RenderRunningScene();
 	}
 
 	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
@@ -367,6 +314,68 @@ namespace Ellis {
 		m_StepFrames = frames;
 	}
 
+	void Scene::RenderRunningScene()
+	{
+		Camera* mainCamera = nullptr;
+		glm::mat4 cameraTransform;
+
+		{
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+				if (camera.Primary)
+				{
+					mainCamera = &camera.Camera;
+					cameraTransform = transform.GetTransform();
+					break;
+				}
+			}
+		}
+
+		if (mainCamera)
+		{
+			Renderer2D::BeginScene(*mainCamera, cameraTransform);
+
+			// Draw sprites
+			{
+				auto view = m_Registry.view<SpriteRendererComponent>();
+				for (auto e : view)
+				{
+					Entity entity = Entity(e, this);
+					auto& sprite = entity.GetComponent<SpriteRendererComponent>();
+
+					Renderer2D::DrawSprite(entity.GetRelativeTranslation(), sprite, (int)entity);
+				}
+			}
+
+			// Draw circles
+			{
+				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+				}
+			}
+
+			// Draw Text
+			{
+				auto view = m_Registry.view<TextComponent>();
+				for (auto e : view)
+				{
+					Entity entity = Entity(e, this);
+					auto& text = entity.GetComponent<TextComponent>();
+
+					Renderer2D::DrawString(text.TextString, entity.GetRelativeTranslation(), text, (int)entity);
+				}
+			}
+
+			Renderer2D::EndScene();
+		}
+	}
+
 	void Scene::OnPhysics2DStart()
 	{
 		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
@@ -433,11 +442,13 @@ namespace Ellis {
 		Renderer2D::BeginScene(camera);
 		// Draw sprites
 		{
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
+			auto view = m_Registry.view<SpriteRendererComponent>();
+			for (auto e : view)
 			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+				Entity entity = Entity(e, this);
+				auto& sprite = entity.GetComponent<SpriteRendererComponent>();
+
+				Renderer2D::DrawSprite(entity.GetRelativeTranslation(), sprite, (int)entity);
 			}
 		}
 
@@ -453,11 +464,13 @@ namespace Ellis {
 
 		// Draw Text
 		{
-			auto view = m_Registry.view<TransformComponent, TextComponent>();
-			for (auto entity : view)
+			auto view = m_Registry.view<TextComponent>();
+			for (auto e : view)
 			{
-				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
-				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+				Entity entity = Entity(e, this);
+				auto& text = entity.GetComponent<TextComponent>();
+
+				Renderer2D::DrawString(text.TextString, entity.GetRelativeTranslation(), text, (int)entity);
 			}
 		}
 
@@ -469,6 +482,10 @@ namespace Ellis {
 	{
 		static_assert(sizeof(T) == 0);
 	}
+
+	template<>
+	void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component)
+	{ }
 
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)

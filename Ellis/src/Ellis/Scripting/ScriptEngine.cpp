@@ -420,6 +420,16 @@ namespace Ellis {
 		return s_Data->EntityInstances[uuid]->GetManagedObject();
 	}
 
+	MonoString* ScriptEngine::CreateString(const char* string)
+	{
+		return mono_string_new(s_Data->AppDomain, string);
+	}
+
+	MonoArray* ScriptEngine::CreateArray(MonoClass* monoClass, size_t size)
+	{
+		return mono_array_new(s_Data->AppDomain, monoClass, size);
+	}
+
 	MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
 	{
 		MonoObject* instance = mono_object_new(s_Data->AppDomain, monoClass);
