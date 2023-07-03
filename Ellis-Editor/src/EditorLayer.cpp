@@ -9,6 +9,9 @@
 #include <Ellis/Math/Math.h>
 #include <Ellis/Scripting/ScriptEngine.h>
 #include <Ellis/Renderer/Font.h>
+#include <Ellis/Asset/TextureImporter.h>
+#include <Ellis/Asset/SceneImporter.h>
+#include <Ellis/Asset/AssetManager.h>
 
 namespace Ellis {
 
@@ -24,11 +27,11 @@ namespace Ellis {
 	{
 		EL_PROFILE_FUNCTION();
 
-		m_IconPlay = Texture2D::Create("Resources/Icons/PlayButton.png");
-		m_IconPause = Texture2D::Create("Resources/Icons/PauseButton.png");
-		m_IconSimulate = Texture2D::Create("Resources/Icons/SimulateButton.png");
-		m_IconStep = Texture2D::Create("Resources/Icons/StepButton.png");
-		m_IconStop = Texture2D::Create("Resources/Icons/StopButton.png");
+		m_IconPlay = TextureImporter::LoadTexture2D("Resources/Icons/PlayButton.png");
+		m_IconPause = TextureImporter::LoadTexture2D("Resources/Icons/PauseButton.png");
+		m_IconSimulate = TextureImporter::LoadTexture2D("Resources/Icons/SimulateButton.png");
+		m_IconStep = TextureImporter::LoadTexture2D("Resources/Icons/StepButton.png");
+		m_IconStop = TextureImporter::LoadTexture2D("Resources/Icons/StopButton.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -218,7 +221,7 @@ namespace Ellis {
 		std::string name = "None";
 		if (m_HoveredEntity)
 			name = m_HoveredEntity.GetComponent<TagComponent>().Tag;
-		ImGui::Text("Hovered Entity: %u", (uint32_t)m_SceneHierarchyPanel.GetSelectedEntity());
+		ImGui::Text("Hovered Entity: %s", name.c_str());
 #endif
 
 		auto stats = Renderer2D::GetStats();
@@ -261,30 +264,8 @@ namespace Ellis {
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 			{
-				const wchar_t* path = (const wchar_t*)payload->Data;
-				std::filesystem::path filePath = std::filesystem::path(path);
-
-				std::unordered_set<std::string> imageExtensions = { ".png", ".jpg" };
-
-				if (filePath.extension().string() == ".ellis")
-				{
-					OpenScene(path);
-				}
-				else if (imageExtensions.find(filePath.extension().string()) != imageExtensions.end())
-				{
-					std::filesystem::path texturePath = path;
-					Ref<Texture2D> texture = Texture2D::Create(texturePath.string());
-
-					if (texture->IsLoaded())
-					{
-						if (m_HoveredEntity && m_HoveredEntity.HasComponent<SpriteRendererComponent>())
-							m_HoveredEntity.GetComponent<SpriteRendererComponent>().Texture = texture;
-					}
-					else
-					{
-						EL_WARN("Could not load texture {0}", texturePath.filename().string());
-					}
-				}
+				AssetHandle handle = *(AssetHandle*)payload->Data;
+				OpenScene(handle);
 			}
 
 			ImGui::EndDragDropTarget();
@@ -429,6 +410,7 @@ namespace Ellis {
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(EL_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(EL_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
+		dispatcher.Dispatch<WindowDropEvent>(EL_BIND_EVENT_FN(EditorLayer::OnWindowDrop));
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
@@ -537,6 +519,14 @@ namespace Ellis {
 		return false;
 	}
 
+	bool EditorLayer::OnWindowDrop(WindowDropEvent& e)
+	{
+		// TODO: if a project is dropped in, probably open it
+		// AssetManager::ImportAsset();
+
+		return true;
+	}
+
 	void EditorLayer::OnOverlayRender()
 	{
 		if (m_SceneState == SceneState::Play)
@@ -597,8 +587,8 @@ namespace Ellis {
 		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
 		if (selectedEntity)
 		{
-			//const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(selectedEntity.GetRelativeTranslation(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+			const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
+			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 		}
 
 		Renderer2D::EndScene();
@@ -625,8 +615,10 @@ namespace Ellis {
 		{
 			ScriptEngine::Init();
 
-			auto startScenePath = Project::GetAssetFileSystemPath(Project::GetActive()->GetConfig().StartScene);
-			OpenScene(startScenePath);
+			AssetHandle startScene = Project::GetActive()->GetConfig().StartScene;
+			if (startScene)
+				OpenScene(startScene);
+
 			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
 		}
 	}
@@ -648,33 +640,26 @@ namespace Ellis {
 
 	void EditorLayer::OpenScene()
 	{
-		std::string filepath = FileDialogs::OpenFile("Ellis Scene (*.ellis)\0*.ellis\0");
-		if (!filepath.empty())
-			OpenScene(filepath);
+		//std::string filepath = FileDialogs::OpenFile("Ellis Scene (*.ellis)\0*.ellis\0");
+		//if (!filepath.empty())
+		//	OpenScene(filepath);
 	}
 
-	void EditorLayer::OpenScene(const std::filesystem::path& path)
+	void EditorLayer::OpenScene(AssetHandle handle)
 	{
+		EL_CORE_ASSERT(handle);
+
 		if (m_SceneState != SceneState::Edit)
 			OnSceneStop();
 
-		if (path.extension().string() != ".ellis")
-		{
-			EL_WARN("Could not load {0} - not a scene file", path.filename().string());
-			return;
-		}
+		Ref<Scene> readOnlyScene = AssetManager::GetAsset<Scene>(handle);
+		Ref<Scene> newScene = Scene::Copy(readOnlyScene);
 
-		Ref<Scene> newScene = CreateRef<Scene>();
-		SceneSerializer serializer(newScene);
+		m_EditorScene = newScene;
+		m_SceneHierarchyPanel.SetContext(m_EditorScene);
 
-		if (serializer.Deserialize(path.string()))
-		{
-			m_EditorScene = newScene;
-			m_SceneHierarchyPanel.SetContext(m_EditorScene);
-
-			m_ActiveScene = m_EditorScene;
-			m_EditorScenePath = path;
-		}
+		m_ActiveScene = m_EditorScene;
+		m_EditorScenePath = Project::GetActive()->GetEditorAssetManager()->GetFilePath(handle);
 	}
 
 	void EditorLayer::SaveScene()
@@ -697,8 +682,7 @@ namespace Ellis {
 
 	void EditorLayer::SerializeScene(Ref<Scene> scene, const std::filesystem::path& path)
 	{
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.Serialize(path.string());
+		SceneImporter::SaveScene(scene, path);
 	}
 
 	void EditorLayer::OnScenePlay()

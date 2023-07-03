@@ -9,18 +9,22 @@
 	#error Ellis only supports Windows!
 #endif
 
-#ifdef EL_DEBUG
-	#if defined(EL_PLATFORM_WINDOWS)
-		#define EL_DEBUGBREAK() __debugbreak()
-	#elif defined(EL_PLATFORM_LINUX)
-		#include <signal.h>
-		#define EL_DEBUGBREAK() raise(SIGTRAP)
-	#else
-		#error "Platform doesn't support debugbreak yet!"
-	#endif
-	#define EL_ENABLE_ASSERTS
+
+#if defined(EL_PLATFORM_WINDOWS)
+	#define EL_DEBUGBREAK() __debugbreak()
+#elif defined(EL_PLATFORM_LINUX)
+#include <signal.h>
+	#define EL_DEBUGBREAK() raise(SIGTRAP)
 #else
-	#define EL_DEBUGBREAK()
+	#error "Platform doesn't support debugbreak yet!"
+#endif
+
+#ifdef EL_DEBUG
+	#define EL_ENABLE_ASSERTS
+#endif
+
+#ifndef EL_DIST
+	#define EL_ENABLE_VERIFY
 #endif
 
 #define EL_EXPAND_MACRO(x) x

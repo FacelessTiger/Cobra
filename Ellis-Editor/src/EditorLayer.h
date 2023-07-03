@@ -50,6 +50,7 @@ namespace Ellis {
 	private:
 		bool OnKeyPressed(KeyPressedEvent& e);
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnWindowDrop(WindowDropEvent& e);
 		void OnOverlayRender();
 
 		void NewProject();
@@ -59,7 +60,7 @@ namespace Ellis {
 
 		void NewScene();
 		void OpenScene();
-		void OpenScene(const std::filesystem::path& path);
+		void OpenScene(AssetHandle handle);
 		void SaveScene();
 		void SaveSceneAs();
 

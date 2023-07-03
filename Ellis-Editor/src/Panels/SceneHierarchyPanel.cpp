@@ -2,6 +2,7 @@
 
 #include "Ellis/Scripting/ScriptEngine.h"
 #include "Ellis/UI/UI.h"
+#include "Ellis/Asset/AssetManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -46,16 +47,6 @@ namespace Ellis {
 
 				ImGui::EndPopup();
 			}
-
-			ImRect boundingBox = ImRect(ImGui::GetWindowPos(), ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y));
-			if (ImGui::BeginDragDropTargetCustom(boundingBox, 20))
-			{
-				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_DRAG"))
-				{
-					Entity* entity = (Entity*)payload->Data;
-					entity->RemoveParent();
-				}
-			}
 		}
 
 		ImGui::End();
@@ -77,9 +68,6 @@ namespace Ellis {
 
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool exception)
 	{
-		if (entity.HasParent() && !exception)
-			return;
-
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -89,23 +77,6 @@ namespace Ellis {
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionContext = entity;
-		}
-
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
-		{
-			ImGui::SetDragDropPayload("ENTITY_DRAG", &entity, sizeof(Entity));
-			ImGui::EndDragDropSource();
-		}
-
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_DRAG"))
-			{
-				Entity* draggedEntity = (Entity*)payload->Data;
-				entity.AddChild(*draggedEntity);
-			}
-
-			ImGui::EndDragDropTarget();
 		}
 
 		bool entityDeleted = false;
@@ -121,10 +92,11 @@ namespace Ellis {
 
 		if (opened)
 		{
-			for (auto& child : entity)
-			{
-				DrawEntityNode(child, true);
-			}
+			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
+			if (opened)
+				ImGui::TreePop();
 
 			ImGui::TreePop();
 		}
@@ -318,7 +290,7 @@ namespace Ellis {
 
 		ImGui::PopItemWidth();
 
-		DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
+		DrawComponent<TransformComponent>("Transform", entity, [](TransformComponent& component)
 		{
 			DrawVec3Control("Translation", component.Translation);
 			glm::vec3 rotation = glm::degrees(component.Rotation);
@@ -327,7 +299,7 @@ namespace Ellis {
 			DrawVec3Control("Scale", component.Scale, 1.0f);
 		});
 
-		DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
+		DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
 		{
 			auto& camera = component.Camera;
 			ImGui::Checkbox("Primary", &component.Primary);
@@ -485,36 +457,79 @@ namespace Ellis {
 			}
 		});
 
-		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](SpriteRendererComponent& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 		
-			if (ImGui::Button("Texture", { 100.0f, 0.0f }))
-				component.Texture.reset();
+			std::string label = "None";
+			bool isTextureValid = false;
 
+			if (component.Texture)
+			{
+				if (AssetManager::IsAssetHandleValid(component.Texture) && AssetManager::GetAssetType(component.Texture) == AssetType::Texture2D)
+				{
+					const auto& metadata = Project::GetActive()->GetEditorAssetManager()->GetMetadata(component.Texture);
+
+					label = metadata.FilePath.filename().string();
+					isTextureValid = true;
+				}
+				else
+				{
+					label = "Invalid";
+				}
+			}
+
+			ImVec2 buttonLabelSize = ImGui::CalcTextSize(label.c_str());
+			buttonLabelSize.x += 20.0f;
+			float buttonLabelWidth = glm::max<float>(100.0f, buttonLabelSize.x);
+
+			ImGui::Button(label.c_str(), {buttonLabelWidth, 0.0f});
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
 				{
-					const wchar_t* path = (const wchar_t*)payload->Data;
-					std::filesystem::path texturePath(path);
-					component.Texture = Texture2D::Create(texturePath.string());
+					AssetHandle handle = *(AssetHandle*)payload->Data;
+
+					if (AssetManager::GetAssetType(handle) == AssetType::Texture2D)
+					{
+						component.Texture = handle;
+					}
+					else
+					{
+						EL_CORE_WARN("Wrong asset type!");
+					}
 				}
 
 				ImGui::EndDragDropTarget();
 			}
 
+			if (isTextureValid)
+			{
+				ImGui::SameLine();
+
+				ImVec2 xLabelSize = ImGui::CalcTextSize("X");
+				float buttonSize = xLabelSize.y + ImGui::GetStyle().FramePadding.y * 2.0f;
+
+				if (ImGui::Button("X", { buttonSize, buttonSize }))
+				{
+					component.Texture = 0;
+				}
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("Texture");
+
 			ImGui::DragFloat("Tiling Factor", &component.TilingFactor, 0.1f, 0.0f, 100.0f);
 		});
 
-		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](auto& component)
+		DrawComponent<CircleRendererComponent>("Circle Renderer", entity, [](CircleRendererComponent& component)
 		{
 			ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
 			ImGui::DragFloat("Thickness", &component.Thickness, 0.025f, 0.0f, 1.0f);
 			ImGui::DragFloat("Fade", &component.Fade, 0.00025f, 0.0f, 1.0f);
 		});
 
-		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](auto& component)
+		DrawComponent<Rigidbody2DComponent>("Rigidbody 2D", entity, [](Rigidbody2DComponent& component)
 		{
 			const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
 			const char* currentBodyTypeString = bodyTypeStrings[(int)component.Type];
@@ -540,7 +555,7 @@ namespace Ellis {
 			ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
 		});
 
-		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](auto& component)
+		DrawComponent<BoxCollider2DComponent>("Box Collider 2D", entity, [](BoxCollider2DComponent& component)
 		{
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
 			ImGui::DragFloat2("Size", glm::value_ptr(component.Size));
@@ -551,7 +566,7 @@ namespace Ellis {
 			ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
 		});
 
-		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](auto& component)
+		DrawComponent<CircleCollider2DComponent>("Circle Collider 2D", entity, [](CircleCollider2DComponent& component)
 		{
 			ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
 			ImGui::DragFloat("Radius", &component.Radius);

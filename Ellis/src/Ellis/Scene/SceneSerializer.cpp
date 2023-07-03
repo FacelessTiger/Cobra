@@ -193,20 +193,6 @@ namespace Ellis {
 		out << YAML::BeginMap;
 		out << YAML::Key << "Entity" << YAML::Value << entity.GetUUID();
 
-		if (entity.HasComponent<RelationshipComponent>())
-		{
-			out << YAML::Key << "RelationshipComponent";
-			out << YAML::BeginMap; // RelationshipComponent
-
-			auto& parent = entity.GetComponent<RelationshipComponent>().Parent;
-			if (parent.has_value())
-				out << YAML::Key << "Parent" << YAML::Value << *parent;
-
-			out << YAML::Key << "Children" << YAML::Value << entity.GetComponent<RelationshipComponent>().Children;
-
-			out << YAML::EndMap; // RelationshipComponent
-		}
-
 		if (entity.HasComponent<TagComponent>())
 		{
 			out << YAML::Key << "TagComponent";
@@ -321,8 +307,7 @@ namespace Ellis {
 
 			auto& spriteRendererComponent = entity.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
-			if (spriteRendererComponent.Texture)
-				out << YAML::Key << "TexturePath" << YAML::Value << std::filesystem::relative(spriteRendererComponent.Texture->GetPath(), Project::GetAssetDirectory()).string();
+			out << YAML::Key << "TextureHandle" << YAML::Value << spriteRendererComponent.Texture;
 
 			out << YAML::Key << "TilingFactor" << YAML::Value << spriteRendererComponent.TilingFactor;
 
@@ -404,7 +389,7 @@ namespace Ellis {
 		out << YAML::EndMap; // Entity
 	}
 
-	void SceneSerializer::Serialize(const std::string& filepath)
+	void SceneSerializer::Serialize(const std::filesystem::path& filepath)
 	{
 		YAML::Emitter out;
 		out << YAML::BeginMap;
@@ -427,18 +412,18 @@ namespace Ellis {
 		fout << out.c_str();
 	}
 
-	void SceneSerializer::SerializeRuntime(const std::string& filepath)
+	void SceneSerializer::SerializeRuntime(const std::filesystem::path& filepath)
 	{
 		// Not implemented
 		EL_CORE_ASSERT(false);
 	}
 
-	bool SceneSerializer::Deserialize(const std::string& filepath)
+	bool SceneSerializer::Deserialize(const std::filesystem::path& filepath)
 	{
 		YAML::Node data;
 		try
 		{
-			data = YAML::LoadFile(filepath);
+			data = YAML::LoadFile(filepath.string());
 		}
 		catch (YAML::ParserException e)
 		{
@@ -467,18 +452,6 @@ namespace Ellis {
 				EL_CORE_TRACE("Deserialized entity with ID = {0}, name = {1}", uuid, name);
 
 				Entity deserializedEntity = m_Scene->CreateEntityWithUUID(uuid, name);
-
-				auto relationshipComponent = entity["RelationshipComponent"];
-				if (relationshipComponent)
-				{
-					auto& rc = deserializedEntity.GetComponent<RelationshipComponent>();
-
-					if (relationshipComponent["Parent"])
-					{
-						rc.Parent = relationshipComponent["Parent"].as<UUID>();
-					}
-					rc.Children = relationshipComponent["Children"].as<std::vector<UUID>>();
-				}
 
 				auto transformComponent = entity["TransformComponent"];
 				if (transformComponent)
@@ -566,12 +539,8 @@ namespace Ellis {
 					auto& src = deserializedEntity.AddComponent<SpriteRendererComponent>();
 
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-					if (spriteRendererComponent["TexturePath"])
-					{
-						std::string texturePath = spriteRendererComponent["TexturePath"].as<std::string>();
-						auto path = Project::GetAssetFileSystemPath(texturePath);
-						src.Texture = Texture2D::Create(path.string());
-					}
+					if (spriteRendererComponent["TextureHandle"])
+						src.Texture = spriteRendererComponent["TextureHandle"].as<AssetHandle>();
 
 					if (spriteRendererComponent["TilingFactor"])
 						src.TilingFactor = spriteRendererComponent["TilingFactor"].as<float>();
@@ -634,7 +603,7 @@ namespace Ellis {
 		return true;
 	}
 
-	bool SceneSerializer::DeserializeRuntime(const std::string& filepath)
+	bool SceneSerializer::DeserializeRuntime(const std::filesystem::path& filepath)
 	{
 		// Not implemented
 		EL_CORE_ASSERT(false);

@@ -16,15 +16,6 @@
 
 namespace Ellis {
 
-	struct RelationshipComponent
-	{
-		std::vector<UUID> Children;
-		std::optional<UUID> Parent;
-
-		RelationshipComponent() = default;
-		RelationshipComponent(const RelationshipComponent&) = default;
-	};
-
 	struct IDComponent
 	{
 		UUID ID;
@@ -66,7 +57,7 @@ namespace Ellis {
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		Ref<Texture2D> Texture;
+		AssetHandle Texture = 0;
 		float TilingFactor = 1.0f;
 
 		SpriteRendererComponent() = default;
@@ -189,7 +180,7 @@ namespace Ellis {
 	{ };
 
 	using AllComponents =
-		ComponentGroup<RelationshipComponent, TransformComponent, SpriteRendererComponent,
+		ComponentGroup<TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, TextComponent>;
 

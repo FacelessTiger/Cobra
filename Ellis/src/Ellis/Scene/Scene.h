@@ -3,6 +3,7 @@
 #include "Ellis/Core/UUID.h"
 #include "Ellis/Core/Timestep.h"
 #include "Ellis/Renderer/EditorCamera.h"
+#include "Ellis/Asset/Asset.h"
 
 #include <entt.hpp>
 
@@ -14,7 +15,7 @@ namespace Ellis {
 	class SceneHierarchyPanel;
 	class SceneSerializer;
 
-	class Scene
+	class Scene : public Asset
 	{
 	private:
 		friend class Entity;
@@ -35,6 +36,8 @@ namespace Ellis {
 		~Scene();
 
 		static Ref<Scene> Copy(Ref<Scene> other);
+
+		AssetType GetType() const override { return AssetType::Scene; };
 
 		Entity CreateEntity(const std::string& name = std::string());
 		Entity CreateEntityWithUUID(UUID uuid, const std::string& name = std::string());

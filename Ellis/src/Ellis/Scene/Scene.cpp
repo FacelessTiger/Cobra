@@ -100,7 +100,6 @@ namespace Ellis {
 	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
 	{
 		Entity entity = { m_Registry.create(), this };
-		entity.AddComponent<RelationshipComponent>();
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
@@ -340,13 +339,11 @@ namespace Ellis {
 
 			// Draw sprites
 			{
-				auto view = m_Registry.view<SpriteRendererComponent>();
-				for (auto e : view)
+				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				for (auto entity : group)
 				{
-					Entity entity = Entity(e, this);
-					auto& sprite = entity.GetComponent<SpriteRendererComponent>();
-
-					Renderer2D::DrawSprite(entity.GetRelativeTranslation(), sprite, (int)entity);
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 				}
 			}
 
@@ -362,13 +359,11 @@ namespace Ellis {
 
 			// Draw Text
 			{
-				auto view = m_Registry.view<TextComponent>();
-				for (auto e : view)
+				auto view = m_Registry.view<TransformComponent, TextComponent>();
+				for (auto entity : view)
 				{
-					Entity entity = Entity(e, this);
-					auto& text = entity.GetComponent<TextComponent>();
-
-					Renderer2D::DrawString(text.TextString, entity.GetRelativeTranslation(), text, (int)entity);
+					auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
 				}
 			}
 
@@ -442,13 +437,11 @@ namespace Ellis {
 		Renderer2D::BeginScene(camera);
 		// Draw sprites
 		{
-			auto view = m_Registry.view<SpriteRendererComponent>();
-			for (auto e : view)
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
 			{
-				Entity entity = Entity(e, this);
-				auto& sprite = entity.GetComponent<SpriteRendererComponent>();
-
-				Renderer2D::DrawSprite(entity.GetRelativeTranslation(), sprite, (int)entity);
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
 			}
 		}
 
@@ -464,13 +457,11 @@ namespace Ellis {
 
 		// Draw Text
 		{
-			auto view = m_Registry.view<TextComponent>();
-			for (auto e : view)
+			auto view = m_Registry.view<TransformComponent, TextComponent>();
+			for (auto entity : view)
 			{
-				Entity entity = Entity(e, this);
-				auto& text = entity.GetComponent<TextComponent>();
-
-				Renderer2D::DrawString(text.TextString, entity.GetRelativeTranslation(), text, (int)entity);
+				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
 			}
 		}
 
@@ -482,10 +473,6 @@ namespace Ellis {
 	{
 		static_assert(sizeof(T) == 0);
 	}
-
-	template<>
-	void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component)
-	{ }
 
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)

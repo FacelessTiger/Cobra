@@ -30,7 +30,7 @@ namespace Ellis {
         spec.GenerateMips = false;
 
         Ref<Texture2D> texture = Texture2D::Create(spec);
-        texture->SetData((void*)bitmap.pixels, bitmap.width * bitmap.height * 3);
+        texture->SetData(Buffer((void*)bitmap.pixels, bitmap.width * bitmap.height * 3));
         return texture;
     }
 
@@ -102,7 +102,7 @@ namespace Ellis {
                 unsigned long long glyphSeed = (LCG_MULTIPLIER * (coloringSeed ^ i) + LCG_INCREMENT) * !!coloringSeed;
                 glyphs[i].edgeColoring(msdfgen::edgeColoringInkTrap, DEFAULT_ANGLE_THRESHOLD, glyphSeed);
                 return true;
-            }, m_Data->Glyphs.size()).finish(THREAD_COUNT);
+            }, (int)m_Data->Glyphs.size()).finish(THREAD_COUNT);
         }
         else
         {

@@ -13,6 +13,7 @@
 #include <unordered_set>
 
 #include "Ellis/Core/Log.h"
+#include "Ellis/Core/Buffer.h"
 #include "Ellis/Debug/Instrumentor.h"
 
 #ifdef EL_PLATFORM_WINDOWS
