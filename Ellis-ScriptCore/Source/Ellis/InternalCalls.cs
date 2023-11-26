@@ -11,6 +11,9 @@ namespace Ellis
         internal extern static bool Entity_HasComponent(ulong entityID, Type componentType);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static bool Entity_NativeLog(string msg);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static ulong Entity_FindEntityByName(string name);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -18,6 +21,9 @@ namespace Ellis
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static uint Entity_GetWindowHeight();
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static float[] Entity_GetWorldTransform(ulong entityID);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static object Entity_GetScriptInstance(ulong entityID);
@@ -151,6 +157,12 @@ namespace Ellis
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
         internal extern static Vector4 Matrix4_MultiplyMat4Vec4(float[] left, Vector4 right);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector3 Matrix4_GetTranslation(float[] array);
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        internal extern static Vector3 Matrix4_GetScale(float[] array);
         #endregion
     }
 }

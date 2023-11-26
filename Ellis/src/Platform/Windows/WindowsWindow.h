@@ -9,20 +9,6 @@ namespace Ellis {
 
 	class WindowsWindow : public Window
 	{
-	private:
-		GLFWwindow* m_Window;
-		Scope<GraphicsContext> m_Context;
-
-		struct WindowData
-		{
-			std::string Title;
-			unsigned int Width, Height;
-			bool VSync;
-
-			EventCallbackFn EventCallback;
-		};
-
-		WindowData m_Data;
 	public:
 		WindowsWindow(const WindowProps& props);
 		virtual ~WindowsWindow();
@@ -37,10 +23,33 @@ namespace Ellis {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
+		inline void SetTitlebarHovered(bool hovered) override { m_Data.TitlebarHovered = hovered; }
+		inline bool IsTitlebarHovered() const override { return m_Data.TitlebarHovered; }
+		inline bool IsMaximized() const override { return (bool)glfwGetWindowAttrib(m_Window, GLFW_MAXIMIZED); }
+
+		inline void Minimize() override { glfwIconifyWindow(m_Window); }
+		inline virtual void Maximize() override { glfwMaximizeWindow(m_Window); }
+		inline virtual void Restore() override { glfwRestoreWindow(m_Window); }
+
 		inline void* GetNativeWindow() const override { return m_Window; }
 	private:
 		virtual void Init(const WindowProps& props);
 		virtual void Shutdown();
+	private:
+		GLFWwindow* m_Window;
+		Scope<GraphicsContext> m_Context;
+
+		struct WindowData
+		{
+			std::string Title;
+			unsigned int Width, Height;
+			bool VSync;
+			bool TitlebarHovered;
+
+			EventCallbackFn EventCallback;
+		};
+
+		WindowData m_Data;
 	};
 
 }

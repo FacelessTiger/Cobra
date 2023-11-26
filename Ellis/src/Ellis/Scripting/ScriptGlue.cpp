@@ -12,8 +12,10 @@
 #include <mono/metadata/reflection.h>
 #include <mono/metadata/appdomain.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 #include <box2d/b2_body.h>
+#include <imgui.h>
 
 namespace Ellis {
 
@@ -50,6 +52,8 @@ namespace Ellis {
 	}
 
 	static std::unordered_map<MonoType*, std::function<bool(Entity)>> s_EntityHasComponentFuncs;
+	static glm::vec2 s_EditorViewportCursorPos;
+	static glm::vec2 s_EditorViewportSize;
 
 #define EL_ADD_INTERNAL_CALL(Name) mono_add_internal_call("Ellis.InternalCalls::" #Name, Name)
 
@@ -64,6 +68,12 @@ namespace Ellis {
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
 		EL_CORE_ASSERT(s_EntityHasComponentFuncs.find(managedType) != s_EntityHasComponentFuncs.end());
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
+	}
+
+	static void Entity_NativeLog(MonoString* string)
+	{
+		std::string str = Utils::MonoStringToString(string);
+		EL_CORE_INFO("Script: {}", str);
 	}
 
 	static uint64_t Entity_FindEntityByName(MonoString* name)
@@ -83,12 +93,24 @@ namespace Ellis {
 
 	static uint32_t Entity_GetWindowWidth()
 	{
-		return Application::Get().GetWindow().GetWidth();
+		// TODO: return Application::Get().GetWindow().GetWidth() in runtime
+		return s_EditorViewportSize.x;
 	}
 
 	static uint32_t Entity_GetWindowHeight()
 	{
-		return Application::Get().GetWindow().GetHeight();
+		// TODO: return Application::Get().GetWindow().GetHeight() in runtime
+		return s_EditorViewportSize.y;
+	}
+
+	static MonoArray* Entity_GetWorldTransform(UUID entityID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		EL_CORE_ASSERT(scene);
+		Entity entity = scene->GetEntityByUUID(entityID);
+		EL_CORE_ASSERT(entity);
+
+		return Utils::Mat4ToMonoArray(scene->GetWorldSpaceTransformMatrix(entity));
 	}
 
 	static MonoObject* Entity_GetScriptInstance(UUID entityID)
@@ -453,12 +475,14 @@ namespace Ellis {
 
 	static float Input_GetMouseX()
 	{
-		return Input::GetMouseX();
+		// TODO: return Input::GetMouseX() in runtime
+		return s_EditorViewportCursorPos.x;
 	}
 
 	static float Input_GetMouseY()
 	{
-		return Input::GetMouseY();
+		// TODO: return Input::GetMouseY() in runtime
+		return s_EditorViewportCursorPos.y;
 	}
 	#pragma endregion
 
@@ -483,6 +507,24 @@ namespace Ellis {
 		glm::mat4 leftMatrix = Utils::MonoArrayToMat4(left);
 
 		return leftMatrix * right;
+	}
+
+	static glm::vec3 Matrix4_GetTranslation(MonoArray* array)
+	{
+		glm::mat4 matrix = Utils::MonoArrayToMat4(array);
+		return glm::vec3(matrix[3]);
+	}
+
+	static glm::vec3 Matrix4_GetScale(MonoArray* array)
+	{
+		glm::mat4 matrix = Utils::MonoArrayToMat4(array);
+
+		glm::vec3 scale;
+		scale.x = glm::length(glm::vec3(matrix[0]));
+		scale.y = glm::length(glm::vec3(matrix[1]));
+		scale.z = glm::length(glm::vec3(matrix[2]));
+
+		return glm::vec3(scale);
 	}
 	#pragma endregion
 
@@ -522,9 +564,11 @@ namespace Ellis {
 	void ScriptGlue::RegisterFunctions()
 	{
 		EL_ADD_INTERNAL_CALL(Entity_HasComponent);
+		EL_ADD_INTERNAL_CALL(Entity_NativeLog);
 		EL_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		EL_ADD_INTERNAL_CALL(Entity_GetWindowWidth);
 		EL_ADD_INTERNAL_CALL(Entity_GetWindowHeight);
+		EL_ADD_INTERNAL_CALL(Entity_GetWorldTransform);
 		EL_ADD_INTERNAL_CALL(Entity_GetScriptInstance);
 
 		EL_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
@@ -572,6 +616,18 @@ namespace Ellis {
 		EL_ADD_INTERNAL_CALL(Matrix4_Inverse);
 		EL_ADD_INTERNAL_CALL(Matrix4_MultiplyMat4Mat4);
 		EL_ADD_INTERNAL_CALL(Matrix4_MultiplyMat4Vec4);
+		EL_ADD_INTERNAL_CALL(Matrix4_GetTranslation);
+		EL_ADD_INTERNAL_CALL(Matrix4_GetScale);
+	}
+
+	void ScriptGlue::SetEditorViewportCursorPos(const glm::vec2& position)
+	{
+		s_EditorViewportCursorPos = position;
+	}
+
+	void ScriptGlue::SetEditorViewportSize(const glm::vec2& size)
+	{
+		s_EditorViewportSize = size;
 	}
 
 }

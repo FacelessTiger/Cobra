@@ -61,6 +61,11 @@ namespace Ellis
             return InternalCalls.Entity_HasComponent(ID, componentType);
         }
 
+        public void NativeLog(string msg)
+        {
+            InternalCalls.Entity_NativeLog(msg);
+        }
+
         public T GetComponent<T>() where T : Component, new()
         {
             if (!HasComponent<T>())
@@ -87,6 +92,11 @@ namespace Ellis
         public uint GetWindowHeight()
         {
             return InternalCalls.Entity_GetWindowHeight();
+        }
+
+        public Matrix4 GetWorldTransform()
+        {
+            return new Matrix4(InternalCalls.Entity_GetWorldTransform(ID));
         }
 
         public T As<T>() where T : Entity, new()

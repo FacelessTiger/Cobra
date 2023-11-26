@@ -32,7 +32,7 @@ namespace Ellis {
 		return out;
 	}
 
-	Ref<Asset> EditorAssetManager::GetAsset(AssetHandle handle)
+	Ref<Asset> EditorAssetManager::GetAsset(AssetHandle handle) const
 	{
 		if (!IsAssetHandleValid(handle))
 			return nullptr;
@@ -94,7 +94,7 @@ namespace Ellis {
 
 	void EditorAssetManager::SerializeAssetRegistry()
 	{
-		auto path = Project::GetAssetRegistryPath();
+		auto path = Project::GetActiveAssetRegistryPath();
 
 		YAML::Emitter out;
 		{
@@ -121,7 +121,7 @@ namespace Ellis {
 
 	bool EditorAssetManager::DeserializeAssetRegistry()
 	{
-		auto path = Project::GetAssetRegistryPath();
+		auto path = Project::GetActiveAssetRegistryPath();
 
 		YAML::Node data;
 		try

@@ -10,7 +10,7 @@ namespace Ellis {
 	{
 		EL_PROFILE_FUNCTION();
 
-		return LoadScene(Project::GetAssetDirectory() / metadata.FilePath);
+		return LoadScene(Project::GetActiveAssetDirectory() / metadata.FilePath);
 	}
 
 	Ref<Scene> SceneImporter::LoadScene(const std::filesystem::path& path)
@@ -27,7 +27,7 @@ namespace Ellis {
 	void SceneImporter::SaveScene(Ref<Scene> scene, const std::filesystem::path& path)
 	{
 		SceneSerializer serializer(scene);
-		serializer.Serialize(Project::GetAssetDirectory() / path);
+		serializer.Serialize(Project::GetActiveAssetDirectory() / path);
 	}
 
 }

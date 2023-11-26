@@ -204,6 +204,31 @@ namespace Ellis {
 			out << YAML::EndMap; // TagComponent
 		}
 
+		if (entity.HasComponent<RelationshipComponent>())
+		{
+			out << YAML::Key << "RelationshipComponent";
+			out << YAML::BeginMap; // RelationshipComponent
+
+			auto& rc = entity.GetComponent<RelationshipComponent>();
+			if (rc.Parent != -1)
+				out << YAML::Key << "Parent" << YAML::Value << rc.Parent;
+
+			if (rc.Children.size() > 0)
+			{
+				out << YAML::Key << "Children" << YAML::Value;
+				out << YAML::BeginSeq;
+
+				for (UUID child : rc.Children)
+				{
+					out << child;
+				}
+
+				out << YAML::EndSeq;
+			}
+
+			out << YAML::EndMap; // RelationshipComponent
+		}
+
 		if (entity.HasComponent<TransformComponent>())
 		{
 			out << YAML::Key << "TransformComponent";
@@ -461,6 +486,23 @@ namespace Ellis {
 					tc.Translation = transformComponent["Translation"].as<glm::vec3>();
 					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
 					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
+				}
+
+				auto relationshipComponent = entity["RelationshipComponent"];
+				if (relationshipComponent)
+				{
+					auto& rc = deserializedEntity.GetComponent<RelationshipComponent>();
+
+					auto parent = relationshipComponent["Parent"];
+					if (parent)
+						rc.Parent = parent.as<UUID>();
+
+					auto children = relationshipComponent["Children"];
+					if (children)
+					{
+						for (auto child : children)
+							rc.Children.push_back(child.as<UUID>());
+					}
 				}
 
 				auto cameraComponent = entity["CameraComponent"];

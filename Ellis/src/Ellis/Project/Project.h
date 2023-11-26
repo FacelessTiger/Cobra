@@ -30,28 +30,37 @@ namespace Ellis {
 
 		inline static Ref<Project> s_ActiveProject;
 	public:
-		static const std::filesystem::path& GetProjectDirectory()
+		const std::filesystem::path& GetProjectDirectory() { return m_ProjectDirectory; }
+
+		std::filesystem::path GetAssetDirectory() { return GetProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory; }
+		std::filesystem::path GetAssetRegistryPath() { return GetAssetDirectory() / s_ActiveProject->m_Config.AssetRegistryPath; }
+		// TODO: move to asset manager when we have one
+		std::filesystem::path GetAssetFileSystemPath(const std::filesystem::path& path) { return GetAssetDirectory() / path; }
+
+		std::filesystem::path GetAssetAbsolutePath(const std::filesystem::path& path);
+
+		static const std::filesystem::path& GetActiveProjectDirectory()
 		{
 			EL_CORE_ASSERT(s_ActiveProject);
-			return s_ActiveProject->m_ProjectDirectory;
+			return s_ActiveProject->GetProjectDirectory();
 		}
 
-		static std::filesystem::path GetAssetDirectory()
+		static std::filesystem::path GetActiveAssetDirectory()
 		{
 			EL_CORE_ASSERT(s_ActiveProject);
-			return GetProjectDirectory() / s_ActiveProject->m_Config.AssetDirectory;
+			return s_ActiveProject->GetAssetDirectory();
 		}
 
-		static std::filesystem::path GetAssetRegistryPath()
+		static std::filesystem::path GetActiveAssetRegistryPath()
 		{
 			EL_CORE_ASSERT(s_ActiveProject);
-			return GetAssetDirectory() / s_ActiveProject->m_Config.AssetRegistryPath;
+			return s_ActiveProject->GetAssetRegistryPath();
 		}
 
-		static std::filesystem::path GetAssetFileSystemPath(const std::filesystem::path& path)
+		static std::filesystem::path GetActiveAssetFileSystemPath(const std::filesystem::path& path)
 		{
 			EL_CORE_ASSERT(s_ActiveProject);
-			return GetAssetDirectory() / path;
+			return s_ActiveProject->GetAssetFileSystemPath(path);
 		}
 
 		ProjectConfig& GetConfig() { return m_Config; }

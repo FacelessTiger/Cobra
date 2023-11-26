@@ -1,13 +1,16 @@
 #include "EditorLayer.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <ImGuizmo.h>
 
+#include <Ellis/UI/UI.h>
 #include <Ellis/Scene/SceneSerializer.h>
 #include <Ellis/Utils/PlatformUtils.h>
 #include <Ellis/Math/Math.h>
 #include <Ellis/Scripting/ScriptEngine.h>
+#include <Ellis/Scripting/ScriptGlue.h>
 #include <Ellis/Renderer/Font.h>
 #include <Ellis/Asset/TextureImporter.h>
 #include <Ellis/Asset/SceneImporter.h>
@@ -32,6 +35,11 @@ namespace Ellis {
 		m_IconSimulate = TextureImporter::LoadTexture2D("Resources/Icons/SimulateButton.png");
 		m_IconStep = TextureImporter::LoadTexture2D("Resources/Icons/StepButton.png");
 		m_IconStop = TextureImporter::LoadTexture2D("Resources/Icons/StopButton.png");
+		m_IconLogo = TextureImporter::LoadTexture2D("Resources/Icons/Logo.png");
+		m_IconMinimize = TextureImporter::LoadTexture2D("Resources/Icons/Minimize.png");
+		m_IconMaximize = TextureImporter::LoadTexture2D("Resources/Icons/Maximize.png");
+		m_IconRestore = TextureImporter::LoadTexture2D("Resources/Icons/Restore.png");
+		m_IconClose = TextureImporter::LoadTexture2D("Resources/Icons/Close.png");
 
 		FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -131,9 +139,11 @@ namespace Ellis {
 		int mouseX = (int)mx;
 		int mouseY = (int)my;
 
+		ScriptGlue::SetEditorViewportSize(viewportSize);
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
 			int pixelData = m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			ScriptGlue::SetEditorViewportCursorPos({ mouseX, mouseY });
 			m_HoveredEntity = (pixelData == -1) ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
 		}
 
@@ -153,64 +163,46 @@ namespace Ellis {
 	{
 		EL_PROFILE_FUNCTION();
 
-		static bool dockSpaceOpen = true;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
 
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->WorkPos);
-		ImGui::SetNextWindowSize(viewport->WorkSize);
+		const bool isMaximized = Application::Get().GetWindow().IsMaximized();
+
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
 		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace Demo", &dockSpaceOpen, window_flags);
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar(2);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, isMaximized ? ImVec2(6.0f, 6.0f) : ImVec2(1.0f, 1.0f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 3.0f);
+
+		ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4{ 0.0f, 0.0f, 0.0f, 0.0f });
+		ImGui::Begin("DockSpace Demo", nullptr, window_flags);
+		ImGui::PopStyleColor();
+
+		ImGui::PopStyleVar(4);
+
+		{
+			ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(50, 50, 50, 255));
+			// Draw window border if the window is not maximized
+			if (!isMaximized)
+				UI::RenderWindowOuterBorders(ImGui::GetCurrentWindow());
+
+			ImGui::PopStyleColor(); // ImGuiCol_Border
+		}
+		
+		ImGui::SetCursorPosY(UI_Titlebar());
 
 		// Submit the DockSpace
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
 		float minWinSizeX = style.WindowMinSize.x;
-		style.WindowMinSize.x = 370.0f;
-
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-		}
-
+		style.WindowMinSize.x = 400.0f;
+		ImGui::DockSpace(ImGui::GetID("MyDockspace"));
 		style.WindowMinSize.x = minWinSizeX;
-
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Open Project...", "Ctrl+O")) OpenProject();
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("New Scene", "Ctrl+N")) NewScene();
-				if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
-				if (ImGui::MenuItem("Exit")) Application::Get().Close();
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Script"))
-			{
-				if (ImGui::MenuItem("Reload assembly", "Ctrl+R")) ScriptEngine::ReloadAssembly();
-
-				ImGui::EndMenu();
-			}
-
-			ImGui::EndMenuBar();
-		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ContentBrowserPanel->OnImGuiRender();
@@ -293,7 +285,7 @@ namespace Ellis {
 
 			// Entity transform
 			auto& tc = selectedEntity.GetComponent<TransformComponent>();
-			glm::mat4 transform = tc.GetTransform();
+			glm::mat4 transform = m_ActiveScene->GetWorldSpaceTransformMatrix(selectedEntity);
 
 			// Snapping
 			bool snap = Input::IsKeyPressed(Key::LeftControl);
@@ -320,6 +312,177 @@ namespace Ellis {
 		UI_Toolbar();
 
 		ImGui::End();
+	}
+
+	float EditorLayer::UI_Titlebar()
+	{
+		Window& window = Application::Get().GetWindow();
+
+		const float titlebarHeight = 58.0f;
+		const bool isMaximized = window.IsMaximized();
+		float titlebarVerticalOffset = isMaximized ? -6.0f : 0.0f;
+		const ImVec2 windowPadding = ImGui::GetCurrentWindow()->WindowPadding;
+
+		ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset));
+		const ImVec2 titlebarMin = ImGui::GetCursorScreenPos();
+		const ImVec2 titlebarMax = { ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
+									 ImGui::GetCursorScreenPos().y + titlebarHeight };
+		auto* bgDrawList = ImGui::GetBackgroundDrawList();
+		auto* fgDrawList = ImGui::GetForegroundDrawList();
+		bgDrawList->AddRectFilled(titlebarMin, titlebarMax, IM_COL32(21, 21, 21, 255));
+		
+		// DEBUG TITLEBAR BOUNDS
+		//fgDrawList->AddRect(titlebarMin, titlebarMax, IM_COL32(255, 255, 255, 255));
+
+		// Logo
+		{
+			const int logoWidth = 48;
+			const int logoHeight = 48;
+
+			const ImVec2 logoOffset(16.0f + windowPadding.x, 5.0f + windowPadding.y + titlebarVerticalOffset);
+			const ImVec2 logoRectStart = { ImGui::GetItemRectMin().x + logoOffset.x, ImGui::GetItemRectMin().y + logoOffset.y };
+			const ImVec2 logoRectMax = { logoRectStart.x + logoWidth, logoRectStart.y + logoHeight };
+
+			fgDrawList->AddImage((ImTextureID)(uint64_t)m_IconLogo->GetRendererID(), logoRectStart, logoRectMax, ImVec2(0, 1), ImVec2(1, 0));
+		}
+
+		ImGui::BeginHorizontal("Titlebar", { ImGui::GetWindowWidth() - windowPadding.y * 2.0f, ImGui::GetFrameHeightWithSpacing() });
+		
+		static float moveOffsetX;
+		static float moveOffsetY;
+		const float w = ImGui::GetContentRegionAvail().x;
+		const float buttonsAreaWidth = 94;
+
+		// Title bar drag area
+		ImGui::SetCursorPos(ImVec2(windowPadding.x, windowPadding.y + titlebarVerticalOffset));
+		// DEBUG DRAG BOUNDS
+		// fgDrawList->AddRect(ImGui::GetCursorScreenPos(), ImVec2(ImGui::GetCursorScreenPos().x + w - buttonsAreaWidth, ImGui::GetCursorScreenPos().y + titlebarHeight), IM_COL32(255, 255, 255, 255));
+		ImGui::InvisibleButton("##titleBarDragZone", ImVec2(w - buttonsAreaWidth, titlebarHeight), ImGuiButtonFlags_AllowOverlap);
+
+		window.SetTitlebarHovered(ImGui::IsItemHovered());
+		if (isMaximized)
+		{
+			float windowMousePosY = ImGui::GetMousePos().y - ImGui::GetCursorScreenPos().y;
+			if (windowMousePosY >= 0.0f && windowMousePosY <= 5.0f)
+				window.SetTitlebarHovered(true); // Account for the top-most pixels which don't register
+		}
+
+		// Draw menu bar
+		ImGui::SuspendLayout();
+		{
+			ImGui::SetNextItemAllowOverlap();
+			const float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
+			ImGui::SetCursorPos(ImVec2(logoHorizontalOffset, 6.0f + titlebarVerticalOffset));
+			UI_Menubar();
+
+			if (ImGui::IsItemHovered()) window.SetTitlebarHovered(false);
+		}
+		ImGui::ResumeLayout();
+
+		// Centered window title
+		{
+			const char* title = Application::Get().GetSpecification().Name.c_str();
+
+			ImVec2 currentCursorPos = ImGui::GetCursorPos();
+			ImVec2 textSize = ImGui::CalcTextSize(title);
+
+			ImGui::SetCursorPos(ImVec2(ImGui::GetWindowWidth() * 0.5f - textSize.x * 0.5f, 2.0f + windowPadding.y + 6.0f));
+			ImGui::Text("%s", title); // Draw title
+			ImGui::SetCursorPos(currentCursorPos);
+		}
+
+		// Window buttons
+		const ImU32 buttonColN = IM_COL32(172, 172, 172, 255);
+		const ImU32 buttonColH = IM_COL32(230, 230, 230, 255);
+		const ImU32 buttonColP = IM_COL32(128, 128, 128, 255);
+		const float buttonWidth = 14.0f;
+		const float buttonHeight = 14.0f;
+
+		// Minimize button
+		ImGui::Spring();
+		UI::ShiftCursorY(8.0f);
+
+		{
+			const int iconWidth = m_IconMinimize->GetWidth();
+			const int iconHeight = m_IconMinimize->GetHeight();
+			const float padY = (buttonHeight - (float)iconHeight) / 2.0f;
+
+			if (ImGui::InvisibleButton("Minimize", ImVec2(buttonWidth, buttonHeight)))
+				window.Minimize();
+
+			UI::DrawButtonImage(m_IconMinimize, buttonColN, buttonColH, buttonColP, UI::RectExpanded(UI::GetItemRect(), 0.0f, -padY));
+		}
+
+		// Maximize Button
+		ImGui::Spring(-1.0f, 17.0f);
+		UI::ShiftCursorY(8.0f);
+
+		{
+			const int iconWidth = m_IconMaximize->GetWidth();
+			const int iconHeight = m_IconMaximize->GetHeight();
+
+			if (ImGui::InvisibleButton("Maximize", ImVec2(buttonWidth, buttonHeight)))
+			{
+				if (isMaximized)
+					window.Restore();
+				else
+					window.Maximize();
+			}
+
+			UI::DrawButtonImage(isMaximized ? m_IconRestore : m_IconMaximize, buttonColN, buttonColH, buttonColP);
+		}
+
+		// Close Button
+		ImGui::Spring(-1.0f, 15.0f);
+		UI::ShiftCursorY(8.0f);
+
+		{
+			const int iconWidth = m_IconClose->GetWidth();
+			const int iconHeight = m_IconClose->GetHeight();
+
+			if (ImGui::InvisibleButton("Close", ImVec2(buttonWidth, buttonHeight)))
+				Application::Get().Close();
+
+			UI::DrawButtonImage(m_IconClose, IM_COL32(192, 192, 192, 255), IM_COL32(255, 255, 255, 255), buttonColP);
+		}
+
+		ImGui::Spring(-1.0f, 18.0f);
+		ImGui::EndHorizontal();
+
+		return titlebarHeight;
+	}
+
+	void EditorLayer::UI_Menubar()
+	{
+		const ImRect menuBarRect = { ImGui::GetCursorPos(), { ImGui::GetContentRegionAvail().x + ImGui::GetCursorScreenPos().x, ImGui::GetFrameHeightWithSpacing() } };
+
+		ImGui::BeginGroup();
+		if (UI::BeginMenubar(menuBarRect))
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open Project...", "Ctrl+O")) OpenProject();
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("New Scene", "Ctrl+N")) NewScene();
+				if (ImGui::MenuItem("Save", "Ctrl+S")) SaveScene();
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) SaveSceneAs();
+				if (ImGui::MenuItem("Exit")) Application::Get().Close();
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Script"))
+			{
+				if (ImGui::MenuItem("Reload assembly", "Ctrl+R")) ScriptEngine::ReloadAssembly();
+
+				ImGui::EndMenu();
+			}
+		}
+
+		UI::EndMenubar();
+		ImGui::EndGroup();
 	}
 
 	void EditorLayer::UI_Toolbar()
@@ -409,12 +572,15 @@ namespace Ellis {
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<KeyPressedEvent>(EL_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+		dispatcher.Dispatch<KeyTypedEvent>(EL_BIND_EVENT_FN(EditorLayer::OnKeyTyped));
 		dispatcher.Dispatch<MouseButtonPressedEvent>(EL_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
 		dispatcher.Dispatch<WindowDropEvent>(EL_BIND_EVENT_FN(EditorLayer::OnWindowDrop));
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& e)
 	{
+		ScriptEngine::OnKeyPressed(e);
+
 		// Shortcuts
 		if (e.IsRepeat()) return false;
 
@@ -508,6 +674,13 @@ namespace Ellis {
 		return false;
 	}
 
+	bool EditorLayer::OnKeyTyped(KeyTypedEvent& e)
+	{
+		ScriptEngine::OnKeyTyped(e);
+
+		return false;
+	}
+
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
 	{
 		if (e.GetMouseButton() == Mouse::ButtonLeft && m_SceneState != SceneState::Play)
@@ -588,7 +761,7 @@ namespace Ellis {
 		if (selectedEntity)
 		{
 			const TransformComponent& transform = selectedEntity.GetComponent<TransformComponent>();
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
+			Renderer2D::DrawRect(m_ActiveScene->GetWorldSpaceTransformMatrix(selectedEntity), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 		}
 
 		Renderer2D::EndScene();
@@ -619,7 +792,7 @@ namespace Ellis {
 			if (startScene)
 				OpenScene(startScene);
 
-			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>();
+			m_ContentBrowserPanel = CreateScope<ContentBrowserPanel>(Project::GetActive());
 		}
 	}
 

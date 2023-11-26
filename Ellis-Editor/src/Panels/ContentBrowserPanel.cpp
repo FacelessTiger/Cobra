@@ -8,9 +8,9 @@
 
 namespace Ellis {
 
-	ContentBrowserPanel::ContentBrowserPanel()
-		: m_BaseDirectory(Project::GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
-	{ 
+	ContentBrowserPanel::ContentBrowserPanel(Ref<Project> project)
+		: m_Project(project), m_ThumbnailCache(CreateRef<ThumbnailCache>(project)), m_BaseDirectory(m_Project->GetAssetDirectory()), m_CurrentDirectory(m_BaseDirectory)
+	{
 		m_TreeNodes.push_back(TreeNode(".", 0));
 
 		m_DirectoryIcon = TextureImporter::LoadTexture2D("Resources/Icons/ContentBrowser/DirectoryIcon.png");
@@ -53,7 +53,7 @@ namespace Ellis {
 		{
 			TreeNode* node = &m_TreeNodes[0];
 
-			auto currentDir = std::filesystem::relative(m_CurrentDirectory, Project::GetAssetDirectory());
+			auto currentDir = std::filesystem::relative(m_CurrentDirectory, Project::GetActiveAssetDirectory());
 			for (const auto& p : currentDir)
 			{
 				if (node->Path == currentDir)
@@ -72,7 +72,7 @@ namespace Ellis {
 
 			for (const auto& [item, treeNodeIndex] : node->Children)
 			{
-				bool isDirectory = std::filesystem::is_directory(Project::GetAssetDirectory() / item);
+				bool isDirectory = std::filesystem::is_directory(Project::GetActiveAssetDirectory() / item);
 
 				std::string itemStr = item.generic_string();
 
@@ -113,6 +113,97 @@ namespace Ellis {
 		}
 		else
 		{
+			uint32_t count = 0;
+			for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+			{
+				count++;
+			}
+
+			// 1. How many entries?
+			// 2. Advance iterator to starting entry
+
+			ImGuiListClipper clipper;
+			bool first = true;
+
+			clipper.Begin(glm::ceil((float)count / (float)columnCount));
+			while (clipper.Step())
+			{
+				auto it = std::filesystem::directory_iterator(m_CurrentDirectory);
+				if (!first)
+				{
+					// advance to clipper.DisplayStart
+					for (int i = 0; i < clipper.DisplayStart; i++)
+					{
+						for (int c = 0; c < columnCount && it != std::filesystem::directory_iterator(); c++)
+						{
+							it++;
+						}
+					}
+				}
+
+				for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+				{
+					int c;
+					for (c = 0; c < columnCount && it != std::filesystem::directory_iterator(); c++, it++)
+					{
+						const auto& directoryEntry = *it;
+
+						const auto& path = directoryEntry.path();
+						std::string filenameString = path.filename().string();
+
+						ImGui::PushID(filenameString.c_str());
+
+						// thumbnail
+						auto relativePath = std::filesystem::relative(path, Project::GetActiveAssetDirectory());
+
+						Ref<Texture2D> thumbnail = m_DirectoryIcon;
+						if (!directoryEntry.is_directory())
+						{
+							thumbnail = m_ThumbnailCache->GetOrCreateThumbnail(relativePath);
+							if (!thumbnail)
+								thumbnail = m_FileIcon;
+						}
+
+						ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
+						ImGui::ImageButton((ImTextureID)thumbnail->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+
+						if (ImGui::BeginPopupContextItem())
+						{
+							if (ImGui::MenuItem("Import"))
+							{
+								Project::GetActive()->GetEditorAssetManager()->ImportAsset(relativePath);
+								RefreshAssetTree();
+							}
+
+							ImGui::EndPopup();
+						}
+
+						ImGui::PopStyleColor();
+						if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+						{
+							if (directoryEntry.is_directory())
+								m_CurrentDirectory /= path.filename();
+						}
+
+						ImGui::TextWrapped(filenameString.c_str());
+						ImGui::NextColumn();
+						ImGui::PopID();
+					}
+
+					if (first && c < columnCount)
+					{
+						for (int extra = 0; extra < columnCount - c; extra++)
+						{
+							ImGui::NextColumn();
+						}
+					}
+				}
+
+				first = false;
+			}
+			clipper.End();
+
+#if 0
 			for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
 			{
 				const auto& path = directoryEntry.path();
@@ -120,15 +211,24 @@ namespace Ellis {
 
 				ImGui::PushID(filenameString.c_str());
 
-				Ref<Texture2D> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+				// thumbnail
+				auto relativePath = std::filesystem::relative(path, Project::GetActiveAssetDirectory());
+
+				Ref<Texture2D> thumbnail = m_DirectoryIcon;
+				if (!directoryEntry.is_directory())
+				{
+					thumbnail = m_ThumbnailCache->GetOrCreateThumbnail(relativePath);
+					if (!thumbnail)
+						thumbnail = m_FileIcon;
+				}
+
 				ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
-				ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				ImGui::ImageButton((ImTextureID)thumbnail->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 
 				if (ImGui::BeginPopupContextItem())
 				{
 					if (ImGui::MenuItem("Import"))
 					{
-						auto relativePath = std::filesystem::relative(path, Project::GetAssetDirectory());
 						Project::GetActive()->GetEditorAssetManager()->ImportAsset(relativePath);
 						RefreshAssetTree();
 					}
@@ -147,6 +247,7 @@ namespace Ellis {
 				ImGui::NextColumn();
 				ImGui::PopID();
 			}
+#endif
 		}
 
 		ImGui::Columns(1);
@@ -155,6 +256,8 @@ namespace Ellis {
 		ImGui::SliderFloat("Padding", &padding, 0, 32);
 
 		ImGui::End();
+
+		m_ThumbnailCache->OnUpdate();
 	}
 
 	void ContentBrowserPanel::RefreshAssetTree()

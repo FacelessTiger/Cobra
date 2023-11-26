@@ -11,9 +11,9 @@ namespace Ellis {
 	{
 	private:
 		AssetRegistry m_AssetRegistry;
-		AssetMap m_LoadedAssets;
+		mutable AssetMap m_LoadedAssets;
 	public:
-		Ref<Asset> GetAsset(AssetHandle handle) override;
+		Ref<Asset> GetAsset(AssetHandle handle) const override;
 
 		bool IsAssetHandleValid(AssetHandle handle) const override;
 		bool IsAssetLoaded(AssetHandle handle) const override;

@@ -101,6 +101,7 @@ namespace Ellis {
 	{
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<IDComponent>(uuid);
+		entity.AddComponent<RelationshipComponent>();
 		entity.AddComponent<TransformComponent>();
 		entity.AddComponent<TagComponent>(name.empty() ? "Entity" : name);
 
@@ -308,6 +309,20 @@ namespace Ellis {
 		return {};
 	}
 
+	glm::mat4 Scene::GetWorldSpaceTransformMatrix(Entity entity)
+	{
+		glm::mat4 retMatrix = entity.GetComponent<TransformComponent>().GetTransform();
+
+		UUID parentUUID = entity.GetComponent<RelationshipComponent>().Parent;
+		if (parentUUID != -1)
+		{
+			Entity parent = GetEntityByUUID(parentUUID);
+			retMatrix = GetWorldSpaceTransformMatrix(parent) * retMatrix;
+		}
+
+		return retMatrix;
+	}
+
 	void Scene::Step(int frames)
 	{
 		m_StepFrames = frames;
@@ -342,8 +357,10 @@ namespace Ellis {
 				auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 				for (auto entity : group)
 				{
+					Entity e = Entity(entity, this);
 					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+
+					Renderer2D::DrawSprite(GetWorldSpaceTransformMatrix(e), sprite, (int)entity);
 				}
 			}
 
@@ -352,8 +369,10 @@ namespace Ellis {
 				auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
 				for (auto entity : view)
 				{
+					Entity e = Entity(entity, this);
 					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+
+					Renderer2D::DrawCircle(GetWorldSpaceTransformMatrix(e), circle.Color, circle.Thickness, circle.Fade, (int)entity);
 				}
 			}
 
@@ -362,8 +381,10 @@ namespace Ellis {
 				auto view = m_Registry.view<TransformComponent, TextComponent>();
 				for (auto entity : view)
 				{
+					Entity e = Entity(entity, this);
 					auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
-					Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+
+					Renderer2D::DrawString(text.TextString, GetWorldSpaceTransformMatrix(e), text, (int)entity);
 				}
 			}
 
@@ -440,8 +461,10 @@ namespace Ellis {
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
+				Entity e = Entity(entity, this);
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+
+				Renderer2D::DrawSprite(GetWorldSpaceTransformMatrix(e), sprite, (int)entity);
 			}
 		}
 
@@ -450,8 +473,10 @@ namespace Ellis {
 			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
 			for (auto entity : view)
 			{
+				Entity e = Entity(entity, this);
 				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+
+				Renderer2D::DrawCircle(GetWorldSpaceTransformMatrix(e), circle.Color, circle.Thickness, circle.Fade, (int)entity);
 			}
 		}
 
@@ -460,8 +485,10 @@ namespace Ellis {
 			auto view = m_Registry.view<TransformComponent, TextComponent>();
 			for (auto entity : view)
 			{
+				Entity e = Entity(entity, this);
 				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
-				Renderer2D::DrawString(text.TextString, transform.GetTransform(), text, (int)entity);
+
+				Renderer2D::DrawString(text.TextString, GetWorldSpaceTransformMatrix(e), text, (int)entity);
 			}
 		}
 
@@ -476,6 +503,10 @@ namespace Ellis {
 
 	template<>
 	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{ }
+
+	template<>
+	void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component)
 	{ }
 
 	template<>

@@ -23,6 +23,7 @@ namespace Ellis {
 		ApplicationSpecification spec;
 		spec.Name = "Ellis Editor";
 		spec.CommandLineArgs = args;
+		spec.CustomTitlebar = true;
 
 		return new EllisEditor(spec);
 	}

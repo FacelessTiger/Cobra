@@ -33,14 +33,15 @@ namespace Ellis {
 			m_Context->m_Registry.each([&](auto entityID)
 				{
 					Entity entity = { entityID, m_Context.get() };
-					DrawEntityNode(entity);
+					if (entity.GetComponent<RelationshipComponent>().Parent == -1)
+						DrawEntityNode(entity);
 				});
 
 			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
 				m_SelectionContext = {};
 
 			// Right-click on blank space
-			if (ImGui::BeginPopupContextWindow(0, 1, false))
+			if (ImGui::BeginPopupContextWindow(0, ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight))
 			{
 				if (ImGui::MenuItem("Create Empty Entity"))
 					m_Context->CreateEntity("Empty Entity");
@@ -66,8 +67,9 @@ namespace Ellis {
 		m_SelectionContext = entity;
 	}
 
-	void SceneHierarchyPanel::DrawEntityNode(Entity entity, bool exception)
+	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
+		auto& relationship = entity.GetComponent<RelationshipComponent>();
 		auto& tag = entity.GetComponent<TagComponent>().Tag;
 
 		ImGuiTreeNodeFlags flags = ((m_SelectionContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
@@ -77,6 +79,31 @@ namespace Ellis {
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectionContext = entity;
+		}
+
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			UUID uuid = entity.GetUUID();
+
+			ImGui::SetDragDropPayload("ENTITY_DRAG", &uuid, sizeof(UUID));
+			ImGui::EndDragDropSource();
+		}
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ENTITY_DRAG"))
+			{
+				UUID uuid = *(UUID*)payload->Data;
+
+				auto& childComponent = m_Context->GetEntityByUUID(uuid).GetComponent<RelationshipComponent>();
+				if (childComponent.Parent == -1)
+				{
+					childComponent.Parent = entity.GetUUID();
+					relationship.Children.push_back(uuid);
+				}
+			}
+
+			ImGui::EndDragDropTarget();
 		}
 
 		bool entityDeleted = false;
@@ -92,11 +119,11 @@ namespace Ellis {
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop();
+			for (const auto& uuid : relationship.Children)
+			{
+				Entity child = m_Context->GetEntityByUUID(uuid);
+				DrawEntityNode(child);
+			}
 
 			ImGui::TreePop();
 		}

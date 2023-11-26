@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Ellis
 {
-	public enum KeyCode
-	{
+	public enum KeyCode : ushort
+    {
 		// From glfw3.h
 		Space = 32,
 		Apostrophe = 39, /* ' */

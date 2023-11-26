@@ -23,7 +23,7 @@ namespace Ellis {
 		if (!m_Specification.WorkingDirecory.empty())
 			std::filesystem::current_path(m_Specification.WorkingDirecory);
 
-		m_Window = Window::Create(WindowProps(m_Specification.Name));
+		m_Window = Window::Create(WindowProps(m_Specification.Name, 1600, 900, m_Specification.CustomTitlebar));
 		m_Window->SetEventCallback(EL_BIND_EVENT_FN(Application::OnEvent));
 
 		Renderer::Init();

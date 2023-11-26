@@ -5,13 +5,18 @@
 #include <unordered_map>
 #include <set>
 
-#include "Ellis/Renderer/Texture.h"
+#include <Ellis/Renderer/Texture.h>
+
+#include "ThumbnailCache.h"
 
 namespace Ellis {
 
 	class ContentBrowserPanel
 	{
 	private:
+		Ref<Project> m_Project;
+		Ref<ThumbnailCache> m_ThumbnailCache;
+
 		std::filesystem::path m_BaseDirectory;
 		std::filesystem::path m_CurrentDirectory;
 
@@ -39,7 +44,7 @@ namespace Ellis {
 
 		Mode m_Mode = Mode::FileSystem;
 	public:
-		ContentBrowserPanel();
+		ContentBrowserPanel(Ref<Project> project);
 
 		void OnImGuiRender();
 	private:

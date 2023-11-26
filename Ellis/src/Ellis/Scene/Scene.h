@@ -59,6 +59,7 @@ namespace Ellis {
 		Entity FindEntityByName(std::string_view name);
 		Entity GetEntityByUUID(UUID uuid);
 		Entity GetPrimaryCameraEntity();
+		glm::mat4 GetWorldSpaceTransformMatrix(Entity entity);
 
 		bool IsRunning() const { return m_IsRunning; }
 		bool IsPaused() const { return m_IsPaused; }

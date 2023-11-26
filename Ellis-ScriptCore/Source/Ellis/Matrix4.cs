@@ -42,5 +42,15 @@ namespace Ellis
             ret += "[" + this[3, 0] + ", " + this[3, 1] + ", " + this[3, 2] + ", " + this[3, 3] + "],\n";
             return ret;
         }
+
+        public Vector3 GetTranslation()
+        {
+            return InternalCalls.Matrix4_GetTranslation(m_Array);
+        }
+
+        public Vector3 GetScale()
+        {
+            return InternalCalls.Matrix4_GetScale(m_Array);
+        }
     }
 }

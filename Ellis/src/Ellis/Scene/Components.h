@@ -24,6 +24,15 @@ namespace Ellis {
 		IDComponent(const IDComponent&) = default;
 	};
 
+	struct RelationshipComponent
+	{
+		UUID Parent = (uint64_t)-1;
+		std::vector<UUID> Children;
+
+		RelationshipComponent() = default;
+		RelationshipComponent(const RelationshipComponent&) = default;
+	};
+
 	struct TagComponent
 	{
 		std::string Tag;
@@ -180,7 +189,7 @@ namespace Ellis {
 	{ };
 
 	using AllComponents =
-		ComponentGroup<TransformComponent, SpriteRendererComponent,
+		ComponentGroup<RelationshipComponent, TransformComponent, SpriteRendererComponent,
 		CircleRendererComponent, CameraComponent, ScriptComponent, NativeScriptComponent,
 		Rigidbody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent, TextComponent>;
 

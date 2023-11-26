@@ -2,6 +2,7 @@
 
 #include "Ellis/Scene/Scene.h"
 #include "Ellis/Scene/Entity.h"
+#include "Ellis/Events/KeyEvent.h"
 
 #include <filesystem>
 #include <string>
@@ -104,6 +105,8 @@ namespace Ellis {
 		MonoMethod* m_Constructor = nullptr;
 		MonoMethod* m_OnCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
+		MonoMethod* m_OnKeyTypedMethod = nullptr;
+		MonoMethod* m_OnKeyPressedMethod = nullptr;
 
 		inline static uint8_t s_FieldValueBuffer[16];
 
@@ -113,6 +116,8 @@ namespace Ellis {
 
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
+		void InvokeOnKeyTyped(KeyCode code);
+		void InvokeOnKeyPressed(KeyCode code, bool repeat);
 
 		Ref<ScriptClass> GetScriptClass() { return m_ScriptClass; }
 
@@ -158,6 +163,8 @@ namespace Ellis {
 		static bool EntityClassExists(const std::string& fullClassName);
 		static void OnCreateEntity(Entity entity);
 		static void OnUpdateEntity(Entity entity, Timestep ts);
+		static void OnKeyTyped(KeyTypedEvent& e);
+		static void OnKeyPressed(KeyPressedEvent& e);
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();

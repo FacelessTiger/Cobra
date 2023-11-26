@@ -19,6 +19,7 @@ project "Ellis-Editor"
 		"%{wks.location}/Ellis/src",
 		"%{wks.location}/Ellis/vendor",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.filewatch}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.ImGuizmo}"
@@ -49,5 +50,6 @@ project "Ellis-Editor"
 
 	filter "configurations:Dist"
 		defines "EL_DIST"
+		kind "WindowedApp"
 		runtime "Release"
 		optimize "on"

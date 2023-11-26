@@ -160,7 +160,7 @@ namespace Ellis {
 			return;
 		}
 
-		auto scriptModulePath = Project::GetAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
+		auto scriptModulePath = Project::GetActiveAssetDirectory() / Project::GetActive()->GetConfig().ScriptModulePath;
 		status = LoadAppAssembly(scriptModulePath);
 
 		if (!status)
@@ -312,6 +312,22 @@ namespace Ellis {
 		else
 		{
 			EL_CORE_ERROR("Could not find ScriptInstance for entity {}", entityUUID);
+		}
+	}
+
+	void ScriptEngine::OnKeyTyped(KeyTypedEvent& e)
+	{
+		for (auto& [value, key] : s_Data->EntityInstances)
+		{
+			key->InvokeOnKeyTyped(e.GetKeyCode());
+		}
+	}
+
+	void ScriptEngine::OnKeyPressed(KeyPressedEvent& e)
+	{
+		for (auto& [value, key] : s_Data->EntityInstances)
+		{
+			key->InvokeOnKeyPressed(e.GetKeyCode(), e.IsRepeat());
 		}
 	}
 
@@ -478,6 +494,8 @@ namespace Ellis {
 		m_Constructor = s_Data->EntityClass.GetMethod(".ctor", 1);
 		m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
 		m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+		m_OnKeyTypedMethod = scriptClass->GetMethod("OnKeyTyped", 1);
+		m_OnKeyPressedMethod = scriptClass->GetMethod("OnKeyPressed", 2);
 
 		m_ScriptClass->InvokeMethod(m_Instance, m_Constructor, entity.GetUUID());
 	}
@@ -492,6 +510,18 @@ namespace Ellis {
 	{
 		if (m_OnUpdateMethod)
 			m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, ts);
+	}
+
+	void ScriptInstance::InvokeOnKeyTyped(KeyCode code)
+	{
+		if (m_OnKeyTypedMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyTypedMethod, code);
+	}
+
+	void ScriptInstance::InvokeOnKeyPressed(KeyCode code, bool repeat)
+	{
+		if (m_OnKeyPressedMethod)
+			m_ScriptClass->InvokeMethod(m_Instance, m_OnKeyPressedMethod, code, repeat);
 	}
 
 	bool ScriptInstance::GetFieldValueInternal(const std::string& name, void* buffer)

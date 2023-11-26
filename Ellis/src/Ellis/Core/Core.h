@@ -13,7 +13,7 @@
 #if defined(EL_PLATFORM_WINDOWS)
 	#define EL_DEBUGBREAK() __debugbreak()
 #elif defined(EL_PLATFORM_LINUX)
-#include <signal.h>
+	#include <signal.h>
 	#define EL_DEBUGBREAK() raise(SIGTRAP)
 #else
 	#error "Platform doesn't support debugbreak yet!"

@@ -11,7 +11,7 @@ namespace Ellis {
 	{
 		EL_PROFILE_FUNCTION();
 
-		return LoadTexture2D(Project::GetAssetDirectory() / metadata.FilePath);
+		return LoadTexture2D(Project::GetActiveAssetDirectory() / metadata.FilePath);
 	}
 
 	Ref<Texture2D> TextureImporter::LoadTexture2D(const std::filesystem::path& path)
@@ -29,7 +29,7 @@ namespace Ellis {
 			data.Data = stbi_load(pathStr.c_str(), &width, &height, &channels, 0);
 		}
 
-		if (!data)
+		if (data.Data == nullptr)
 		{
 			EL_CORE_ERROR("TextureImporter::ImportTexture2D - Could not load texture from filepath: {}", path.string());
 			return nullptr;
@@ -42,7 +42,7 @@ namespace Ellis {
 		spec.Height = height;
 
 		switch (channels)
-			{
+		{
 			case 3: spec.Format = ImageFormat::RGB8; break;
 			case 4: spec.Format = ImageFormat::RGBA8; break;
 		}

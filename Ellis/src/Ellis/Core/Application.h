@@ -31,26 +31,11 @@ namespace Ellis {
 		std::string Name = "Ellis Application";
 		std::string WorkingDirecory;
 		ApplicationCommandLineArgs CommandLineArgs;
+		bool CustomTitlebar = false;
 	};
 
 	class Application
 	{
-	private:
-		static Application* s_Instance;
-		friend int ::main(int argc, char** argv);
-
-		ApplicationSpecification m_Specification;
-		Scope<Window> m_Window;
-		ImGuiLayer* m_ImGuiLayer;
-		LayerStack m_LayerStack;
-
-		float m_LastFrameTime = 0.0f;
-
-		bool m_Running = true;
-		bool m_Minimized = false;
-
-		std::vector<std::function<void()>> m_MainThreadQueue;
-		std::mutex m_MainThreadQueueMutex;
 	public:
 		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
@@ -77,6 +62,27 @@ namespace Ellis {
 		bool OnWindowResize(WindowResizeEvent& e);
 
 		void ExecuteMainThreadQueue();
+	private:
+		static Application* s_Instance;
+
+#if defined(EL_PLATFORM_WINDOWS) && defined(EL_DIST)
+		friend int APIENTRY ::WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow);
+#else
+		friend int ::main(int argc, char** argv);
+#endif
+
+		ApplicationSpecification m_Specification;
+		Scope<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
+		LayerStack m_LayerStack;
+
+		float m_LastFrameTime = 0.0f;
+
+		bool m_Running = true;
+		bool m_Minimized = false;
+
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueMutex;
 	};
 
 	// To be defined in client

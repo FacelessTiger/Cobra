@@ -58,6 +58,8 @@ namespace Ellis {
 
 		{
 			EL_PROFILE_SCOPE("glfwCreateWindow");
+
+			if (props.CustomTitlebar) glfwWindowHint(GLFW_TITLEBAR, false);
 			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		}
 
@@ -66,8 +68,15 @@ namespace Ellis {
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
+		SetTitlebarHovered(false);
 
 		// Set GLFW callbacks
+		glfwSetTitlebarHitTestCallback(m_Window, [](GLFWwindow* window, int x, int y, int* hit)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+			*hit = data.TitlebarHovered;
+		});
+
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
