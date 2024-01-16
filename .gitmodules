@@ -1,28 +1,28 @@
-[submodule "Ellis/vendor/spdlog"]
-	path = Ellis/vendor/spdlog
+[submodule "Cobra/vendor/spdlog"]
+	path = Cobra/vendor/spdlog
 	url = https://github.com/gabime/spdlog
 	branch = v1.x
-[submodule "Ellis/vendor/glm"]
-	path = Ellis/vendor/glm
+[submodule "Cobra/vendor/glm"]
+	path = Cobra/vendor/glm
 	url = https://github.com/g-truc/glm
 	branch = master
-[submodule "Ellis/vendor/GLFW"]
-	path = Ellis/vendor/GLFW
+[submodule "Cobra/vendor/GLFW"]
+	path = Cobra/vendor/GLFW
 	url = https://github.com/FacelessTiger/glfw
 	branch = master
-[submodule "Ellis/vendor/imgui"]
-	path = Ellis/vendor/imgui
+[submodule "Cobra/vendor/imgui"]
+	path = Cobra/vendor/imgui
 	url = https://github.com/FacelessTiger/imgui/
 	branch = docking
-[submodule "Ellis/vendor/yaml-cpp"]
-	path = Ellis/vendor/yaml-cpp
+[submodule "Cobra/vendor/yaml-cpp"]
+	path = Cobra/vendor/yaml-cpp
 	url = https://github.com/FacelessTiger/yaml-cpp
-[submodule "Ellis/vendor/ImGuizmo"]
-	path = Ellis/vendor/ImGuizmo
+[submodule "Cobra/vendor/ImGuizmo"]
+	path = Cobra/vendor/ImGuizmo
 	url = https://github.com/FacelessTiger/ImGuizmo
-[submodule "Ellis/vendor/Box2D"]
-	path = Ellis/vendor/Box2D
+[submodule "Cobra/vendor/Box2D"]
+	path = Cobra/vendor/Box2D
 	url = https://github.com/FacelessTiger/box2d
-[submodule "Ellis/vendor/msdf-atlas-gen"]
-	path = Ellis/vendor/msdf-atlas-gen
+[submodule "Cobra/vendor/msdf-atlas-gen"]
+	path = Cobra/vendor/msdf-atlas-gen
 	url = https://github.com/TheCherno/msdf-atlas-gen

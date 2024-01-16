@@ -1,13 +1,13 @@
-#include <Ellis.h>
-#include <Ellis/Core/EntryPoint.h>
+#include <Cobra.h>
+#include <Cobra/Core/EntryPoint.h>
 
 #include "Sandbox2D.h"
 
-class Sandbox : public Ellis::Application
+class Sandbox : public Cobra::Application
 {
 public:
-	Sandbox(const Ellis::ApplicationSpecification& specification)
-		: Ellis::Application(specification)
+	Sandbox(const Cobra::ApplicationSpecification& specification)
+		: Cobra::Application(specification)
 	{
 		PushLayer(new Sandbox2D());
 	}
@@ -16,11 +16,11 @@ public:
 	{ }
 };
 
-Ellis::Application* Ellis::CreateApplication(Ellis::ApplicationCommandLineArgs args)
+Cobra::Application* Cobra::CreateApplication(Cobra::ApplicationCommandLineArgs args)
 {
 	ApplicationSpecification spec;
 	spec.Name = "Sandbox";
-	//spec.WorkingDirecory = "../Ellis-Editor";
+	//spec.WorkingDirecory = "../Cobra-Editor";
 	spec.CommandLineArgs = args;
 
 	return new Sandbox(spec);

@@ -13,6 +13,7 @@ Intermediates/
 **.vcxproj.filters
 **.vcxproj.user
 **.csproj
+Ellis-ProjectManager/projects.yaml
 
 # Directories
 Ellis/vendor/VulkanSDK

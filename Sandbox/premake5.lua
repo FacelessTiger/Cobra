@@ -15,9 +15,9 @@ project "Sandbox"
 
 	includedirs
 	{
-		"%{wks.location}/Ellis/vendor/spdlog/include",
-		"%{wks.location}/Ellis/src",
-		"%{wks.location}/Ellis/vendor",
+		"%{wks.location}/Cobra/vendor/spdlog/include",
+		"%{wks.location}/Cobra/src",
+		"%{wks.location}/Cobra/vendor",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.ImGuizmo}"
@@ -25,7 +25,7 @@ project "Sandbox"
 
 	links
 	{
-		"Ellis"
+		"Cobra"
 	}
 
 	defines
@@ -37,16 +37,16 @@ project "Sandbox"
 		systemversion "latest"
 
 	filter "configurations:Debug"
-		defines "EL_DEBUG"
+		defines "CB_DEBUG"
 		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
-		defines "EL_RELEASE"
+		defines "CB_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations:Dist"
-		defines "EL_DIST"
+		defines "CB_DIST"
 		runtime "Release"
 		optimize "on"

@@ -1,9 +1,9 @@
 include "/vendor/premake/premake_customization/solution_items.lua"
 include "Dependencies.lua"
 
-workspace "Ellis"
+workspace "Cobra"
 	architecture "x86_64"
-	startproject "Ellis-Editor"
+	startproject "Cobra-Editor"
 	
 	configurations
 	{
@@ -21,21 +21,22 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
 	include "vendor/premake"
-	include "Ellis/vendor/Box2D"
-	include "Ellis/vendor/GLFW"
-	include "Ellis/vendor/Glad"
-	include "Ellis/vendor/msdf-atlas-gen"
-	include "Ellis/vendor/imgui"
-	include "Ellis/vendor/yaml-cpp"
+	include "Cobra/vendor/Box2D"
+	include "Cobra/vendor/GLFW"
+	include "Cobra/vendor/Glad"
+	include "Cobra/vendor/msdf-atlas-gen"
+	include "Cobra/vendor/imgui"
+	include "Cobra/vendor/yaml-cpp"
 group ""
 
 group "Core"
-	include "Ellis"
-	include "Ellis-ScriptCore"
+	include "Cobra"
+	include "Cobra-ScriptCore"
 group ""
 
 group "Tools"
-	include "Ellis-Editor"
+	include "Cobra-Editor"
+	include "Cobra-ProjectManager"
 group ""
 
 group "Misc"

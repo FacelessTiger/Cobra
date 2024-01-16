@@ -1,11 +1,11 @@
 #pragma once
 
-#include <Ellis.h>
+#include <Cobra.h>
 
-class Sandbox2D : public Ellis::Layer
+class Sandbox2D : public Cobra::Layer
 {
 private:
-	Ellis::Ref<Ellis::Scene> m_Scene;
+	Cobra::Ref<Cobra::Scene> m_Scene;
 public:
 	Sandbox2D();
 	virtual ~Sandbox2D() = default;
@@ -13,7 +13,7 @@ public:
 	void OnAttach() override;
 	void OnDetach() override;
 
-	void OnUpdate(Ellis::Timestep ts) override;
+	void OnUpdate(Cobra::Timestep ts) override;
 	void OnImGuiRender() override;
-	void OnEvent(Ellis::Event& e) override;
+	void OnEvent(Cobra::Event& e) override;
 };

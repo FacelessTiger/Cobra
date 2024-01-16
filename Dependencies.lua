@@ -1,27 +1,27 @@
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
 IncludeDir = {}
-IncludeDir["stb_image"] = "%{wks.location}/Ellis/vendor/stb_image"
-IncludeDir["yaml_cpp"] = "%{wks.location}/Ellis/vendor/yaml-cpp/include"
-IncludeDir["Box2D"] = "%{wks.location}/Ellis/vendor/Box2D/include"
-IncludeDir["filewatch"] = "%{wks.location}/Ellis/vendor/filewatch"
-IncludeDir["GLFW"] = "%{wks.location}/Ellis/vendor/GLFW/include"
-IncludeDir["Glad"] = "%{wks.location}/Ellis/vendor/Glad/include"
-IncludeDir["ImGui"] = "%{wks.location}/Ellis/vendor/imgui"
-IncludeDir["ImGuizmo"] = "%{wks.location}/Ellis/vendor/ImGuizmo"
-IncludeDir["glm"] = "%{wks.location}/Ellis/vendor/glm"
-IncludeDir["entt"] = "%{wks.location}/Ellis/vendor/entt/include"
-IncludeDir["mono"] = "%{wks.location}/Ellis/vendor/mono/include"
-IncludeDir["shaderc"] = "%{wks.location}/Ellis/vendor/shaderc/include"
-IncludeDir["SPIRV_Cross"] = "%{wks.location}/Ellis/vendor/SPIRV-Cross"
+IncludeDir["stb_image"] = "%{wks.location}/Cobra/vendor/stb_image"
+IncludeDir["yaml_cpp"] = "%{wks.location}/Cobra/vendor/yaml-cpp/include"
+IncludeDir["Box2D"] = "%{wks.location}/Cobra/vendor/Box2D/include"
+IncludeDir["filewatch"] = "%{wks.location}/Cobra/vendor/filewatch"
+IncludeDir["GLFW"] = "%{wks.location}/Cobra/vendor/GLFW/include"
+IncludeDir["Glad"] = "%{wks.location}/Cobra/vendor/Glad/include"
+IncludeDir["ImGui"] = "%{wks.location}/Cobra/vendor/imgui"
+IncludeDir["ImGuizmo"] = "%{wks.location}/Cobra/vendor/ImGuizmo"
+IncludeDir["glm"] = "%{wks.location}/Cobra/vendor/glm"
+IncludeDir["entt"] = "%{wks.location}/Cobra/vendor/entt/include"
+IncludeDir["mono"] = "%{wks.location}/Cobra/vendor/mono/include"
+IncludeDir["shaderc"] = "%{wks.location}/Cobra/vendor/shaderc/include"
+IncludeDir["SPIRV_Cross"] = "%{wks.location}/Cobra/vendor/SPIRV-Cross"
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
-IncludeDir["msdfgen"] = "%{wks.location}/Ellis/vendor/msdf-atlas-gen/msdfgen"
-IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Ellis/vendor/msdf-atlas-gen/msdf-atlas-gen"
+IncludeDir["msdfgen"] = "%{wks.location}/Cobra/vendor/msdf-atlas-gen/msdfgen"
+IncludeDir["msdf_atlas_gen"] = "%{wks.location}/Cobra/vendor/msdf-atlas-gen/msdf-atlas-gen"
 
 LibraryDir = {}
 
 LibraryDir["VulkanSDK"] = "%{VULKAN_SDK}/Lib"
-LibraryDir["mono"] = "%{wks.location}/Ellis/vendor/mono/lib/%{cfg.buildcfg}"
+LibraryDir["mono"] = "%{wks.location}/Cobra/vendor/mono/lib/%{cfg.buildcfg}"
 
 Library = {}
 Library["mono"] = "%{LibraryDir.mono}/libmono-static-sgen.lib"

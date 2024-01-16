@@ -1,10 +1,10 @@
 #include "Sandbox2D.h"
 
-#include <Ellis/Scene/SceneSerializer.h>
-#include <Ellis/Utils/PlatformUtils.h>
-#include <Ellis/Math/Math.h>
-#include <Ellis/Scripting/ScriptEngine.h>
-#include <Ellis/Renderer/Font.h>
+#include <Cobra/Scene/SceneSerializer.h>
+#include <Cobra/Utils/PlatformUtils.h>
+#include <Cobra/Math/Math.h>
+#include <Cobra/Scripting/ScriptEngine.h>
+#include <Cobra/Renderer/Font.h>
 
 Sandbox2D::Sandbox2D()
 	: Layer("Sandbox2D")
@@ -12,15 +12,15 @@ Sandbox2D::Sandbox2D()
 
 void Sandbox2D::OnAttach()
 {
-	EL_PROFILE_FUNCTION();
+	CB_PROFILE_FUNCTION();
 	
-	if (Ellis::Project::Load("Facerun.eproj"))
+	if (Cobra::Project::Load("Facerun.eproj"))
 	{
-		Ellis::ScriptEngine::Init();
-		auto startScenePath = Ellis::Project::GetAssetFileSystemPath(Ellis::Project::GetActive()->GetConfig().StartScene);
+		Cobra::ScriptEngine::Init();
+		auto startScenePath = Cobra::Project::GetAssetFileSystemPath(Cobra::Project::GetActive()->GetConfig().StartScene);
 
-		m_Scene = Ellis::CreateRef<Ellis::Scene>();
-		Ellis::SceneSerializer serializer(m_Scene);
+		m_Scene = Cobra::CreateRef<Cobra::Scene>();
+		Cobra::SceneSerializer serializer(m_Scene);
 
 		serializer.Deserialize(startScenePath.string());
 	}
@@ -30,31 +30,31 @@ void Sandbox2D::OnAttach()
 
 void Sandbox2D::OnDetach()
 {
-	EL_PROFILE_FUNCTION();
+	CB_PROFILE_FUNCTION();
 }
 
-void Sandbox2D::OnUpdate(Ellis::Timestep ts)
+void Sandbox2D::OnUpdate(Cobra::Timestep ts)
 {
-	EL_PROFILE_FUNCTION();
+	CB_PROFILE_FUNCTION();
 
-	Ellis::Window& window = Ellis::Application::Get().GetWindow();
+	Cobra::Window& window = Cobra::Application::Get().GetWindow();
 	m_Scene->OnViewportResize(window.GetWidth(), window.GetHeight());
 
-	Ellis::Renderer2D::ResetStats();
+	Cobra::Renderer2D::ResetStats();
 
 	//m_Framebuffer->Bind();
-	Ellis::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-	Ellis::RenderCommand::Clear();
+	Cobra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+	Cobra::RenderCommand::Clear();
 
 	m_Scene->OnUpdateRuntime(ts);
 }
 
 void Sandbox2D::OnImGuiRender()
 {
-    EL_PROFILE_FUNCTION();
+    CB_PROFILE_FUNCTION();
 }
 
-void Sandbox2D::OnEvent(Ellis::Event& e)
+void Sandbox2D::OnEvent(Cobra::Event& e)
 {
 	
 }
