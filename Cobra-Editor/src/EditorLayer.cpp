@@ -774,7 +774,7 @@ namespace Cobra {
 
 	bool EditorLayer::OpenProject()
 	{
-		std::string filepath = FileDialogs::OpenFile("Cobra Project (*.eproj)\0*.eproj\0");
+		std::string filepath = FileDialogs::OpenFile("Cobra Project (*.cproj)\0*.cproj\0");
 		if (filepath.empty())
 			return false;
 

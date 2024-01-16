@@ -130,7 +130,7 @@ namespace Cobra {
 		}
 		catch (YAML::ParserException e)
 		{
-			CB_CORE_ERROR("Failed to load .eproj file \"{0}\"\n     {1}", path, e.what());
+			CB_CORE_ERROR("Failed to load .cproj file \"{0}\"\n     {1}", path, e.what());
 			return false;
 		}
 
